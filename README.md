@@ -1,10 +1,10 @@
-# unraid-vmbackup
+# unraid-vmbackup-plugin
 
-v1.2.0 - 2019/11/27
+v1.0.0 - Development
 
-Script for use with unRAID's CA User Scripts plugin. See [here](https://lime-technology.com/forums/topic/48286-plugin-ca-user-scripts/ "CA User Scripts") for more information.
+Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
-Currently the script is in a relatively stable state, and most of the features have been implemented. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this script for backups. Please review the Change Log and To-Do List if you would like to know more.
+Currently the plugin is in a relatively stable state, and most of the features have been implemented. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
 
 ## Important
 
