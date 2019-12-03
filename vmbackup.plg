@@ -12,7 +12,7 @@
 <!ENTITY packages	"/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY MD5		"BLANK">
-<!ENTITY launch    "Settings/VMbackup">
+<!ENTITY launch    "Tools/VMbackup">
 ]>
 
 <PLUGIN name="&name;"
