@@ -4,7 +4,7 @@
 <!ENTITY name      "vmbackup">
 <!ENTITY author    "jtok">
 <!ENTITY version   "2019.12.02">
-<!ENTITY launch    "Settings/VMbackup">
+<!ENTITY tag       "v1.0.0">
 <!ENTITY branch    "development">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL "&gitURL;/&name;.plg">
@@ -12,6 +12,7 @@
 <!ENTITY packages	"/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY MD5		"BLANK">
+<!ENTITY launch    "Settings/VMbackup">
 ]>
 
 <PLUGIN name="&name;"
@@ -32,8 +33,8 @@
 <!--
     plugin package file.
 -->
-<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz">
-    <URL>&gitURL;/archive/&name;-&version;.txz</URL>
+<FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz">
+    <URL>&gitURL;/&name;-&tag;.txz</URL>
     <MD5>&MD5;</MD5>
 </FILE>
 
@@ -50,14 +51,14 @@
 -->
 <FILE Run="/bin/bash">
     <INLINE>
-        find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&version;*" -delete
+        find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
         find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
 
         echo ""
         echo "-----------------------------------------------------------"
         echo " &name; has been installed."
         echo " copyright 2019-2020, &author;"
-        echo " version: &version;"
+        echo " version: &tag; - &version;"
         echo "-----------------------------------------------------------"
         echo ""
     </INLINE>
@@ -90,7 +91,7 @@
         echo "-----------------------------------------------------------"
         echo " &name; has been uninstalled."
         echo " copyright 2019-2020, &author;"
-        echo " version: &version;"
+        echo " version: &tag; - &version;"
         echo "-----------------------------------------------------------"
         echo ""
     </INLINE>
