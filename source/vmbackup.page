@@ -1,0 +1,48 @@
+Menu="VMs"
+Title="VM Backup"
+
+<?php
+
+/* vmbackup plugin
+   copyright 2019 JTok */
+
+include 'functions.php';
+
+// create local variables.
+$plugin = 'vmbackup';
+$plugin_path = '/boot/config/plugins/' . $plugin;
+$default_script_file = $plugin_path . '/default-script.sh';
+$user_script_file = $plugin_path . '/user-script.sh';
+$default_conf_file = $plugin_path . '/default.conf';
+$user_conf_file = $plugin_path . '/user.conf';
+
+// see if user config file already exists.
+if (!file_exists($user_conf_file)) {
+
+  // if not, create it from the default config file.
+  if (!copy($default_conf_file, $user_conf_file)) {
+    echo "failed to create user config file.\n";
+
+  } else {
+
+    // parse user config file.
+    $conf_array = parse_ini_file($user_conf_file);
+  }
+  
+} else {
+
+  // parse user config file.
+  $conf_array = parse_ini_file($user_conf_file);
+}
+
+// see if user script already exists.
+if (!file_exists($user_script_file)) {
+  
+  // if not, create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
+}
+
+?>
