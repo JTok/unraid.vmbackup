@@ -12,7 +12,7 @@
 
 
 # what is the scripts' official name.
-official_script_name="script"
+official_script_name="no_config"
 
 # set the name of the script to a variable so it can be used.
 me=$(basename "$0")
