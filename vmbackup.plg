@@ -6,13 +6,14 @@
 <!ENTITY version   "2019.12.02">
 <!ENTITY tag       "v1.0.0">
 <!ENTITY branch    "development">
+<!ENTITY launch    "Settings/VMbackup">
+<!ENTITY icon      "laptop-code">
 <!ENTITY gitURL    "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL "&gitURL;/&name;.plg">
 <!ENTITY supportURL	"https://forums.unraid.net/">
 <!ENTITY packages	"/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY MD5		"BLANK">
-<!ENTITY launch    "Tools/VMbackup">
 ]>
 
 <PLUGIN name="&name;"
@@ -39,7 +40,7 @@
 </FILE>
 
 <!--
-    xmlstarlet.
+    xmlstarlet package file.
 -->
 <FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
     <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
