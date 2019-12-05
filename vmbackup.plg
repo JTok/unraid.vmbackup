@@ -57,7 +57,7 @@
 <!--
   xmlstarlet package file.
 -->
-<!--<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
+<!--<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg -install-new">
   <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
 </FILE> -->
 
