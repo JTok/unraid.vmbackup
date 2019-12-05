@@ -5,3 +5,4 @@
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings
+#  - ability to do multiple script variations/schedules.
