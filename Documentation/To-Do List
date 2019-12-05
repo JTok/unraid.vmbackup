@@ -7,3 +7,4 @@
 #  - ignore/change number of backups to keep and number of days to keep backups warnings
 #  - ability to do multiple script variations/schedules.
 #  - move additional items to advanced section.
+#  - php form validation.
