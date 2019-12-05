@@ -1,15 +1,15 @@
 <?xml version='1.0' standalone='yes'?>
 
 <!DOCTYPE PLUGIN [
-<!ENTITY name      "vmbackup">
-<!ENTITY author    "jtok">
-<!ENTITY version   "2019.12.02">
-<!ENTITY tag       "v1.0.0">
-<!ENTITY branch    "development">
-<!ENTITY launch    "Settings/VMbackup">
-<!ENTITY icon      "laptop-code">
-<!ENTITY gitURL    "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
-<!ENTITY pluginURL "&gitURL;/&name;.plg">
+<!ENTITY name       "vmbackup">
+<!ENTITY author     "jtok">
+<!ENTITY version    "2019.12.02">
+<!ENTITY tag        "v1.0.0">
+<!ENTITY branch     "development">
+<!ENTITY launch     "Settings/VMbackup">
+<!ENTITY icon       "laptop-code">
+<!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
+<!ENTITY pluginURL  "&gitURL;/&name;.plg">
 <!ENTITY supportURL	"https://forums.unraid.net/">
 <!ENTITY packages	"/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
@@ -17,11 +17,11 @@
 ]>
 
 <PLUGIN name="&name;"
-        author="&author;"
-        version="&version;"
-        pluginURL="&pluginURL;"
-        support="&supportURL;"
-        launch="&launch;">
+    author="&author;"
+    version="&version;"
+    pluginURL="&pluginURL;"
+    support="&supportURL;"
+    launch="&launch;">
 
 <CHANGES>
 ##&name;
@@ -32,70 +32,101 @@
  </CHANGES>
 
 <!--
-    plugin package file.
+  get plugin package file.
 -->
 <FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz">
-    <URL>&gitURL;/&name;-&tag;.txz</URL>
-    <MD5>&MD5;</MD5>
+  <URL>&gitURL;/&name;-&tag;.txz</URL>
 </FILE>
 
-<!--
-    xmlstarlet package file.
--->
-<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
-    <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
-    <MD5>BLANK</MD5>
-</FILE>
 
 <!--
-    clean old files.
+  pre-install script.
 -->
 <FILE Run="/bin/bash">
-    <INLINE>
-        find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
-        find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
+  <INLINE>
 
-        echo ""
-        echo "-----------------------------------------------------------"
-        echo " &name; has been installed."
-        echo " copyright 2019, &author;"
-        echo " version: &tag; - &version;"
-        echo "-----------------------------------------------------------"
-        echo ""
-    </INLINE>
+    # remove plugin files from emhttp.
+    rm -rf /usr/local/emhttp/plugins/&name;
+
+    # remove xmlstarlet.
+    removepkg &xmlstarlet; 2>/dev/null
+  </INLINE>
+</FILE>
+
+
+<!--
+  xmlstarlet package file.
+-->
+<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
+  <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
+</FILE>
+
+
+<!--
+  install the plugin package.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    tar -xf /boot/config/plugins/&name;/&name;-&tag;.txz -C /usr/local/emhttp/plugins 2>/dev/null
+
+    # change plugin permissions.
+    chmod 755 -R /usr/local/emhttp/plugins/&name; 2>/dev/null
+  </INLINE>
+</FILE>
+
+
+<!--
+  clean old files.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
+    find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
+
+    echo ""
+    echo "-----------------------------------------------------------"
+    echo " &name; has been installed."
+    echo " copyright 2019, &author;"
+    echo " version: &tag; - &version;"
+    echo "-----------------------------------------------------------"
+    echo ""
+  </INLINE>
 </FILE>
 
 <!--
-    remove plugin.
+  remove plugin.
 -->
 <FILE Run="/bin/bash" Method="remove">
-    <INLINE>
-        # remove installed packages.
-        find "&packages;/" -type f -iname "*.txz" -delete
-        
-        # remove plugin config folder.
-        rm -rf /boot/config/plugins/&name;
+  <INLINE>
+    # remove installed packages.
+    find "&packages;/" -type f -iname "*.txz" -delete
+    
+    # remove plugin config folder.
+    rm -rf /boot/config/plugins/&name;
 
-        # remove plugin folder.
-        rm -rf /usr/local/emhttp/plugins/&name;
+    # remove plugin folder.
+    rm -rf /usr/local/emhttp/plugins/&name;
 
-        # remove plugin packages folder.
-        rm -rf &packages;/
+    # remove plugin packages folder.
+    rm -rf &packages;/
 
-        # remove plugin files from emhttp.
-        rm -rf /usr/local/emhttp/plugins/&name;
+    # remove plugin files from emhttp.
+    rm -rf /usr/local/emhttp/plugins/&name;
 
-        # remove xmlstarlet.
-        removepkg &xmlstarlet; 2>/dev/null
+    # remove old cron files.
+    rm -rf /boot/config/plugins/dynamix/vmbackup.cron
 
-        echo ""
-        echo "-----------------------------------------------------------"
-        echo " &name; has been uninstalled."
-        echo " copyright 2019, &author;"
-        echo " version: &tag; - &version;"
-        echo "-----------------------------------------------------------"
-        echo ""
-    </INLINE>
+    # remove xmlstarlet.
+    removepkg &xmlstarlet; 2>/dev/null
+
+    echo ""
+    echo "-----------------------------------------------------------"
+    echo " &name; has been uninstalled."
+    echo " copyright 2019, &author;"
+    echo " version: &tag; - &version;"
+    echo "-----------------------------------------------------------"
+    echo ""
+  </INLINE>
 </FILE>
 
 </PLUGIN>
