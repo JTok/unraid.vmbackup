@@ -8,7 +8,6 @@ Icon="laptop-code"
    copyright 2019 JTok */
 
 include 'functions.php';
-include 'update.php';
 
 // create local variables.
 $plugin = 'vmbackup';
