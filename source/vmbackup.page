@@ -55,22 +55,22 @@ if (!file_exists($user_script_file)) {
 
 
 <div style="width: 65%; float:none">
-	<form markdown="1" name="recycle_bin_settings" method="POST" action="/update.php" target="progressFrame">
-	<input type="hidden" name="#file" value="recycle.bin/recycle.bin.cfg">
-	<input type="hidden" name="#command" value="/plugins/recycle.bin/scripts/rc.recycle.bin">
-	<input type="hidden" name="#arg[1]" value="update">
+  <form markdown="1" name="recycle_bin_settings" method="POST" action="/update.php" target="progressFrame">
+  <input type="hidden" name="#file" value="recycle.bin/recycle.bin.cfg">
+  <input type="hidden" name="#command" value="/plugins/recycle.bin/scripts/rc.recycle.bin">
+  <input type="hidden" name="#arg[1]" value="update">
 
-	Enable Recycle Bin for Deleted Files?
-	: <select name="enabled" size="1">
-		<?=mk_option($conf_array['enabled'], "0", "No");?>
-		<?=mk_option($conf_array['enabled'], "0", "Yes");?>
-	  </select>
+  Enable Recycle Bin for Deleted Files?
+  : <select name="enabled" size="1">
+    <?=mk_option($conf_array['enabled'], "0", "No");?>
+    <?=mk_option($conf_array['enabled'], "0", "Yes");?>
+    </select>
 
-	> Set to 'Yes' to enable the Recycle Bin functionality for deleted files when the server is started.
+  > Set to 'Yes' to enable the Recycle Bin functionality for deleted files when the server is started.
 
-	<input type="submit" name="#default" value="Default" title="Load and apply default values.">
-	: <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
-	</form>
+  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+  </form>
 </div>
 
 
