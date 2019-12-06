@@ -46,10 +46,10 @@
   <INLINE>
 
     # remove plugin files from emhttp.
-    rm -rf /usr/local/emhttp/plugins/&name;
+    rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
 
     # remove xmlstarlet.
-    removepkg xmlstarlet*
+    removepkg xmlstarlet* 2>/dev/null
   </INLINE>
 </FILE>
 
@@ -114,7 +114,7 @@
     rm -rf /boot/config/plugins/dynamix/vmbackup.cron
 
     # remove xmlstarlet.
-    removepkg xmlstarlet* 2>/dev/null
+    removepkg &xmlstarlet;
 
     echo ""
     echo "-----------------------------------------------------------"
