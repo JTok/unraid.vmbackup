@@ -6,7 +6,7 @@
 <!ENTITY version    "2019.12.02">
 <!ENTITY tag        "v1.0.0">
 <!ENTITY branch     "development">
-<!ENTITY launch     "Settings/VMbackup">
+<!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "laptop-code">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL  "&gitURL;/&name;.plg">
@@ -21,7 +21,9 @@
     version="&version;"
     pluginURL="&pluginURL;"
     support="&supportURL;"
-    launch="&launch;">
+    launch="&launch;"
+    min="6.7.0"
+    icon="laptop-code">
 
 <CHANGES>
 ##&name;
