@@ -49,7 +49,7 @@
     rm -rf /usr/local/emhttp/plugins/&name;
 
     # remove xmlstarlet.
-    removepkg &xmlstarlet; 2>/dev/null
+    removepkg &xmlstarlet;
   </INLINE>
 </FILE>
 
@@ -57,9 +57,9 @@
 <!--
   xmlstarlet package file.
 -->
-<!--<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg -install-new">
+<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg -install-new">
   <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
-</FILE> -->
+</FILE>
 
 
 <!--
@@ -70,7 +70,7 @@
     tar -xf /boot/config/plugins/&name;/&name;-&tag;.txz -C /usr/local/emhttp/plugins
 
     # change plugin permissions.
-    chmod 755 -R /usr/local/emhttp/plugins/&name; 2>/dev/null
+    chmod 755 -R /usr/local/emhttp/plugins/&name;
   </INLINE>
 </FILE>
 
