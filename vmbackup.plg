@@ -48,8 +48,8 @@
     # remove plugin files from emhttp.
     rm -rf /usr/local/emhttp/plugins/&name;
 
-    # remove xmlstarlet.
-    removepkg &xmlstarlet;
+    <!--# remove xmlstarlet.
+    removepkg &xmlstarlet;-->
   </INLINE>
 </FILE>
 
