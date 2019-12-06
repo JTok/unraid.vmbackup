@@ -49,7 +49,7 @@
     rm -rf /usr/local/emhttp/plugins/&name;
 
     # remove xmlstarlet.
-    removepkg &xmlstarlet;
+    removepkg xmlstarlet*
   </INLINE>
 </FILE>
 
@@ -57,7 +57,7 @@
 <!--
   xmlstarlet package file.
 -->
-<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg -install-new">
+<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
   <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
 </FILE>
 
