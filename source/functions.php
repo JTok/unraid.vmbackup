@@ -29,7 +29,7 @@
     foreach ($conf as $key => $value) {
       
       // replace a corresponding value in the config variable with value from user variables.
-      $conf_contents = str_ireplace("$key=\"'$value'\"", "$key=\"'$user_variables[$key]'\"", $conf_contents);
+      $conf_contents = str_ireplace("$key=\"$value\"", "$key=\"$user_variables[$key]\"", $conf_contents);
     }
 
     return $conf_contents;
@@ -57,7 +57,7 @@
       $value = replace_comma_newline($value);
 
       // replace a corresponding value in the script variable with value from config file.
-      $script_contents = str_ireplace("$key=\"no_config\"", "$key=\"'$value'\"", $script_contents);
+      $script_contents = str_ireplace("$key=\"no_config\"", "$key=\"$value\"", $script_contents);
     }
 
     return $script_contents;
