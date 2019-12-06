@@ -59,7 +59,7 @@
 -->
 <!--<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg -install-new">
   <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
-</FILE>-->
+</FILE> -->
 
 
 <!--
@@ -67,7 +67,7 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-    tar -xf /boot/config/plugins/&name;/&name;-&tag;.txz -C /usr/local/emhttp/plugins/&name; 2>/dev/null
+    tar -xf /boot/config/plugins/&name;/&name;-&tag;.txz -C /usr/local/emhttp/plugins
 
     # change plugin permissions.
     chmod 755 -R /usr/local/emhttp/plugins/&name; 2>/dev/null
