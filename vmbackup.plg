@@ -31,13 +31,6 @@
 
  </CHANGES>
 
-<!--
-  get plugin package file.
--->
-<FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz">
-  <URL>&gitURL;/&name;-&tag;.txz</URL>
-</FILE>
-
 
 <!--
   pre-install script.
@@ -63,12 +56,10 @@
 
 
 <!--
-  install the plugin package.
+  plugin package file.
 -->
-<FILE Run="/bin/bash">
-  <INLINE>
-    upgradepkg --install-new /boot/config/plugins/&name;/&name;-&tag;.txz
-  </INLINE>
+<FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz" Run="upgradepkg --install-new">
+  <URL>&gitURL;/&name;-&tag;.txz</URL>
 </FILE>
 
 
