@@ -67,7 +67,7 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-    tar -xf /boot/config/plugins/&name;/&name;-&tag;.txz -C /usr/local/emhttp/plugins
+    tar -xf /boot/config/plugins/&name;/&name;-&tag;.txz -C /usr/local/emhttp/plugins/&name;
 
     # change plugin permissions.
     chmod 755 -R /usr/local/emhttp/plugins/&name;
