@@ -114,7 +114,7 @@
     rm -rf /boot/config/plugins/dynamix/vmbackup.cron
 
     # remove xmlstarlet.
-    removepkg &xmlstarlet; 2>/dev/null
+    removepkg xmlstarlet* 2>/dev/null
 
     echo ""
     echo "-----------------------------------------------------------"
