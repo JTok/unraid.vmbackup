@@ -48,6 +48,8 @@ if (!file_exists($user_script_file)) {
 
 ?>
 
+Hello World
+
 <div style="width: 80%; float:none">
   <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
   <input type="hidden" name="#file" value="vmbackup/user.cfg">
