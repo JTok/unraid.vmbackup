@@ -8,7 +8,7 @@ Icon="clone"
 /* vmbackup plugin
    copyright 2019 JTok */
 
-include '/usr/local/emhttp/plugins/Vmbackup/functions.php';
+include '/usr/local/emhttp/plugins/vmbackup/functions.php';
 
 // create local variables.
 $plugin = 'vmbackup';
