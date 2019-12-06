@@ -107,6 +107,9 @@
     # remove xmlstarlet.
     removepkg &xmlstarlet;
 
+    # remove plugin.
+    removepkg &name;*
+
     echo ""
     echo "-----------------------------------------------------------"
     echo " &name; has been uninstalled."
