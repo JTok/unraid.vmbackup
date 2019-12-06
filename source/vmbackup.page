@@ -12,10 +12,11 @@ include '/usr/local/emhttp/plugins/vmbackup/functions.php';
 
 // create local variables.
 $plugin = 'vmbackup';
+$plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
 $plugin_path = '/boot/config/plugins/' . $plugin;
-$default_script_file = $plugin_path . '/default-script.sh';
+$default_script_file = $plugin_source_path . '/default-script.sh';
 $user_script_file = $plugin_path . '/user-script.sh';
-$default_conf_file = $plugin_path . '/default.cfg';
+$default_conf_file = $plugin_source_path . '/default.cfg';
 $user_conf_file = $plugin_path . '/user.cfg';
 
 // see if user config file already exists.
