@@ -54,28 +54,8 @@ if (!file_exists($user_script_file)) {
 ?>
 
 
-<div style="width: 65%; float:none">
-  <form markdown="1" name="recycle_bin_settings" method="POST" action="/update.php" target="progressFrame">
-  <input type="hidden" name="#file" value="recycle.bin/recycle.bin.cfg">
-  <input type="hidden" name="#command" value="/plugins/recycle.bin/scripts/rc.recycle.bin">
-  <input type="hidden" name="#arg[1]" value="update">
-
-  Enable Recycle Bin for Deleted Files?
-  : <select name="enabled" size="1">
-    <?=mk_option($conf_array['enabled'], "0", "No");?>
-    <?=mk_option($conf_array['enabled'], "0", "Yes");?>
-    </select>
-
-  > Set to 'Yes' to enable the Recycle Bin functionality for deleted files when the server is started.
-
-  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
-  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
-  </form>
-</div>
-
-
 <div style="width: 80%; float:none">
-  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
   <input type="hidden" name="#file" value="vmbackup/user.cfg">
 
   Enable backups?
@@ -91,6 +71,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="backup_location" class="narrow" maxlength="1000" value="<?=$conf_array['backup_location'];?>">
 
   > Folder location to save backups. Must be full path.
+  >
   > + Each VM will have a subfolder made for it in this location.
 
 
@@ -100,7 +81,8 @@ if (!file_exists($user_script_file)) {
     <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
     </select>
 
-  > Set to 'Yes' to backup all VMs. Set to 'No' to use "List VMs to backup". 
+  > Set to 'Yes' to backup all VMs. Set to 'No' to use "List VMs to backup".
+  >
   > + When set to 'Yes', "List VMs to backup" will be ignored.
 
 
@@ -108,6 +90,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="vms_to_backup" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup'];?>">
 
   > Comma separated list of VM names to backup. If "Backup all VMs" is set to 'Yes', then this list will be ignored.
+  >
   > + Names should be the same names used in the configs.
 
 
@@ -115,6 +98,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
 
   > Comma separated list of specific vdisks to skip. Full path must be used.
+  >
   > + IMPORTANT: Path must match path in config.
   > + IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.
 
@@ -123,6 +107,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>">
 
   > Comma separated list of vdisk extensions to skip.
+  >
   > + iso extensions are skipped by default.
 
 
@@ -133,6 +118,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.
+  >
   > + WARNING: This will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.
   > + IMPORTANT: It is highly recommended that you install the qemu guest agent on your VMs before using snapshots to ensure the integrity of your backups.
   > + If a VM is already shutdown the default backup method will be used instead.
@@ -146,6 +132,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.
+  >
   > + Default is 'No'.
 
 
@@ -156,6 +143,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to prevent VMs from being set back to their original state after backing up.
+  >
   > + Default is 'Yes'.
 
 
@@ -163,6 +151,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
 
   > Set this to the number of days backups should be kept. '0' means indefinitely.
+  >
   > + Default is '0'.
 
 
@@ -170,6 +159,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
 
   > Set this to the number of backups that should be kept. '0' means indefinitely.
+  >
   > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
   > + Default is '0'.
 
@@ -181,6 +171,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to compress backups.
+  >
   > + WARNING: Do not turn on if you already have uncompressed backups. You should move or delete uncompressed backups before enabling, because this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
   > + IMPORTANT: This can add a significant amount of time to the backup process.
   > + Compression uses tar.gz for sparse file compatibility.
@@ -194,6 +185,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to prevent backups from being timestamped.
+  >
   > + Timestamps are dropped only when "Number of backups to keep" is set to '1'.
   > + Default is 'Yes'.
 
@@ -207,6 +199,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to have log file deleted after the backup has completed.
+  >
   > + Error logs are separate. Settings for error logs can be found in the 'Advanced' section.
   > + Default is 'Yes'.
 
@@ -215,6 +208,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>">
 
   > Set this to the number of successful log files that should be kept. '0' means infinitely.
+  >
   > + Default is '1'.
 
 
@@ -222,6 +216,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>">
 
   > Choose a folder name for storing logs.
+  >
   > + Set to blank to put logs in the root of backups folder.
   > + Set to "logs/subfolder" to place logs in an additional subfolder.
   > + Default is 'logs'.
@@ -234,6 +229,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to prevent notifications from being sent.
+  >
   > + Script failures that occur before logging can start, and before this variable is validated, will still be sent.
   > + Default is 'Yes'.
 
@@ -245,6 +241,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to receive more detailed notifications.
+  >
   > + Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.
   > + Default is 'No'.
 
@@ -255,6 +252,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
 
   > Change the extension used when creating snapshots.
+  >
   > + WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.
   > + Default is 'snap'.
 
@@ -266,6 +264,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to fallback to standard backup method if snapshot creation fails.
+  >
   > + This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.
   > + Default is 'No'.
 
@@ -277,6 +276,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to pause VMs instead of shutting them down during standard backups.
+  >
   > + WARNING: This could result in unusable backups, but I have not thoroughly tested.
   > + Default is 'No'.
 
@@ -285,6 +285,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="vms_to_backup_running" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup_running'];?>">
 
   > Comma separated list of VM names to keep running during backup.
+  >
   > + WARNING: Using this setting can result in an unusable backup. Not recommended.
   > + VMs already being backed up using a snapshot will not be shutdown.
   > + These must also be listed in "List VMs to backup".
@@ -297,6 +298,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.
+  >
   > + IMPORTANT: Do not use if reconstruct write is already enabled.
   > + IMPORTANT: May break auto functionality when it is implemented.
   > + When set to 'Yes', reconstruct write will be disabled after the backup finishes.
@@ -311,6 +313,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to compare files after copy and then run rsync in the event of a mismatch.
+  >
   > + IMPORTANT: Enabling can add a significant amount of time depending on the size of the VM.
   > + Default is 'No'.
 
@@ -322,6 +325,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to skip backing up of VM configuration.
+  >
   > + Default is 'Yes'.
 
 
@@ -332,6 +336,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to skip backing up of VM nvram.
+  >
   > + Default is 'Yes'.
 
   Backup vdisks?
@@ -341,6 +346,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to skip backing up of VM vdisks.
+  >
   > + Setting to 'No' will automatically disable compression.
   > + Default is 'Yes'.
 
@@ -352,6 +358,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to always start VMs after a successful backup.
+  >
   > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
   > + Default is 'No'.
 
@@ -363,6 +370,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to always start VMs after a failed backup.
+  >
   > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
   > + Default is 'No'.
 
@@ -374,6 +382,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to disable rsync delta syncs.
+  >
   > + Default is 'No'.
 
 
@@ -384,6 +393,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to to always use rsync instead of cp.
+  >
   > + IMPORTANT: rsync was significantly slower in my tests.
   > + Default is 'No'.
 
@@ -395,6 +405,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' if you would like to perform a dry-run backup.
+  >
   > + Dry-run backups will still create empty files in your backup directory.
   > + This will only use rsync to perform the dry-run.
   > + Default is 'Yes'.
@@ -404,6 +415,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>">
 
   > Set this to the number of times to check if a clean shutdown of a VM has been successful.
+  >
   > + Default is '20'.
 
 
@@ -411,6 +423,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>">
 
   > Set this to the number of seconds to wait between VM shutdown checks.
+  >
   > + Default is '30'.
 
 
@@ -421,6 +434,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'No' to have error log file deleted after the backup has completed.
+  >
   > + Default is 'Yes'.
 
 
@@ -428,6 +442,7 @@ if (!file_exists($user_script_file)) {
   : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
 
   > Set this to the number of error log files that should be kept. '0' means infinitely.
+  >
   > + Default is '10'.
 
 
@@ -438,6 +453,7 @@ if (!file_exists($user_script_file)) {
     </select>
 
   > Set to 'Yes' to only send error notifications.
+  >
   > + Default is 'No'.
 
   <input type="submit" name="#default" value="Default" title="Load and apply default values.">
