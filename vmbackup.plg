@@ -23,7 +23,7 @@
     support="&supportURL;"
     launch="&launch;"
     min="6.7.0"
-    icon="laptop-code">
+    icon="clone">
 
 <CHANGES>
 ##&name;

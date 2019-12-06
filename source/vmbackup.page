@@ -1,6 +1,6 @@
 Menu="Utilities"
 Title="VM Backup"
-Icon="laptop-code"
+Icon="clone"
 
 <?php
 
