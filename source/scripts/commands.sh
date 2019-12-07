@@ -18,7 +18,7 @@
       
       # if the a user script already exists, remove it.
       if [[ -f "$user_script" ]]; then
-        rm -fv "$user_script"
+        rm -f "$user_script"
       fi
 
       php "$php_functions_script" "update_user_script" "$default_script" "$user_script" "$user_config"
