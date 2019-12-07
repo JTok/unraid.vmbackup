@@ -8,3 +8,4 @@
 #  - ability to do multiple script variations/schedules.
 #  - move additional items to advanced section.
 #  - php form validation.
+#  - move some of the settings alerts to php form validation instead.
