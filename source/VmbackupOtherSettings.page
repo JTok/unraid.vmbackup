@@ -10,10 +10,11 @@ Title="Other Settings"
 ?>
 
 <div style="width: 90%; float:left">
-	<p>The settings below could have unintended side effects if used improperly.</p>
-  <p>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.</p>
-  <p>It is recommended not to change these settings.</p>
-  <p>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
+  <p><u>Warning</u></p>
+	<p>The settings below could have unintended side effects if used improperly.
+  </br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
+  </br>It is recommended not to change these settings.
+  </br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
 <div style="width:90%; float:none">
