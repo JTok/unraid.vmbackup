@@ -16,8 +16,9 @@ Title="Danger Zone"
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
+    <!-- danger zone -->
     <div markdown="1" style="width:100%; clear:both">
-      <div id="title" class="nocontrol">Settings</div>
+      <div id="title" class="nocontrol">Danger Zone</div>
 
       Keep error log file?
       : <select name="keep_error_log_file" size="1">
@@ -150,14 +151,6 @@ Title="Danger Zone"
       >
       > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
       > + Default is 'No'.
-
-    </div>
-
-
-    <!-- advanced features -->
-    <div markdown="1" style="width:100%; clear:both">
-      <div id="title" class="nocontrol">Advanced Features</div>
-
 
     </div>
 
