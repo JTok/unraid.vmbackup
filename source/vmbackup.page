@@ -54,6 +54,12 @@ if (!file_exists($user_script_file)) {
 ?>
 
 
+<button type="button" class="collapsible">Open Collapsible</button>
+<div class="content">
+  TEST
+</div>
+
+
 <script type="text/javascript">
   var coll = document.getElementsByClassName("collapsible");
   var i;
@@ -70,15 +76,6 @@ if (!file_exists($user_script_file)) {
     });
   }
 </script>
-
-
-
-
-
-<button type="button" class="collapsible">Open Collapsible</button>
-<div class="content">
-  TEST
-</div>
 
 
 
