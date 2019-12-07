@@ -66,6 +66,16 @@
 
 
 <!--
+  set plugin permissions.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    chmod -R 755 /usr/local/emhttp/plugins/&name;
+  </INLINE>
+</FILE>
+
+
+<!--
   clean old files.
 -->
 <FILE Run="/bin/bash">
