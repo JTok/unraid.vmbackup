@@ -1,5 +1,5 @@
-Menu="Vmbackup:3"
-Title="VM Backup Danger Zone"
+Menu="Vmbackup:2"
+Title="Danger Zone"
 ---
 
 <?php

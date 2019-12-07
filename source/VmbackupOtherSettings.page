@@ -1,5 +1,5 @@
-Menu="Vmbackup:2"
-Title="VM Backup Other Settings"
+Menu="Vmbackup:1"
+Title="Other Settings"
 ---
 
 <?php
