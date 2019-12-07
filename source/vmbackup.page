@@ -205,6 +205,25 @@ if (!file_exists($user_script_file)) {
   > + Default is 'logs'.
 
 
+  Number of error log files to keep:
+  : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
+
+  > Set this to the number of error log files that should be kept. '0' means infinitely.
+  >
+  > + Default is '10'.
+
+
+  Only send error notifications?
+  : <select name="only_send_error_notifications" size="1">
+    <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
+    <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
+  </select>
+
+  > Set to 'Yes' to only send error notifications.
+  >
+  > + Default is 'No'.
+
+
   <!-- notifications -->
   <div id="title" class="nocontrol">Notifications</div>
   
@@ -229,25 +248,6 @@ if (!file_exists($user_script_file)) {
   > Set to 'Yes' to receive more detailed notifications.
   >
   > + Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.
-  > + Default is 'No'.
-
-
-  Number of error log files to keep:
-  : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
-
-  > Set this to the number of error log files that should be kept. '0' means infinitely.
-  >
-  > + Default is '10'.
-
-
-  Only send error notifications?
-  : <select name="only_send_error_notifications" size="1">
-    <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
-    <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
-  </select>
-
-  > Set to 'Yes' to only send error notifications.
-  >
   > + Default is 'No'.
 
 
