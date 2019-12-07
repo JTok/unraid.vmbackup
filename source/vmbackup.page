@@ -54,13 +54,13 @@ if (!file_exists($user_script_file)) {
 ?>
 
 
-<div style="width: 100%; float:none">
+<div style="width:100%; float:none">
   <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
-    <div markdown="1" style="width: 45%; float:left">
+    <div markdown="1" style="width:100%; clear:both">
 
       Enable backups?
       : <select name="enabled" size="1">
@@ -124,7 +124,7 @@ if (!file_exists($user_script_file)) {
 
 
     <!-- advanced features -->
-    <div markdown="1" style="width: 45%; float:right">
+    <div markdown="1" style="width:100%; clear:both">
       <div id="title" class="nocontrol">Advanced Features</div>
 
       List vdisks to skip:
@@ -188,12 +188,14 @@ if (!file_exists($user_script_file)) {
 
     </div>
 
-    <input type="submit" name="#default" value="Default" title="Load and apply default values.">
-    : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+    <div markdown="1" style="width:100%; clear:both">
+     <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+    </div>
   </form>
 </div>
 
-<div style="width: 100%; float:none">
+<div style="width:100%; float:none">
   <!-- logging -->
   <div id="title" class="nocontrol">Logging</div>
   <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
