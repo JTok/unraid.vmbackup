@@ -1,0 +1,212 @@
+Menu="Vmbackup:3"
+Title="VM Backup Danger Zone"
+---
+
+<?php
+
+/* vmbackup plugin
+   copyright 2019 JTok */
+
+include '/usr/local/emhttp/plugins/vmbackup/functions.php';
+
+// create local variables.
+// plugin name
+$plugin = 'vmbackup';
+// default files
+$plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
+$default_script_file = $plugin_source_path . '/default-script.sh';
+$default_conf_file = $plugin_source_path . '/default.cfg';
+// user files
+$plugin_path = '/boot/config/plugins/' . $plugin;
+$user_script_file = $plugin_path . '/user-script.sh';
+$user_conf_file = $plugin_path . '/user.cfg';
+
+// see if user config file already exists.
+if (!file_exists($user_conf_file)) {
+
+  // if not, create it from the default config file.
+  if (!copy($default_conf_file, $user_conf_file)) {
+    echo "failed to create user config file.\n";
+
+  } else {
+
+    // parse user config file.
+    $conf_array = parse_ini_file($user_conf_file);
+  }
+
+} else {
+
+  // parse user config file.
+  $conf_array = parse_ini_file($user_conf_file);
+}
+
+// see if user script already exists.
+if (!file_exists($user_script_file)) {
+  
+  // if not, create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
+}
+
+?>
+
+
+<div style="width:100%; float:none">
+  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+    <input type="hidden" name="#file" value="vmbackup/user.cfg">
+    <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+    <input type="hidden" name="#arg[1]" value="update_user_script">
+
+    <div markdown="1" style="width:100%; clear:both">
+      <div id="title" class="nocontrol">Settings</div>
+
+      Keep error log file?
+      : <select name="keep_error_log_file" size="1">
+        <?=mk_option($conf_array['keep_error_log_file'], "0", "No");?>
+        <?=mk_option($conf_array['keep_error_log_file'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to have error log file deleted after the backup has completed.
+      >
+      > + Default is 'Yes'.
+
+
+      Kill VMs if they can't be shutdown?
+      : <select name="kill_vm_if_cant_shutdown" size="1">
+        <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "0", "No");?>
+        <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.
+      >
+      > + Default is 'No'.
+
+
+      Set VM to original state after backup?
+      : <select name="set_vm_to_original_state" size="1">
+        <?=mk_option($conf_array['set_vm_to_original_state'], "0", "No");?>
+        <?=mk_option($conf_array['set_vm_to_original_state'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to prevent VMs from being set back to their original state after backing up.
+      >
+      > + Default is 'Yes'.
+
+
+      Snapshot extension:
+      : <input type="text" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
+
+      > Change the extension used when creating snapshots.
+      >
+      > + WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.
+      > + Default is 'snap'.
+
+
+      Fallback to standard backups?
+      : <select name="snapshot_fallback" size="1">
+        <?=mk_option($conf_array['snapshot_fallback'], "0", "No");?>
+        <?=mk_option($conf_array['snapshot_fallback'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to fallback to standard backup method if snapshot creation fails.
+      >
+      > + This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.
+      > + Default is 'No'.
+
+
+      Pause VMs instead of shutting down?
+      : <select name="pause_vms" size="1">
+        <?=mk_option($conf_array['pause_vms'], "0", "No");?>
+        <?=mk_option($conf_array['pause_vms'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to pause VMs instead of shutting them down during standard backups.
+      >
+      > + WARNING: This could result in unusable backups, but I have not thoroughly tested.
+      > + Default is 'No'.
+
+
+      List VMs to backup while running:
+      : <input type="text" name="vms_to_backup_running" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup_running'];?>">
+
+      > Comma separated list of VM names to keep running during backup.
+      >
+      > + WARNING: Using this setting can result in an unusable backup. Not recommended.
+      > + VMs already being backed up using a snapshot will not be shutdown.
+      > + These must also be listed in "List VMs to backup".
+
+
+      Backup configs?
+      : <select name="backup_xml" size="1">
+        <?=mk_option($conf_array['backup_xml'], "0", "No");?>
+        <?=mk_option($conf_array['backup_xml'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to skip backing up of VM configuration.
+      >
+      > + Default is 'Yes'.
+
+
+      Backup nvram?
+      : <select name="backup_nvram" size="1">
+        <?=mk_option($conf_array['backup_nvram'], "0", "No");?>
+        <?=mk_option($conf_array['backup_nvram'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to skip backing up of VM nvram.
+      >
+      > + Default is 'Yes'.
+
+      Backup vdisks?
+      : <select name="backup_vdisks" size="1">
+        <?=mk_option($conf_array['backup_vdisks'], "0", "No");?>
+        <?=mk_option($conf_array['backup_vdisks'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to skip backing up of VM vdisks.
+      >
+      > + Setting to 'No' will automatically disable compression.
+      > + Default is 'Yes'.
+
+
+      Start VMs after successful backup?
+      : <select name="start_vm_after_backup" size="1">
+        <?=mk_option($conf_array['start_vm_after_backup'], "0", "No");?>
+        <?=mk_option($conf_array['start_vm_after_backup'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to always start VMs after a successful backup.
+      >
+      > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
+      > + Default is 'No'.
+
+
+      Start VMs after failed backup?
+      : <select name="start_vm_after_failure" size="1">
+        <?=mk_option($conf_array['start_vm_after_failure'], "0", "No");?>
+        <?=mk_option($conf_array['start_vm_after_failure'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to always start VMs after a failed backup.
+      >
+      > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
+      > + Default is 'No'.
+
+    </div>
+
+
+    <!-- advanced features -->
+    <div markdown="1" style="width:100%; clear:both">
+      <div id="title" class="nocontrol">Advanced Features</div>
+
+
+    </div>
+
+    <div markdown="1" style="width:100%; clear:both">
+     <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+    </div>
+  </form>
+</div>

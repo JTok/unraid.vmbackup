@@ -1,0 +1,221 @@
+Menu="Vmbackup:2"
+Title="VM Backup Other Settings"
+---
+
+<?php
+
+/* vmbackup plugin
+   copyright 2019 JTok */
+
+include '/usr/local/emhttp/plugins/vmbackup/functions.php';
+
+// create local variables.
+// plugin name
+$plugin = 'vmbackup';
+// default files
+$plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
+$default_script_file = $plugin_source_path . '/default-script.sh';
+$default_conf_file = $plugin_source_path . '/default.cfg';
+// user files
+$plugin_path = '/boot/config/plugins/' . $plugin;
+$user_script_file = $plugin_path . '/user-script.sh';
+$user_conf_file = $plugin_path . '/user.cfg';
+
+// see if user config file already exists.
+if (!file_exists($user_conf_file)) {
+
+  // if not, create it from the default config file.
+  if (!copy($default_conf_file, $user_conf_file)) {
+    echo "failed to create user config file.\n";
+
+  } else {
+
+    // parse user config file.
+    $conf_array = parse_ini_file($user_conf_file);
+  }
+
+} else {
+
+  // parse user config file.
+  $conf_array = parse_ini_file($user_conf_file);
+}
+
+// see if user script already exists.
+if (!file_exists($user_script_file)) {
+  
+  // if not, create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
+}
+
+?>
+
+
+<div style="width:100%; float:none">
+  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+    <input type="hidden" name="#file" value="vmbackup/user.cfg">
+    <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+    <input type="hidden" name="#arg[1]" value="update_user_script">
+
+    <!-- logging -->
+    <div markdown="1" style="width:100%; clear:both">
+      <div id="title" class="nocontrol">Logging</div>
+
+      Keep log file?
+      : <select name="keep_log_file" size="1">
+        <?=mk_option($conf_array['keep_log_file'], "0", "No");?>
+        <?=mk_option($conf_array['keep_log_file'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to have log file deleted after the backup has completed.
+      >
+      > + Error logs are separate. Settings for error logs can be found in the 'Advanced' section.
+      > + Default is 'Yes'.
+
+      
+      Number of log files to keep:
+      : <input type="text" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>">
+
+      > Set this to the number of successful log files that should be kept.
+      > '0' means infinitely.
+      >
+      > + Default is '1'.
+
+
+      Log file subfolder:
+      : <input type="text" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>">
+
+      > Choose a folder name for storing logs.
+      >
+      > + Set to blank to put logs in the root of backups folder.
+      > + Set to "logs/subfolder" to place logs in an additional subfolder.
+      > + Default is 'logs'.
+
+
+      Number of error log files to keep:
+      : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
+
+      > Set this to the number of error log files that should be kept.
+      > '0' means infinitely.
+      >
+      > + Default is '10'.
+
+    </div>
+
+
+    <!-- notifications -->
+    <div markdown="1" style="width:100%; clear:both">
+      <div id="title" class="nocontrol">Notifications</div>
+
+      Send notifications?
+      : <select name="send_notifications" size="1">
+        <?=mk_option($conf_array['send_notifications'], "0", "No");?>
+        <?=mk_option($conf_array['send_notifications'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to prevent notifications from being sent.
+      >
+      > + Script failures that occur before logging can start, and before this variable is validated, will still be sent.
+      > + Default is 'Yes'.
+
+
+      Enable detailed notifications?
+      : <select name="detailed_notifications" size="1">
+        <?=mk_option($conf_array['detailed_notifications'], "0", "No");?>
+        <?=mk_option($conf_array['detailed_notifications'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to receive more detailed notifications.
+      >
+      > + Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.
+      > + Default is 'No'.
+
+      Only send error notifications?
+      : <select name="only_send_error_notifications" size="1">
+        <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
+        <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to only send error notifications.
+      >
+      > + Default is 'No'.
+
+    </div>
+
+
+    <!-- advanced features -->
+    <div markdown="1" style="width:100%; clear:both">
+      <div id="title" class="nocontrol">Advanced Features</div>
+
+      Timestamp backups?
+      : <select name="timestamp_files" size="1">
+        <?=mk_option($conf_array['timestamp_files'], "0", "No");?>
+        <?=mk_option($conf_array['timestamp_files'], "1", "Yes");?>
+      </select>
+
+      > Set to 'No' to prevent backups from being timestamped.
+      >
+      > + Timestamps are dropped only when "Number of backups to keep" is set to '1'.
+      > + Default is 'Yes'.
+
+
+      Compare files during backup?
+      : <select name="compare_files" size="1">
+        <?=mk_option($conf_array['compare_files'], "0", "No");?>
+        <?=mk_option($conf_array['compare_files'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to compare files after copy and then run rsync in the event of a mismatch.
+      >
+      > + IMPORTANT: Enabling can add a significant amount of time depending on the size of the VM.
+      > + Default is 'No'.
+
+
+      Disable delta syncs for backups?
+      : <select name="disable_delta_sync" size="1">
+        <?=mk_option($conf_array['disable_delta_sync'], "0", "No");?>
+        <?=mk_option($conf_array['disable_delta_sync'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to disable rsync delta syncs.
+      >
+      > + Default is 'No'.
+
+
+      Only use rsync for backups?
+      : <select name="rsync_only" size="1">
+        <?=mk_option($conf_array['rsync_only'], "0", "No");?>
+        <?=mk_option($conf_array['rsync_only'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to to always use rsync instead of other quicker options.
+      >
+      > + IMPORTANT: rsync was significantly slower in my tests.
+      > + Default is 'No'.
+
+
+      Number of times to check if a VM is shutdown:
+      : <input type="text" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>">
+
+      > Set this to the number of times to check if a clean shutdown of a VM has been successful.
+      >
+      > + Default is '20'.
+
+
+      Number of seconds to wait between shutdown checks:
+      : <input type="text" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>">
+
+      > Set this to the number of seconds to wait between VM shutdown checks.
+      >
+      > + Default is '30'.
+
+    </div>
+
+    <div markdown="1" style="width:100%; clear:both">
+     <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+    </div>
+  </form>
+</div>
