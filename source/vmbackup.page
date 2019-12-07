@@ -55,12 +55,12 @@ if (!file_exists($user_script_file)) {
 
 
 <div style="width: 100%; float:none">
-  <div style="width: 45%; float:left">
-  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
-  <input type="hidden" name="#file" value="vmbackup/user.cfg">
-  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
-  <input type="hidden" name="#arg[1]" value="update_user_script">
+<form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+<input type="hidden" name="#file" value="vmbackup/user.cfg">
+<input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+<input type="hidden" name="#arg[1]" value="update_user_script">
 
+  <div style="width: 45%; float:left">
 
   Enable backups?
   : <select name="enabled" size="1">
@@ -68,7 +68,8 @@ if (!file_exists($user_script_file)) {
     <?=mk_option($conf_array['enabled'], "1", "Yes");?>
   </select>
 
-  > Set to 'Yes' to enable backups. Set to 'No' to disable backups.
+  > Must be set to 'Yes' to enable backups.
+  > Set to 'No' to disable backups without disabling the schedule.
 
 
   Set backup location:
@@ -85,15 +86,18 @@ if (!file_exists($user_script_file)) {
     <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
   </select>
 
-  > Set to 'Yes' to backup all VMs. Set to 'No' to use "List VMs to backup".
+  > Set to 'Yes' to backup all VMs.
   >
+  > + When set to 'No', "List VMs to backup" will be used.
   > + When set to 'Yes', "List VMs to backup" will be ignored.
+  > + Default is 'No'.
 
 
   List VMs to backup:
   : <input type="text" name="vms_to_backup" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup'];?>">
 
-  > Comma separated list of VM names to backup. If "Backup all VMs" is set to 'Yes', then this list will be ignored.
+  > Comma separated list of VM names to backup.
+  > If "Backup all VMs" is set to 'Yes', then this list will be ignored.
   >
   > + Names should be the same names used in the configs.
 
@@ -101,7 +105,8 @@ if (!file_exists($user_script_file)) {
   Number of days to keep backups:
   : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
 
-  > Set this to the number of days backups should be kept. '0' means indefinitely.
+  > Set this to the number of days backups should be kept. 
+  > '0' means indefinitely.
   >
   > + Default is '0'.
 
@@ -109,30 +114,26 @@ if (!file_exists($user_script_file)) {
   Number of backups to keep:
   : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
 
-  > Set this to the number of backups that should be kept. '0' means indefinitely.
+  > Set this to the number of backups that should be kept.
+  > '0' means indefinitely.
   >
   > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
   > + Default is '0'.
 
-  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
-  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
-  </form>
   </div>
 
 
   <!-- advanced features -->
   <div style="width: 45%; float:left">
-  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
-  <input type="hidden" name="#file" value="vmbackup/user.cfg">
-  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
-  <input type="hidden" name="#arg[1]" value="update_user_script">
+  <div id="title" class="nocontrol">Advanced Features</div>
 
   List vdisks to skip:
   : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
 
-  > Comma separated list of specific vdisks to skip. Full path must be used.
+  > Comma separated list of specific vdisks to skip.
+  > Full path must be used.
   >
-  > + IMPORTANT: Path must match path in config.
+  > + IMPORTANT: Path must match path used in config.
   > + IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.
 
 
@@ -167,7 +168,7 @@ if (!file_exists($user_script_file)) {
   > Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.
   >
   > + IMPORTANT: Do not use if reconstruct write is already enabled.
-  > + IMPORTANT: May break auto functionality when it is implemented.
+  > + IMPORTANT: May break auto functionality whenever it is implemented.
   > + When set to 'Yes', reconstruct write will be disabled after the backup finishes.
   > + Backups may run faster with this enabled.
   > + Default is 'No'.
@@ -185,10 +186,11 @@ if (!file_exists($user_script_file)) {
   > + This will only use rsync to perform the dry-run.
   > + Default is 'Yes'.
 
+  </div>
   <input type="submit" name="#default" value="Default" title="Load and apply default values.">
   : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
   </form>
-  </div>
+
 
   <!-- logging -->
   <div id="title" class="nocontrol">Logging</div>
@@ -212,7 +214,8 @@ if (!file_exists($user_script_file)) {
   Number of log files to keep:
   : <input type="text" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>">
 
-  > Set this to the number of successful log files that should be kept. '0' means infinitely.
+  > Set this to the number of successful log files that should be kept.
+  > '0' means infinitely.
   >
   > + Default is '1'.
 
@@ -230,7 +233,8 @@ if (!file_exists($user_script_file)) {
   Number of error log files to keep:
   : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
 
-  > Set this to the number of error log files that should be kept. '0' means infinitely.
+  > Set this to the number of error log files that should be kept.
+  > '0' means infinitely.
   >
   > + Default is '10'.
 
@@ -303,7 +307,7 @@ if (!file_exists($user_script_file)) {
   > + WARNING: Do not turn on if you already have uncompressed backups. You should move or delete uncompressed backups before enabling, because this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
   > + IMPORTANT: This can add a significant amount of time to the backup process.
   > + Compression uses tar.gz for sparse file compatibility.
-  > + Default is 'Yes'.
+  > + Default is 'No'.
 
 
   Timestamp backups?
@@ -347,7 +351,7 @@ if (!file_exists($user_script_file)) {
     <?=mk_option($conf_array['rsync_only'], "1", "Yes");?>
   </select>
 
-  > Set to 'Yes' to to always use rsync instead of cp.
+  > Set to 'Yes' to to always use rsync instead of other quicker options.
   >
   > + IMPORTANT: rsync was significantly slower in my tests.
   > + Default is 'No'.
