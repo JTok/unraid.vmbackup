@@ -124,7 +124,7 @@ if (!file_exists($user_script_file)) {
 
 
     <!-- advanced features -->
-    <div markdown="1" style="width: 45%; float:left">
+    <div markdown="1" style="width: 45%; float:right">
       <div id="title" class="nocontrol">Advanced Features</div>
 
       List vdisks to skip:
