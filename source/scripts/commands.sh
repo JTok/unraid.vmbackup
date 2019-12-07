@@ -9,7 +9,7 @@
   update_user_script () {
     # create local variables.
     local php_functions_script="/usr/local/emhttp/plugins/vmbackup/functions.php"
-    local default_script="/usr/local/emhttp/plugins/vmbackup/default.cfg"
+    local default_script="/usr/local/emhttp/plugins/vmbackup/default-script.sh"
     local user_script="/boot/config/plugins/vmbackup/user-script.sh"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
 
