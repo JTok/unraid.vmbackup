@@ -7,49 +7,6 @@ Title="VM Backup Settings"
 /* vmbackup plugin
    copyright 2019 JTok */
 
-include '/usr/local/emhttp/plugins/vmbackup/functions.php';
-
-// create local variables.
-// plugin name
-$plugin = 'vmbackup';
-// default files
-$plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
-$default_script_file = $plugin_source_path . '/default-script.sh';
-$default_conf_file = $plugin_source_path . '/default.cfg';
-// user files
-$plugin_path = '/boot/config/plugins/' . $plugin;
-$user_script_file = $plugin_path . '/user-script.sh';
-$user_conf_file = $plugin_path . '/user.cfg';
-
-// see if user config file already exists.
-if (!file_exists($user_conf_file)) {
-
-  // if not, create it from the default config file.
-  if (!copy($default_conf_file, $user_conf_file)) {
-    echo "failed to create user config file.\n";
-
-  } else {
-
-    // parse user config file.
-    $conf_array = parse_ini_file($user_conf_file);
-  }
-
-} else {
-
-  // parse user config file.
-  $conf_array = parse_ini_file($user_conf_file);
-}
-
-// see if user script already exists.
-if (!file_exists($user_script_file)) {
-  
-  // if not, create a variable with the default script contents and user config file merged.
-  $script_contents = update_script_contents($default_script_file, $user_conf_file);
-
-  // write script contents variable as the user script file.
-  file_put_contents($user_script_file, $script_contents);
-}
-
 ?>
 
 
