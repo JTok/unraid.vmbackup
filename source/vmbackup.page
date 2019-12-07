@@ -113,9 +113,18 @@ if (!file_exists($user_script_file)) {
   > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
   > + Default is '0'.
 
+  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+  </form>
+
 
   <!-- advanced features -->
   <div id="title" class="nocontrol">Advanced Features</div>
+  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <input type="hidden" name="#file" value="vmbackup/user.cfg">
+  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+  <input type="hidden" name="#arg[1]" value="update_user_script">
+
   List vdisks to skip:
   : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
 
@@ -174,9 +183,17 @@ if (!file_exists($user_script_file)) {
   > + This will only use rsync to perform the dry-run.
   > + Default is 'Yes'.
 
+  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+  </form>
+
 
   <!-- logging -->
   <div id="title" class="nocontrol">Logging</div>
+  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <input type="hidden" name="#file" value="vmbackup/user.cfg">
+  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+  <input type="hidden" name="#arg[1]" value="update_user_script">
 
   Keep log file?
   : <select name="keep_log_file" size="1">
@@ -226,9 +243,17 @@ if (!file_exists($user_script_file)) {
   >
   > + Default is 'No'.
 
+  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+  </form>
+
 
   <!-- notifications -->
   <div id="title" class="nocontrol">Notifications</div>
+  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <input type="hidden" name="#file" value="vmbackup/user.cfg">
+  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+  <input type="hidden" name="#arg[1]" value="update_user_script">
   
   Send notifications?
   : <select name="send_notifications" size="1">
@@ -253,9 +278,17 @@ if (!file_exists($user_script_file)) {
   > + Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.
   > + Default is 'No'.
 
+  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+  </form>
+
 
   <!-- advanced settings -->
   <div id="title" class="nocontrol">Advanced Settings</div>
+  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <input type="hidden" name="#file" value="vmbackup/user.cfg">
+  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+  <input type="hidden" name="#arg[1]" value="update_user_script">
 
   Compress backups?
   : <select name="compress_backups" size="1">
@@ -333,9 +366,17 @@ if (!file_exists($user_script_file)) {
   >
   > + Default is '30'.
 
+  <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+  : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+  </form>
+
 
   <!-- danger zone -->
   <div id="title" class="nocontrol">Danger Zone</div>
+  <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <input type="hidden" name="#file" value="vmbackup/user.cfg">
+  <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+  <input type="hidden" name="#arg[1]" value="update_user_script">
 
   Keep error log file?
   : <select name="keep_error_log_file" size="1">
@@ -469,10 +510,7 @@ if (!file_exists($user_script_file)) {
   > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
   > + Default is 'No'.
 
-
-
   <input type="submit" name="#default" value="Default" title="Load and apply default values.">
   : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
-
   </form>
 </div>
