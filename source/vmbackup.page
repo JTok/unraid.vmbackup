@@ -62,7 +62,7 @@ if (!file_exists($user_script_file)) {
   : <select name="enabled" size="1">
     <?=mk_option($conf_array['enabled'], "0", "No");?>
     <?=mk_option($conf_array['enabled'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'Yes' to enable backups. Set to 'No' to disable backups.
 
@@ -79,7 +79,7 @@ if (!file_exists($user_script_file)) {
   : <select name="backup_all_vms" size="1">
     <?=mk_option($conf_array['backup_all_vms'], "0", "No");?>
     <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'Yes' to backup all VMs. Set to 'No' to use "List VMs to backup".
   >
@@ -94,6 +94,25 @@ if (!file_exists($user_script_file)) {
   > + Names should be the same names used in the configs.
 
 
+  Number of days to keep backups:
+  : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
+
+  > Set this to the number of days backups should be kept. '0' means indefinitely.
+  >
+  > + Default is '0'.
+
+
+  Number of backups to keep:
+  : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
+
+  > Set this to the number of backups that should be kept. '0' means indefinitely.
+  >
+  > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
+  > + Default is '0'.
+
+
+  <!-- advanced features -->
+  <div id="title" class="nocontrol">Advanced Features</div>
   List vdisks to skip:
   : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
 
@@ -115,7 +134,7 @@ if (!file_exists($user_script_file)) {
   : <select name="use_snapshots" size="1">
     <?=mk_option($conf_array['use_snapshots'], "0", "No");?>
     <?=mk_option($conf_array['use_snapshots'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.
   >
@@ -125,78 +144,42 @@ if (!file_exists($user_script_file)) {
   > + Default is 'No'.
 
 
-  Kill VMs if they can't be shutdown?
-  : <select name="kill_vm_if_cant_shutdown" size="1">
-    <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "0", "No");?>
-    <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "1", "Yes");?>
-    </select>
+  Enable reconstruct write?
+  : <select name="enable_reconstruct_write" size="1">
+    <?=mk_option($conf_array['enable_reconstruct_write'], "0", "No");?>
+    <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
+  </select>
 
-  > Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.
+  > Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.
   >
+  > + IMPORTANT: Do not use if reconstruct write is already enabled.
+  > + IMPORTANT: May break auto functionality when it is implemented.
+  > + When set to 'Yes', reconstruct write will be disabled after the backup finishes.
+  > + Backups may run faster with this enabled.
   > + Default is 'No'.
 
 
-  Set VM to original state after backup?
-  : <select name="set_vm_to_original_state" size="1">
-    <?=mk_option($conf_array['set_vm_to_original_state'], "0", "No");?>
-    <?=mk_option($conf_array['set_vm_to_original_state'], "1", "Yes");?>
-    </select>
+  Actually copy files?
+  : <select name="actually_copy_files" size="1">
+    <?=mk_option($conf_array['actually_copy_files'], "0", "No");?>
+    <?=mk_option($conf_array['actually_copy_files'], "1", "Yes");?>
+  </select>
 
-  > Set to 'No' to prevent VMs from being set back to their original state after backing up.
+  > Set to 'No' if you would like to perform a dry-run backup.
   >
+  > + Dry-run backups will still create empty files in your backup directory.
+  > + This will only use rsync to perform the dry-run.
   > + Default is 'Yes'.
 
 
-  Number of days to keep backups:
-  : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
-
-  > Set this to the number of days backups should be kept. '0' means indefinitely.
-  >
-  > + Default is '0'.
-
-
-  Number of backups to keep:
-  : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
-
-  > Set this to the number of backups that should be kept. '0' means indefinitely.
-  >
-  > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
-  > + Default is '0'.
-
-
-  Compress backups?
-  : <select name="compress_backups" size="1">
-    <?=mk_option($conf_array['compress_backups'], "0", "No");?>
-    <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
-    </select>
-
-  > Set to 'Yes' to compress backups.
-  >
-  > + WARNING: Do not turn on if you already have uncompressed backups. You should move or delete uncompressed backups before enabling, because this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
-  > + IMPORTANT: This can add a significant amount of time to the backup process.
-  > + Compression uses tar.gz for sparse file compatibility.
-  > + Default is 'Yes'.
-
-
-  Timestamp backups?
-  : <select name="timestamp_files" size="1">
-    <?=mk_option($conf_array['timestamp_files'], "0", "No");?>
-    <?=mk_option($conf_array['timestamp_files'], "1", "Yes");?>
-    </select>
-
-  > Set to 'No' to prevent backups from being timestamped.
-  >
-  > + Timestamps are dropped only when "Number of backups to keep" is set to '1'.
-  > + Default is 'Yes'.
-
-
-  <!-- logging and notifications -->
+  <!-- logging -->
+  <div id="title" class="nocontrol">Logging</div>
 
   Keep log file?
   : <select name="keep_log_file" size="1">
     <?=mk_option($conf_array['keep_log_file'], "0", "No");?>
     <?=mk_option($conf_array['keep_log_file'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'No' to have log file deleted after the backup has completed.
   >
@@ -222,11 +205,14 @@ if (!file_exists($user_script_file)) {
   > + Default is 'logs'.
 
 
+  <!-- notifications -->
+  <div id="title" class="nocontrol">Notifications</div>
+  
   Send notifications?
   : <select name="send_notifications" size="1">
     <?=mk_option($conf_array['send_notifications'], "0", "No");?>
     <?=mk_option($conf_array['send_notifications'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'No' to prevent notifications from being sent.
   >
@@ -238,7 +224,7 @@ if (!file_exists($user_script_file)) {
   : <select name="detailed_notifications" size="1">
     <?=mk_option($conf_array['detailed_notifications'], "0", "No");?>
     <?=mk_option($conf_array['detailed_notifications'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'Yes' to receive more detailed notifications.
   >
@@ -246,71 +232,59 @@ if (!file_exists($user_script_file)) {
   > + Default is 'No'.
 
 
-  <!-- advanced -->
+  Number of error log files to keep:
+  : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
 
-  Snapshot extension:
-  : <input type="text" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
-
-  > Change the extension used when creating snapshots.
+  > Set this to the number of error log files that should be kept. '0' means infinitely.
   >
-  > + WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.
-  > + Default is 'snap'.
+  > + Default is '10'.
 
 
-  Fallback to standard backups?
-  : <select name="snapshot_fallback" size="1">
-    <?=mk_option($conf_array['snapshot_fallback'], "0", "No");?>
-    <?=mk_option($conf_array['snapshot_fallback'], "1", "Yes");?>
-    </select>
+  Only send error notifications?
+  : <select name="only_send_error_notifications" size="1">
+    <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
+    <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
+  </select>
 
-  > Set to 'Yes' to fallback to standard backup method if snapshot creation fails.
+  > Set to 'Yes' to only send error notifications.
   >
-  > + This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.
   > + Default is 'No'.
 
 
-  Pause VMs instead of shutting down?
-  : <select name="pause_vms" size="1">
-    <?=mk_option($conf_array['pause_vms'], "0", "No");?>
-    <?=mk_option($conf_array['pause_vms'], "1", "Yes");?>
-    </select>
+  <!-- advanced settings -->
+  <div id="title" class="nocontrol">Advanced Settings</div>
 
-  > Set to 'Yes' to pause VMs instead of shutting them down during standard backups.
+  Compress backups?
+  : <select name="compress_backups" size="1">
+    <?=mk_option($conf_array['compress_backups'], "0", "No");?>
+    <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
+  </select>
+
+  > Set to 'Yes' to compress backups.
   >
-  > + WARNING: This could result in unusable backups, but I have not thoroughly tested.
-  > + Default is 'No'.
+  > + WARNING: Do not turn on if you already have uncompressed backups. You should move or delete uncompressed backups before enabling, because this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
+  > + IMPORTANT: This can add a significant amount of time to the backup process.
+  > + Compression uses tar.gz for sparse file compatibility.
+  > + Default is 'Yes'.
 
 
-  List VMs to backup while running:
-  : <input type="text" name="vms_to_backup_running" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup_running'];?>">
+  Timestamp backups?
+  : <select name="timestamp_files" size="1">
+    <?=mk_option($conf_array['timestamp_files'], "0", "No");?>
+    <?=mk_option($conf_array['timestamp_files'], "1", "Yes");?>
+  </select>
 
-  > Comma separated list of VM names to keep running during backup.
+  > Set to 'No' to prevent backups from being timestamped.
   >
-  > + WARNING: Using this setting can result in an unusable backup. Not recommended.
-  > + VMs already being backed up using a snapshot will not be shutdown.
-  > + These must also be listed in "List VMs to backup".
-
-
-  Enable reconstruct write?
-  : <select name="enable_reconstruct_write" size="1">
-    <?=mk_option($conf_array['enable_reconstruct_write'], "0", "No");?>
-    <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
-    </select>
-
-  > Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.
-  >
-  > + IMPORTANT: Do not use if reconstruct write is already enabled.
-  > + IMPORTANT: May break auto functionality when it is implemented.
-  > + When set to 'Yes', reconstruct write will be disabled after the backup finishes.
-  > + Backups may run faster with this enabled.
-  > + Default is 'No'.
+  > + Timestamps are dropped only when "Number of backups to keep" is set to '1'.
+  > + Default is 'Yes'.
 
 
   Compare files during backup?
   : <select name="compare_files" size="1">
     <?=mk_option($conf_array['compare_files'], "0", "No");?>
     <?=mk_option($conf_array['compare_files'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'Yes' to compare files after copy and then run rsync in the event of a mismatch.
   >
@@ -318,68 +292,11 @@ if (!file_exists($user_script_file)) {
   > + Default is 'No'.
 
 
-  Backup configs?
-  : <select name="backup_xml" size="1">
-    <?=mk_option($conf_array['backup_xml'], "0", "No");?>
-    <?=mk_option($conf_array['backup_xml'], "1", "Yes");?>
-    </select>
-
-  > Set to 'No' to skip backing up of VM configuration.
-  >
-  > + Default is 'Yes'.
-
-
-  Backup nvram?
-  : <select name="backup_nvram" size="1">
-    <?=mk_option($conf_array['backup_nvram'], "0", "No");?>
-    <?=mk_option($conf_array['backup_nvram'], "1", "Yes");?>
-    </select>
-
-  > Set to 'No' to skip backing up of VM nvram.
-  >
-  > + Default is 'Yes'.
-
-  Backup vdisks?
-  : <select name="backup_vdisks" size="1">
-    <?=mk_option($conf_array['backup_vdisks'], "0", "No");?>
-    <?=mk_option($conf_array['backup_vdisks'], "1", "Yes");?>
-    </select>
-
-  > Set to 'No' to skip backing up of VM vdisks.
-  >
-  > + Setting to 'No' will automatically disable compression.
-  > + Default is 'Yes'.
-
-
-  Start VMs after successful backup?
-  : <select name="start_vm_after_backup" size="1">
-    <?=mk_option($conf_array['start_vm_after_backup'], "0", "No");?>
-    <?=mk_option($conf_array['start_vm_after_backup'], "1", "Yes");?>
-    </select>
-
-  > Set to 'Yes' to always start VMs after a successful backup.
-  >
-  > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
-  > + Default is 'No'.
-
-
-  Start VMs after failed backup?
-  : <select name="start_vm_after_failure" size="1">
-    <?=mk_option($conf_array['start_vm_after_failure'], "0", "No");?>
-    <?=mk_option($conf_array['start_vm_after_failure'], "1", "Yes");?>
-    </select>
-
-  > Set to 'Yes' to always start VMs after a failed backup.
-  >
-  > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
-  > + Default is 'No'.
-
-
   Disable delta syncs for backups?
   : <select name="disable_delta_sync" size="1">
     <?=mk_option($conf_array['disable_delta_sync'], "0", "No");?>
     <?=mk_option($conf_array['disable_delta_sync'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'Yes' to disable rsync delta syncs.
   >
@@ -390,25 +307,12 @@ if (!file_exists($user_script_file)) {
   : <select name="rsync_only" size="1">
     <?=mk_option($conf_array['rsync_only'], "0", "No");?>
     <?=mk_option($conf_array['rsync_only'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'Yes' to to always use rsync instead of cp.
   >
   > + IMPORTANT: rsync was significantly slower in my tests.
   > + Default is 'No'.
-
-
-  Actually copy files?
-  : <select name="actually_copy_files" size="1">
-    <?=mk_option($conf_array['actually_copy_files'], "0", "No");?>
-    <?=mk_option($conf_array['actually_copy_files'], "1", "Yes");?>
-    </select>
-
-  > Set to 'No' if you would like to perform a dry-run backup.
-  >
-  > + Dry-run backups will still create empty files in your backup directory.
-  > + This will only use rsync to perform the dry-run.
-  > + Default is 'Yes'.
 
 
   Number of times to check if a VM is shutdown:
@@ -427,34 +331,142 @@ if (!file_exists($user_script_file)) {
   > + Default is '30'.
 
 
+  <!-- danger zone -->
+  <div id="title" class="nocontrol">Danger Zone</div>
+
   Keep error log file?
   : <select name="keep_error_log_file" size="1">
     <?=mk_option($conf_array['keep_error_log_file'], "0", "No");?>
     <?=mk_option($conf_array['keep_error_log_file'], "1", "Yes");?>
-    </select>
+  </select>
 
   > Set to 'No' to have error log file deleted after the backup has completed.
   >
   > + Default is 'Yes'.
 
 
-  Number of error log files to keep:
-  : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
+  Kill VMs if they can't be shutdown?
+  : <select name="kill_vm_if_cant_shutdown" size="1">
+    <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "0", "No");?>
+    <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "1", "Yes");?>
+  </select>
 
-  > Set this to the number of error log files that should be kept. '0' means infinitely.
-  >
-  > + Default is '10'.
-
-
-  Only send error notifications?
-  : <select name="only_send_error_notifications" size="1">
-    <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
-    <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
-    </select>
-
-  > Set to 'Yes' to only send error notifications.
+  > Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.
   >
   > + Default is 'No'.
+
+
+  Set VM to original state after backup?
+  : <select name="set_vm_to_original_state" size="1">
+    <?=mk_option($conf_array['set_vm_to_original_state'], "0", "No");?>
+    <?=mk_option($conf_array['set_vm_to_original_state'], "1", "Yes");?>
+  </select>
+
+  > Set to 'No' to prevent VMs from being set back to their original state after backing up.
+  >
+  > + Default is 'Yes'.
+
+
+  Snapshot extension:
+  : <input type="text" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
+
+  > Change the extension used when creating snapshots.
+  >
+  > + WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.
+  > + Default is 'snap'.
+
+
+  Fallback to standard backups?
+  : <select name="snapshot_fallback" size="1">
+    <?=mk_option($conf_array['snapshot_fallback'], "0", "No");?>
+    <?=mk_option($conf_array['snapshot_fallback'], "1", "Yes");?>
+  </select>
+
+  > Set to 'Yes' to fallback to standard backup method if snapshot creation fails.
+  >
+  > + This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.
+  > + Default is 'No'.
+
+
+  Pause VMs instead of shutting down?
+  : <select name="pause_vms" size="1">
+    <?=mk_option($conf_array['pause_vms'], "0", "No");?>
+    <?=mk_option($conf_array['pause_vms'], "1", "Yes");?>
+  </select>
+
+  > Set to 'Yes' to pause VMs instead of shutting them down during standard backups.
+  >
+  > + WARNING: This could result in unusable backups, but I have not thoroughly tested.
+  > + Default is 'No'.
+
+
+  List VMs to backup while running:
+  : <input type="text" name="vms_to_backup_running" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup_running'];?>">
+
+  > Comma separated list of VM names to keep running during backup.
+  >
+  > + WARNING: Using this setting can result in an unusable backup. Not recommended.
+  > + VMs already being backed up using a snapshot will not be shutdown.
+  > + These must also be listed in "List VMs to backup".
+
+
+  Backup configs?
+  : <select name="backup_xml" size="1">
+    <?=mk_option($conf_array['backup_xml'], "0", "No");?>
+    <?=mk_option($conf_array['backup_xml'], "1", "Yes");?>
+  </select>
+
+  > Set to 'No' to skip backing up of VM configuration.
+  >
+  > + Default is 'Yes'.
+
+
+  Backup nvram?
+  : <select name="backup_nvram" size="1">
+    <?=mk_option($conf_array['backup_nvram'], "0", "No");?>
+    <?=mk_option($conf_array['backup_nvram'], "1", "Yes");?>
+  </select>
+
+  > Set to 'No' to skip backing up of VM nvram.
+  >
+  > + Default is 'Yes'.
+
+  Backup vdisks?
+  : <select name="backup_vdisks" size="1">
+    <?=mk_option($conf_array['backup_vdisks'], "0", "No");?>
+    <?=mk_option($conf_array['backup_vdisks'], "1", "Yes");?>
+  </select>
+
+  > Set to 'No' to skip backing up of VM vdisks.
+  >
+  > + Setting to 'No' will automatically disable compression.
+  > + Default is 'Yes'.
+
+
+  Start VMs after successful backup?
+  : <select name="start_vm_after_backup" size="1">
+    <?=mk_option($conf_array['start_vm_after_backup'], "0", "No");?>
+    <?=mk_option($conf_array['start_vm_after_backup'], "1", "Yes");?>
+  </select>
+
+  > Set to 'Yes' to always start VMs after a successful backup.
+  >
+  > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
+  > + Default is 'No'.
+
+
+  Start VMs after failed backup?
+  : <select name="start_vm_after_failure" size="1">
+    <?=mk_option($conf_array['start_vm_after_failure'], "0", "No");?>
+    <?=mk_option($conf_array['start_vm_after_failure'], "1", "Yes");?>
+  </select>
+
+  > Set to 'Yes' to always start VMs after a failed backup.
+  >
+  > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
+  > + Default is 'No'.
+
+
 
   <input type="submit" name="#default" value="Default" title="Load and apply default values.">
   : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
