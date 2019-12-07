@@ -26,8 +26,11 @@
     // loop through each key pair in the config file
     foreach ($conf as $key => $value) {
       
+      // remove whitespace from between comma separated values for user variable.
+      $user_value = remove_list_whitespace($user_variables[$key]);
+
       // replace a corresponding value in the config variable with value from user variables.
-      $conf_contents = str_ireplace("$key=\"$value\"", "$key=\"$user_variables[$key]\"", $conf_contents);
+      $conf_contents = str_ireplace("$key=\"$value\"", "$key=\"$user_value\"", $conf_contents);
     }
 
     return $conf_contents;
@@ -61,6 +64,28 @@
     return $script_contents;
   }
 
+  // function to return sanitized config file contents, without writing it to a file.
+  function sanitize_config($conf_file) {
+
+    // store the config file contents in a variable.
+    $conf_contents = file_get_contents($conf_file);
+
+    // parse config file.
+    $conf = parse_ini_file($conf_file);
+
+    // loop through each key pair in the config file
+    foreach ($conf as $key => $value) {
+      
+      // remove whitespace from between comma separated values for user variable.
+      $new_value = remove_list_whitespace($value);
+
+      // replace a corresponding value in the config variable with value from user variables.
+      $conf_contents = str_ireplace("$key=\"$value\"", "$key=\"$new_value\"", $conf_contents);
+    }
+
+    return $conf_contents;
+  }
+
   // check for post commands.
   // if update_script_contents exists, then update the user script file.
   if (isset($_POST['#update_script_contents'])) {
@@ -81,6 +106,12 @@
     $default_script_file = $argv[2];
     $user_script_file = $argv[3];
     $conf_file = $argv[4];
+
+    // create a variable with the config file contents sanitized.
+    $conf_contents = sanitize_config($conf_file);
+
+    // write sanitized config contents variable to the user config file.
+    file_put_contents($conf_file, $conf_contents);
 
     // create a variable with the default script contents and user config file merged.
     $script_contents = update_script_contents($default_script_file, $conf_file);
