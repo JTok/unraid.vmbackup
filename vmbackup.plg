@@ -72,7 +72,15 @@
   <INLINE>
     find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
     find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
+  </INLINE>
+</FILE>
 
+
+<!--
+  finished message.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
     echo ""
     echo "-----------------------------------------------------------"
     echo " &name; has been installed."
@@ -82,6 +90,7 @@
     echo ""
   </INLINE>
 </FILE>
+
 
 <!--
   remove plugin.
