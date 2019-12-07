@@ -85,7 +85,7 @@
     $conf_file = $argv[4];
 
     // create a variable with the default script contents and user config file merged.
-    $script_contents = update_script_contents($default_script_file, $user_conf_file);
+    $script_contents = update_script_contents($default_script_file, $conf_file);
 
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
