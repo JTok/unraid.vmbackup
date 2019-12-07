@@ -54,6 +54,24 @@ if (!file_exists($user_script_file)) {
 ?>
 
 
+<script type="text/javascript">
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+</script>
+
+
 <style type="text/css">
   .collapsible {
     background-color: #777;
@@ -78,6 +96,12 @@ if (!file_exists($user_script_file)) {
     background-color: #f1f1f1;
   }
 </style>
+
+
+<button type="button" class="collapsible">Open Collapsible</button>
+<div class="content">
+  TEST
+</div>
 
 
 
@@ -147,9 +171,6 @@ if (!file_exists($user_script_file)) {
 
   <!-- advanced features -->
   <div id="title" class="nocontrol">Advanced Features</div>
-  <button type="button" class="collapsible">Open Collapsible</button>
-  <div class="content">
-
   <form markdown="1" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
   <input type="hidden" name="#file" value="vmbackup/user.cfg">
   <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
@@ -216,7 +237,6 @@ if (!file_exists($user_script_file)) {
   <input type="submit" name="#default" value="Default" title="Load and apply default values.">
   : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
   </form>
-  </div>
 
 
   <!-- logging -->
@@ -545,20 +565,3 @@ if (!file_exists($user_script_file)) {
   : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
   </form>
 </div>
-
-<script type="text/javascript">
-  var coll = document.getElementsByClassName("collapsible");
-  var i;
-
-  for (i = 0; i < coll.length; i++) {
-    coll[i].addEventListener("click", function() {
-      this.classList.toggle("active");
-      var content = this.nextElementSibling;
-      if (content.style.display === "block") {
-        content.style.display = "none";
-      } else {
-        content.style.display = "block";
-      }
-    });
-  }
-</script>
