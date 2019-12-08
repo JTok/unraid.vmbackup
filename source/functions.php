@@ -86,6 +86,11 @@
     return $conf_contents;
   }
 
+  // function to validate form options.
+  function validate_form() {
+    return "form validated";
+  }
+
   // check for post commands.
   // if update_script_contents exists, then update the user script file.
   if (isset($_POST['#update_script_contents'])) {
