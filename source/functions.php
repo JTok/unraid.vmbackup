@@ -91,6 +91,24 @@
     return "form validated";
   }
 
+  // function to create an array of numbers with matching keys.
+  function create_number_array($start_number, $finish_number, $padding_depth = "0") {
+
+    // create an empty array.
+    $number_array = array();
+
+    // set argument for number of leading zeros used by sprintf.
+    $sprintf_arg = '%0' . $padding_depth . 'd';
+
+    // loop through each number and add it to the array.
+    for ($i = $start_number; $i <= $finish_number; $i++) {
+      $padded_number = sprintf($sprintf_arg, $i);
+      $number_array[$padded_number] = $padded_number;
+    }
+
+    return $number_array;
+  }
+
   // check for post commands.
   // if update_script_contents exists, then update the user script file.
   if (isset($_POST['#update_script_contents'])) {
