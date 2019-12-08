@@ -121,6 +121,176 @@ if (!file_exists($user_script_file)) {
       > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
       > + Default is '0'.
 
+
+      Backup Frequency:
+      : <select name="frequency" size="1">
+        <option value="disabled">Disabled</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="custom">Custom</option>
+      </select>
+
+      > Set to the desired backup frequency.
+      >
+      > + Selecting 'Custom' will allow for a custom Cron setting.
+
+
+      Day of the Week:
+      : <select name="day" size="1">
+        <option value="0">Sunday</option>
+        <option value="1">Monday</option>
+        <option value="2">Tuesday</option>
+        <option value="3">Wednesday</option>
+        <option value="4">Thursday</option>
+        <option value="5">Friday</option>
+        <option value="6">Saturday</option>
+      </select>
+
+      > Set the day of the week to perform the backup.
+
+
+      Day of the Month:
+      : <select name="month" size="1">
+        <option value="1"></option>
+        <option value="2"></option>
+        <option value="3"></option>
+        <option value="4"></option>
+        <option value="5"></option>
+        <option value="6"></option>
+        <option value="7"></option>
+        <option value="8"></option>
+        <option value="9"></option>
+        <option value="10"></option>
+        <option value="11"></option>
+        <option value="12"></option>
+        <option value="13"></option>
+        <option value="14"></option>
+        <option value="15"></option>
+        <option value="16"></option>
+        <option value="17"></option>
+        <option value="18"></option>
+        <option value="19"></option>
+        <option value="20"></option>
+        <option value="21"></option>
+        <option value="22"></option>
+        <option value="23"></option>
+        <option value="24"></option>
+        <option value="25"></option>
+        <option value="26"></option>
+        <option value="27"></option>
+        <option value="28"></option>
+        <option value="29"></option>
+        <option value="30"></option>
+        <option value="31"></option>
+      </select>
+
+      > Set the day of the month to perform the backup.
+
+
+      Hour:
+      : <select name="hour" size="1">
+        <option value="00"></option>
+        <option value="01"></option>
+        <option value="02"></option>
+        <option value="03"></option>
+        <option value="04"></option>
+        <option value="05"></option>
+        <option value="06"></option>
+        <option value="07"></option>
+        <option value="08"></option>
+        <option value="09"></option>
+        <option value="10"></option>
+        <option value="11"></option>
+        <option value="12"></option>
+        <option value="13"></option>
+        <option value="14"></option>
+        <option value="15"></option>
+        <option value="16"></option>
+        <option value="17"></option>
+        <option value="18"></option>
+        <option value="19"></option>
+        <option value="20"></option>
+        <option value="21"></option>
+        <option value="22"></option>
+        <option value="23"></option>
+      </select>
+
+      > Set the hour to perform the backup.
+
+
+      Minute:
+      : <select name="minute" size="1">
+        <option value="00"></option>
+        <option value="01"></option>
+        <option value="02"></option>
+        <option value="03"></option>
+        <option value="04"></option>
+        <option value="05"></option>
+        <option value="06"></option>
+        <option value="07"></option>
+        <option value="08"></option>
+        <option value="09"></option>
+        <option value="10"></option>
+        <option value="11"></option>
+        <option value="12"></option>
+        <option value="13"></option>
+        <option value="14"></option>
+        <option value="15"></option>
+        <option value="16"></option>
+        <option value="17"></option>
+        <option value="18"></option>
+        <option value="19"></option>
+        <option value="20"></option>
+        <option value="21"></option>
+        <option value="22"></option>
+        <option value="23"></option>
+        <option value="24"></option>
+        <option value="25"></option>
+        <option value="26"></option>
+        <option value="27"></option>
+        <option value="28"></option>
+        <option value="29"></option>
+        <option value="30"></option>
+        <option value="31"></option>
+        <option value="32"></option>
+        <option value="33"></option>
+        <option value="34"></option>
+        <option value="35"></option>
+        <option value="36"></option>
+        <option value="37"></option>
+        <option value="38"></option>
+        <option value="39"></option>
+        <option value="40"></option>
+        <option value="41"></option>
+        <option value="42"></option>
+        <option value="43"></option>
+        <option value="44"></option>
+        <option value="45"></option>
+        <option value="46"></option>
+        <option value="47"></option>
+        <option value="48"></option>
+        <option value="49"></option>
+        <option value="50"></option>
+        <option value="51"></option>
+        <option value="52"></option>
+        <option value="53"></option>
+        <option value="54"></option>
+        <option value="55"></option>
+        <option value="56"></option>
+        <option value="57"></option>
+        <option value="58"></option>
+        <option value="59"></option>
+      </select>
+
+      > Set the minute to perform the backup.
+
+
+      Custom Cron:
+      : <input type="text" name="custom" class="narrow" maxlength="20">
+
+      > Set a custom Cron schedule.
+
     </div>
 
 
