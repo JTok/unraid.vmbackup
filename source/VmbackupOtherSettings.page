@@ -1,6 +1,7 @@
 Menu="Vmbackup:2"
 Title="Other Settings"
 Icon="clone"
+Markdown="true"
 ---
 
 <?php
