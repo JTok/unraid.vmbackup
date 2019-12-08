@@ -1,5 +1,6 @@
-Menu="Vmbackup:2"
+Menu="VM Backup:3"
 Title="Danger Zone"
+Icon="clone"
 ---
 
 <?php

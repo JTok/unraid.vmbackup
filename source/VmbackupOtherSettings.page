@@ -1,5 +1,6 @@
-Menu="Vmbackup:1"
+Menu="VM Backup:2"
 Title="Other Settings"
+Icon="clone"
 ---
 
 <?php

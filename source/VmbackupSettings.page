@@ -1,0 +1,154 @@
+Menu="VM Backup:1"
+Title="Settings"
+Icon="clone"
+---
+
+<?php
+
+/* vmbackup plugin
+   copyright 2019 JTok */
+
+?>
+
+<div style="width:90%; float:none">
+  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+    <input type="hidden" name="#file" value="vmbackup/user.cfg">
+    <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+    <input type="hidden" name="#arg[1]" value="update_user_script">
+
+    <!-- basic settings -->
+    <div markdown="1" style="width:90%; clear:both">
+      <div id="title" class="nocontrol">Basic Settings</div>
+
+      Enable backups?
+      : <select name="enabled" size="1">
+        <?=mk_option($conf_array['enabled'], "0", "No");?>
+        <?=mk_option($conf_array['enabled'], "1", "Yes");?>
+      </select>
+
+      > Must be set to 'Yes' to enable backups.
+      > Set to 'No' to disable backups without disabling the schedule.
+
+
+      Set backup location:
+      : <input type="text" name="backup_location" class="narrow" maxlength="1000" value="<?=$conf_array['backup_location'];?>">
+
+      > Folder location to save backups. Must be full path.
+      >
+      > + Each VM will have a subfolder made for it in this location.
+
+
+      Backup all VMs?
+      : <select name="backup_all_vms" size="1">
+        <?=mk_option($conf_array['backup_all_vms'], "0", "No");?>
+        <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to backup all VMs.
+      >
+      > + When set to 'No', "List VMs to backup" will be used.
+      > + When set to 'Yes', "List VMs to backup" will be ignored.
+      > + Default is 'No'.
+
+
+      List VMs to backup:
+      : <input type="text" name="vms_to_backup" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup'];?>">
+
+      > Comma separated list of VM names to backup.
+      > If "Backup all VMs" is set to 'Yes', then this list will be ignored.
+      >
+      > + Names should be the same names used in the configs.
+
+
+      Number of days to keep backups:
+      : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
+
+      > Set this to the number of days backups should be kept. 
+      > '0' means indefinitely.
+      >
+      > + Default is '0'.
+
+
+      Number of backups to keep:
+      : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
+
+      > Set this to the number of backups that should be kept.
+      > '0' means indefinitely.
+      >
+      > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
+      > + Default is '0'.
+
+    </div>
+
+
+    <!-- advanced settings -->
+    <div markdown="1" style="width:90%; clear:both">
+      <div id="title" class="nocontrol">Advanced Settings</div>
+
+      List vdisks to skip:
+      : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
+
+      > Comma separated list of specific vdisks to skip.
+      > Full path must be used.
+      >
+      > + IMPORTANT: Path must match path used in config.
+      > + IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.
+
+
+      List vdisk extensions to skip:
+      : <input type="text" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>">
+
+      > Comma separated list of vdisk extensions to skip.
+      >
+      > + WARNING: Choosing an extension that is the same as one of your vdisks will cause it not to be backed up.
+      > + iso extensions are skipped by default.
+
+
+      Enable snapshots?
+      : <select name="use_snapshots" size="1">
+        <?=mk_option($conf_array['use_snapshots'], "0", "No");?>
+        <?=mk_option($conf_array['use_snapshots'], "1", "Yes");?>
+      </select>
+
+      > Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.
+      >
+      > + WARNING: This will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.
+      > + IMPORTANT: It is highly recommended that you install the qemu guest agent on your VMs before using snapshots to ensure the integrity of your backups.
+      > + If a VM is already shutdown the default backup method will be used instead.
+      > + Default is 'No'.
+
+      Compress backups?
+      : <select name="compress_backups" size="1">
+        <?=mk_option($conf_array['compress_backups'], "0", "No");?>
+        <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to compress backups.
+      >
+      > + WARNING: Do not turn on if you already have uncompressed backups. You should move or delete uncompressed backups before enabling, because this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
+      > + IMPORTANT: This can add a significant amount of time to the backup process.
+      > + Compression uses tar.gz for sparse file compatibility.
+      > + Default is 'No'.
+
+      Enable reconstruct write?
+      : <select name="enable_reconstruct_write" size="1">
+        <?=mk_option($conf_array['enable_reconstruct_write'], "0", "No");?>
+        <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
+      </select>
+
+      > Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.
+      >
+      > + IMPORTANT: Do not use if reconstruct write is already enabled.
+      > + IMPORTANT: May break auto functionality whenever it is implemented.
+      > + When set to 'Yes', reconstruct write will be disabled after the backup finishes.
+      > + Backups may run faster with this enabled.
+      > + Default is 'No'.
+
+    </div>
+
+    <div markdown="1" style="width:90%; clear:both">
+     <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+    </div>
+  </form>
+</div>
