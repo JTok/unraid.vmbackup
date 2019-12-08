@@ -1,7 +1,6 @@
 Menu="Vmbackup:1"
 Title="Settings"
 Icon="clone"
-Markdown="true"
 ---
 
 <?php
