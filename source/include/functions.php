@@ -27,7 +27,7 @@
 
     // loop through each key pair in the config file
     foreach ($conf as $key => $value) {
-      
+
       // remove whitespace from between comma separated values for user variable.
       $user_value = remove_list_whitespace($user_variables[$key]);
 
@@ -40,7 +40,7 @@
 
   // function to add missing config options from first config to second config, without writing it to a file.
   function add_missing_config_options($first_conf_file, $second_conf_file) {
-    
+
     // get an array of the settings for the first config file and second config file.
     $first_conf_array = parse_ini_file($first_conf_file);
     $second_conf_array = parse_ini_file($second_conf_file);
@@ -53,9 +53,9 @@
 
       // add the missing config options to the second config.
       foreach ($conf_diff as $key => $value) {
-        
+
         // only add missing keys, do not change existing values.
-        if (!array_key_exists($key)){
+        if (!array_key_exists($key, $second_conf_array)){
           $second_conf_array[$key] = $value;
         }
       }
@@ -163,7 +163,7 @@
     foreach ($conf_array as $key => $value) {
       $config_contents .= "$key=\"$value\"\n";
     }
-    
+
     return $config_contents;
   }
 
