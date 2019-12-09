@@ -13,9 +13,9 @@ Icon="clone"
 <div style="width: 90%; float:left">
   <p><u>Warning</u></p>
 	<p>The settings below can be dangerous or have unintended side effects if used improperly.
-  </br>Many of them can result in corrupted backups, or no backups at all.
-  </br>It is recommended not to change these settings.
-  </br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
+  <br>Many of them can result in corrupted backups, or no backups at all.
+  <br>It is recommended not to change these settings.
+  <br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
 <div style="width:90%; float:left">
@@ -34,9 +34,12 @@ Icon="clone"
         <?=mk_option($conf_array['keep_error_log_file'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to have error log file deleted after the backup has completed.
-      >
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to have error log file deleted after the backup has completed.</p>
+        <ul>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
 
       Kill VMs if they can't be shutdown?
@@ -45,9 +48,12 @@ Icon="clone"
         <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.
-      >
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.</p>
+        <ul>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Set VM to original state after backup?
@@ -56,18 +62,24 @@ Icon="clone"
         <?=mk_option($conf_array['set_vm_to_original_state'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to prevent VMs from being set back to their original state after backing up.
-      >
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to prevent VMs from being set back to their original state after backing up.</p>
+        <ul>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
 
       Snapshot extension:
       : <input type="text" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
 
-      > Change the extension used when creating snapshots.
-      >
-      > + WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.
-      > + Default is 'snap'.
+      <blockquote class="inline_help">
+        <p>Change the extension used when creating snapshots.</p>
+        <ul>
+          <li>WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.</li>
+          <li>Default is 'snap'.</li>
+        </ul>
+      </blockquote>
 
 
       Fallback to standard backups?
@@ -76,10 +88,13 @@ Icon="clone"
         <?=mk_option($conf_array['snapshot_fallback'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to fallback to standard backup method if snapshot creation fails.
-      >
-      > + This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to fallback to standard backup method if snapshot creation fails.</p>
+        <ul>
+          <li>This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Pause VMs instead of shutting down?
@@ -88,20 +103,26 @@ Icon="clone"
         <?=mk_option($conf_array['pause_vms'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to pause VMs instead of shutting them down during standard backups.
-      >
-      > + WARNING: This could result in unusable backups, but I have not thoroughly tested.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to pause VMs instead of shutting them down during standard backups.</p>
+        <ul>
+          <li>WARNING: This could result in unusable backups, but I have not thoroughly tested.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       List VMs to backup while running:
       : <input type="text" name="vms_to_backup_running" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup_running'];?>">
 
-      > Comma separated list of VM names to keep running during backup.
-      >
-      > + WARNING: Using this setting can result in an unusable backup. Not recommended.
-      > + VMs already being backed up using a snapshot will not be shutdown.
-      > + These must also be listed in "List VMs to backup".
+      <blockquote class="inline_help">
+        <p>Comma separated list of VM names to keep running during backup.</p>
+        <ul>
+          <li>WARNING: Using this setting can result in an unusable backup. Not recommended.</li>
+          <li>VMs already being backed up using a snapshot will not be shutdown.</li>
+          <li>These must also be listed in "List VMs to backup".</li>
+        </ul>
+      </blockquote>
 
 
       Backup configs?
@@ -110,9 +131,12 @@ Icon="clone"
         <?=mk_option($conf_array['backup_xml'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to skip backing up of VM configuration.
-      >
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to skip backing up of VM configuration.</p>
+        <ul>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
 
       Backup nvram?
@@ -121,9 +145,12 @@ Icon="clone"
         <?=mk_option($conf_array['backup_nvram'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to skip backing up of VM nvram.
-      >
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to skip backing up of VM nvram.</p>
+        <ul>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
       Backup vdisks?
       : <select name="backup_vdisks" size="1">
@@ -131,10 +158,13 @@ Icon="clone"
         <?=mk_option($conf_array['backup_vdisks'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to skip backing up of VM vdisks.
-      >
-      > + Setting to 'No' will automatically disable compression.
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to skip backing up of VM vdisks.</p>
+        <ul>
+          <li>Setting to 'No' will automatically disable compression.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
 
       Start VMs after successful backup?
@@ -143,10 +173,13 @@ Icon="clone"
         <?=mk_option($conf_array['start_vm_after_backup'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to always start VMs after a successful backup.
-      >
-      > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to always start VMs after a successful backup.</p>
+        <ul>
+          <li>Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Start VMs after failed backup?
@@ -155,10 +188,13 @@ Icon="clone"
         <?=mk_option($conf_array['start_vm_after_failure'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to always start VMs after a failed backup.
-      >
-      > + Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to always start VMs after a failed backup.</p>
+        <ul>
+          <li>Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Actually copy files?
@@ -167,11 +203,14 @@ Icon="clone"
         <?=mk_option($conf_array['actually_copy_files'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' if you would like to perform a dry-run backup.
-      >
-      > + Dry-run backups will still create empty files in your backup directory.
-      > + This will only use rsync to perform the dry-run.
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' if you would like to perform a dry-run backup.</p>
+        <ul>
+          <li>Dry-run backups will still create empty files in your backup directory.</li>
+          <li>This will only use rsync to perform the dry-run.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
     </div>
 

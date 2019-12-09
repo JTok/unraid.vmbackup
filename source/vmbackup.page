@@ -1,5 +1,5 @@
 Menu="Utilities"
 Title="Vmbackup"
 Type="xmenu"
-Tabs="True"
+Tabs="true"
 Icon="clone"

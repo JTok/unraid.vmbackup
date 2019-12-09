@@ -13,9 +13,9 @@ Icon="clone"
 <div style="width: 90%; float:left">
   <p><u>Warning</u></p>
 	<p>The settings below could have unintended side effects if used improperly.
-  </br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
-  </br>It is recommended not to change these settings.
-  </br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
+  <br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
+  <br>It is recommended not to change these settings.
+  <br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
 <div style="width:90%; float:left">
@@ -34,38 +34,50 @@ Icon="clone"
         <?=mk_option($conf_array['keep_log_file'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to have log file deleted after the backup has completed.
-      >
-      > + Error logs are separate. Settings for error logs can be found in the 'Advanced' section.
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to have log file deleted after the backup has completed.</p>
+        <ul>
+          <li>Error logs are separate. Settings for error logs can be found in the 'Advanced' section.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
       
       Number of log files to keep:
       : <input type="text" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>">
 
-      > Set this to the number of successful log files that should be kept.
-      > '0' means infinitely.
-      >
-      > + Default is '1'.
+      <blockquote class="inline_help">
+        <p>Set this to the number of successful log files that should be kept.
+        <br>'0' means infinitely.</p>
+        <ul>
+          <li>Default is '1'.</li>
+        </ul>
+      </blockquote>
 
 
       Log file subfolder:
       : <input type="text" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>">
 
-      > Choose a folder name for storing logs.
-      >
-      > + Set to blank to put logs in the root of backups folder.
-      > + Set to "logs/subfolder" to place logs in an additional subfolder.
-      > + Default is 'logs'.
+      <blockquote class="inline_help">
+        <p>Choose a folder name for storing logs.</p>
+        <ul>
+          <li>Set to blank to put logs in the root of backups folder.</li>
+          <li>Set to "logs/subfolder" to place logs in an additional subfolder.</li>
+          <li>Default is 'logs'.</li>
+        </ul>
+      </blockquote>
 
 
       Number of error log files to keep:
       : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
 
-      > Set this to the number of error log files that should be kept.
-      > '0' means infinitely.
-      >
-      > + Default is '10'.
+      <blockquote class="inline_help">
+        <p>Set this to the number of error log files that should be kept.
+        <br>'0' means infinitely.</p>
+        <ul>
+          <li>Default is '10'.</li>
+        </ul>
+      </blockquote>
 
     </div>
 
@@ -80,11 +92,14 @@ Icon="clone"
         <?=mk_option($conf_array['send_notifications'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to prevent notifications from being sent.
-      > Disabling this could prevent you from receiving error notifications.
-      >
-      > + Script failures that occur before logging can start, and before this variable is validated, will still be sent.
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to prevent notifications from being sent.
+        <br>Disabling this could prevent you from receiving error notifications.</p>
+        <ul>
+          <li>Script failures that occur before logging can start, and before this variable is validated, will still be sent.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
 
       Enable detailed notifications?
@@ -93,10 +108,14 @@ Icon="clone"
         <?=mk_option($conf_array['detailed_notifications'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to receive more detailed notifications.
-      >
-      > + Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to receive more detailed notifications.</p>
+        <ul>
+          <li>Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
+
 
       Only send error notifications?
       : <select name="only_send_error_notifications" size="1">
@@ -104,9 +123,12 @@ Icon="clone"
         <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to only send error notifications.
-      >
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to only send error notifications.</p>
+        <ul>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
     </div>
 
@@ -121,10 +143,13 @@ Icon="clone"
         <?=mk_option($conf_array['timestamp_files'], "1", "Yes");?>
       </select>
 
-      > Set to 'No' to prevent backups from being timestamped.
-      >
-      > + Timestamps are dropped only when "Number of backups to keep" is set to '1'.
-      > + Default is 'Yes'.
+      <blockquote class="inline_help">
+        <p>Set to 'No' to prevent backups from being timestamped.</p>
+        <ul>
+          <li>Timestamps are dropped only when "Number of backups to keep" is set to '1'.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
 
 
       Compare files during backup?
@@ -133,10 +158,13 @@ Icon="clone"
         <?=mk_option($conf_array['compare_files'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to compare files after copy and then run rsync in the event of a mismatch.
-      >
-      > + IMPORTANT: Enabling can add a significant amount of time depending on the size of the VM.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to compare files after copy and then run rsync in the event of a mismatch.</p>
+        <ul>
+          <li>IMPORTANT: Enabling can add a significant amount of time depending on the size of the VM.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Disable delta syncs for backups?
@@ -145,9 +173,12 @@ Icon="clone"
         <?=mk_option($conf_array['disable_delta_sync'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to disable rsync delta syncs.
-      >
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to disable rsync delta syncs.</p>
+        <ul>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Only use rsync for backups?
@@ -156,26 +187,35 @@ Icon="clone"
         <?=mk_option($conf_array['rsync_only'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to to always use rsync instead of other quicker options.
-      >
-      > + IMPORTANT: rsync was significantly slower in my tests.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to to always use rsync instead of other quicker options.</p>
+        <ul>
+          <li>IMPORTANT: rsync was significantly slower in my tests.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       Number of times to check if a VM is shutdown:
       : <input type="text" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>">
 
-      > Set this to the number of times to check if a clean shutdown of a VM has been successful.
-      >
-      > + Default is '20'.
+      <blockquote class="inline_help">
+        <p>Set this to the number of times to check if a clean shutdown of a VM has been successful.</p>
+        <ul>
+          <li>Default is '20'.</li>
+        </ul>
+      </blockquote>
 
 
       Number of seconds to wait between shutdown checks:
       : <input type="text" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>">
 
-      > Set this to the number of seconds to wait between VM shutdown checks.
-      >
-      > + Default is '30'.
+      <blockquote class="inline_help">
+        <p>Set this to the number of seconds to wait between VM shutdown checks.</p>
+        <ul>
+          <li>Default is '30'.</li>
+        </ul>
+      </blockquote>
 
     </div>
 

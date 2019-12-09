@@ -69,16 +69,21 @@ if (!file_exists($user_script_file)) {
         <?=mk_option($conf_array['enabled'], "1", "Yes");?>
       </select>
 
-      > Must be set to 'Yes' to enable backups.
-      > Set to 'No' to disable backups without disabling the schedule.
+      <blockquote class="inline_help">
+        <p>Must be set to 'Yes' to enable backups.
+        <br>Set to 'No' to disable backups without disabling the schedule.</p>
+      </blockquote>
 
 
       Set backup location:
       : <input type="text" name="backup_location" class="narrow" maxlength="1000" value="<?=$conf_array['backup_location'];?>">
 
-      > Folder location to save backups. Must be full path.
-      >
-      > + Each VM will have a subfolder made for it in this location.
+      <blockquote class="inline_help">
+        <p>Folder location to save backups. Must be full path.</p>
+        <ul>
+          <li>Each VM will have a subfolder made for it in this location.</li>
+        </ul>
+      </blockquote>
 
 
       Backup all VMs?
@@ -87,39 +92,52 @@ if (!file_exists($user_script_file)) {
         <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to backup all VMs.
-      >
-      > + When set to 'No', "List VMs to backup" will be used.
-      > + When set to 'Yes', "List VMs to backup" will be ignored.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to backup all VMs.</p>
+        <ul>
+          <li>When set to 'No', "List VMs to backup" will be used.</li>
+          <li>When set to 'Yes', "List VMs to backup" will be ignored.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
 
       List VMs to backup:
       : <input type="text" name="vms_to_backup" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup'];?>">
 
-      > Comma separated list of VM names to backup.
-      > If "Backup all VMs" is set to 'Yes', then this list will be ignored.
-      >
-      > + Names should be the same names used in the configs.
+      <blockquote class="inline_help">
+        <p>Comma separated list of VM names to backup.
+        <br>If "Backup all VMs" is set to 'Yes', then this list will be ignored.</p>
+        <ul>
+          <li>Names should be the same names used in the configs.</li>
+        </ul>
+      </blockquote>
 
 
       Number of days to keep backups:
       : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
 
-      > Set this to the number of days backups should be kept. 
-      > '0' means indefinitely.
-      >
-      > + Default is '0'.
+      <blockquote class="inline_help">
+        <p>Set this to the number of days backups should be kept.
+        <br>'0' means indefinitely.</p>
+        <ul>
+          <li>Default is '0'.</li>
+        </ul>
+      </blockquote>
 
 
       Number of backups to keep:
       : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
 
-      > Set this to the number of backups that should be kept.
-      > '0' means indefinitely.
-      >
-      > + WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
-      > + Default is '0'.
+      
+      <blockquote class="inline_help">
+        <p>Set this to the number of backups that should be kept.
+        <br>'0' means indefinitely.</p>
+        <ul>
+          <li>WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).</li>
+          <li>Default is '0'.</li>
+        </ul>
+      </blockquote>
 
     </div>
 
@@ -137,9 +155,12 @@ if (!file_exists($user_script_file)) {
         <option value="custom">Custom</option>
       </select>
 
-      > Set to the desired backup frequency.
-      >
-      > + Selecting 'Custom' will allow for a custom Cron setting.
+      <blockquote class="inline_help">
+        <p>Set to the desired backup frequency.</p>
+        <ul>
+          <li>Selecting 'Custom' will allow for a custom Cron setting.</li>
+        </ul>
+      </blockquote>
 
 
       Day of the Week:
@@ -153,7 +174,9 @@ if (!file_exists($user_script_file)) {
         <option value="6">Saturday</option>
       </select>
 
-      > Set the day of the week to perform the backup.
+      <blockquote class="inline_help">
+        <p>Set the day of the week to perform the backup.</p>
+      </blockquote>
 
 
       Day of the Month:
@@ -168,7 +191,9 @@ if (!file_exists($user_script_file)) {
           ?>
       </select>
 
-      > Set the day of the month to perform the backup.
+      <blockquote class="inline_help">
+        </p>Set the day of the month to perform the backup.</p>
+      </blockquote>
 
 
       Hour:
@@ -183,7 +208,9 @@ if (!file_exists($user_script_file)) {
           ?>
       </select>
 
-      > Set the hour to perform the backup.
+    <blockquote class="inline_help">
+      <p>Set the hour to perform the backup.</p>
+    </blockquote>
 
 
       Minute:
@@ -198,13 +225,17 @@ if (!file_exists($user_script_file)) {
           ?>
       </select>
 
-      > Set the minute to perform the backup.
+      <blockquote class="inline_help">
+        <p>Set the minute to perform the backup.</p>
+      </blockquote>
 
 
       Custom Cron:
       : <input type="text" name="custom" class="narrow" maxlength="20">
 
-      > Set a custom Cron schedule.
+      <blockquote class="inline_help">
+        <p>Set a custom Cron schedule.</p>
+      </blockquote>
 
     </div>
 
@@ -216,20 +247,26 @@ if (!file_exists($user_script_file)) {
       List vdisks to skip:
       : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
 
-      > Comma separated list of specific vdisks to skip.
-      > Full path must be used.
-      >
-      > + IMPORTANT: Path must match path used in config.
-      > + IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.
+      <blockquote class="inline_help">
+        <p>Comma separated list of specific vdisks to skip.
+        <br>Full path must be used.</p>
+        <ul>
+          <li>IMPORTANT: Path must match path used in config.</li>
+          <li>IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.</li>
+        </ul>
+      </blockquote>
 
 
       List vdisk extensions to skip:
       : <input type="text" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>">
 
-      > Comma separated list of vdisk extensions to skip.
-      >
-      > + WARNING: Choosing an extension that is the same as one of your vdisks will cause it not to be backed up.
-      > + iso extensions are skipped by default.
+      <blockquote class="inline_help">
+        <p>Comma separated list of vdisk extensions to skip.</p>
+        <ul>
+          <li>WARNING: Choosing an extension that is the same as one of your vdisks will cause it not to be backed up.</li>
+          <li>iso extensions are skipped by default.</li>
+        </ul>
+      </blockquote>
 
 
       Enable snapshots?
@@ -238,12 +275,15 @@ if (!file_exists($user_script_file)) {
         <?=mk_option($conf_array['use_snapshots'], "1", "Yes");?>
       </select>
 
-      > Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.
-      >
-      > + WARNING: This will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.
-      > + IMPORTANT: It is highly recommended that you install the qemu guest agent on your VMs before using snapshots to ensure the integrity of your backups.
-      > + If a VM is already shutdown the default backup method will be used instead.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.</p>
+        <ul>
+          <li>WARNING: This will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.</li>
+          <li>IMPORTANT: It is highly recommended that you install the qemu guest agent on your VMs before using snapshots to ensure the integrity of your backups.</li>
+          <li>If a VM is already shutdown the default backup method will be used instead.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
       Compress backups?
       : <select name="compress_backups" size="1">
@@ -251,12 +291,14 @@ if (!file_exists($user_script_file)) {
         <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to compress backups.
-      >
-      > + WARNING: Do not turn on if you already have uncompressed backups. You should move or delete uncompressed backups before enabling, because this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
-      > + IMPORTANT: This can add a significant amount of time to the backup process.
-      > + Compression uses tar.gz for sparse file compatibility.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to compress backups.</p>
+        <ul>
+          <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
+          <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
+          <li>Compression uses tar.gz for sparse file compatibility.</li>
+          <li>Default is 'No'.</li>
+        </ul>
 
       Enable reconstruct write?
       : <select name="enable_reconstruct_write" size="1">
@@ -264,13 +306,16 @@ if (!file_exists($user_script_file)) {
         <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
       </select>
 
-      > Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.
-      >
-      > + IMPORTANT: Do not use if reconstruct write is already enabled.
-      > + IMPORTANT: May break auto functionality whenever it is implemented.
-      > + When set to 'Yes', reconstruct write will be disabled after the backup finishes.
-      > + Backups may run faster with this enabled.
-      > + Default is 'No'.
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.</p>
+        <ul>
+          <li>IMPORTANT: Do not use if reconstruct write is already enabled.</li>
+          <li>IMPORTANT: May break auto functionality whenever it is implemented.</li>
+          <li>When set to 'Yes', reconstruct write will be disabled after the backup finishes.</li>
+          <li>Backups may run faster with this enabled.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
     </div>
 
