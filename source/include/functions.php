@@ -2,42 +2,11 @@
 
   // v0.1.2 - Development
 
-  // function to remove white space from around commas in a list.
-  function remove_list_whitespace($string) {
-    $string = preg_replace('/\s*,\s*/', ',', $string);
 
-    return $string;
-  }
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
-  // function to replace commas with new lines.
-  function replace_comma_newline($string) {
-    $string = str_ireplace(',', "\n", $string);
-
-    return $string;
-  }
-
-  // function to return updated conf file contents, without writing it to a file.
-  function update_config_contents($conf_file, $user_variables) {
-
-    // store the config file contents in a variable.
-    $conf_contents = file_get_contents($conf_file);
-
-    // parse config file.
-    $conf = parse_ini_file($conf_file);
-
-    // loop through each key pair in the config file
-    foreach ($conf as $key => $value) {
-
-      // remove whitespace from between comma separated values for user variable.
-      $user_value = remove_list_whitespace($user_variables[$key]);
-
-      // replace a corresponding value in the config variable with value from user variables.
-      $conf_contents = str_ireplace("$key=\"$value\"", "$key=\"$user_value\"", $conf_contents);
-    }
-
-    return $conf_contents;
-  }
-
+  
   // function to add missing config options from first config to second config, without writing it to a file.
   function add_missing_config_options($first_conf_file, $second_conf_file) {
 
@@ -63,6 +32,18 @@
 
     return $second_conf_array;
   }
+
+
+  // function to take config array and create config file contents, without writing it to a file.
+  function create_ini_file ($conf_array) {
+    $config_contents = "";
+    foreach ($conf_array as $key => $value) {
+      $config_contents .= "$key=\"$value\"\n";
+    }
+
+    return $config_contents;
+  }
+
 
   // function to return script file contents that have been updated by an array of configs, without writing it to a file.
   function update_script_contents($script_file, $conf_file) {
@@ -92,32 +73,6 @@
     return $script_contents;
   }
 
-  // function to return sanitized config file contents, without writing it to a file.
-  function sanitize_config($conf_file) {
-
-    // store the config file contents in a variable.
-    $conf_contents = file_get_contents($conf_file);
-
-    // parse config file.
-    $conf = parse_ini_file($conf_file);
-
-    // loop through each key pair in the config file
-    foreach ($conf as $key => $value) {
-      
-      // remove whitespace from between comma separated values for user variable.
-      $new_value = remove_list_whitespace($value);
-
-      // replace a corresponding value in the config variable with value from user variables.
-      $conf_contents = str_ireplace("$key=\"$value\"", "$key=\"$new_value\"", $conf_contents);
-    }
-
-    return $conf_contents;
-  }
-
-  // function to validate form options.
-  function validate_form() {
-    return "form validated";
-  }
 
   // function to create an array of numbers with matching keys.
   function create_number_array($start_number, $finish_number, $padding_depth = "0") {
@@ -136,6 +91,7 @@
 
     return $number_array;
   }
+
 
   // function to send a post command to another php page.
   function send_post($url, $data) {
@@ -157,17 +113,6 @@
     var_dump($result);
   }
 
-  // function to take config array and create config file contents, without writing it to a file.
-  function create_ini_file ($conf_array) {
-    $config_contents = "";
-    foreach ($conf_array as $key => $value) {
-      $config_contents .= "$key=\"$value\"\n";
-    }
-
-    return $config_contents;
-  }
-
-
 
   // check for post commands.
   // if update_script_contents exists, then update the user script file.
@@ -182,6 +127,7 @@
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
   }
+
 
   // check for arguments passed from bash.
   // if first argument is update_user_script, then update the user script file.
