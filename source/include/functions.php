@@ -1,6 +1,6 @@
 <?php
 
-  // v0.1.0 - Development
+  // v0.1.1 - Development
 
   // function to remove white space from around commas in a list.
   function remove_list_whitespace($string) {
@@ -36,6 +36,28 @@
     }
 
     return $conf_contents;
+  }
+
+  // function to add missing config options from first config to second config, without writing it to a file.
+  function add_missing_config_options($first_conf_file, $second_conf_file) {
+    
+    // get an array of the settings for the first config file and second config file.
+    $first_conf_array = parse_ini_file($first_conf_file);
+    $second_conf_array = parse_ini_file($second_conf_file);
+
+    // get an array of the differences between the two configs.
+    $conf_diff = array_diff($first_conf_array, $second_conf_array);
+
+    // add the missing config options to the second config.
+    foreach ($conf_diff as $key => $value) {
+      
+      // only add missing keys, do not change existing values.
+      if (!array_key_exists($key)){
+        $second_conf_array[$key] = $value;
+      }
+    }
+
+    return $second_conf_array;
   }
 
   // function to return script file contents that have been updated by an array of configs, without writing it to a file.
@@ -110,6 +132,38 @@
 
     return $number_array;
   }
+
+  // function to send a post command to another php page.
+  function send_post($url, $data) {
+
+    // use key 'http' even if you send the request to https://...
+    $options = array(
+      'http' => array(
+        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method'  => 'POST',
+        'content' => http_build_query($data)
+      )
+    );
+    $context  = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    if ($result === FALSE) { 
+      echo "POST to $url failed.\n";
+    }
+
+    var_dump($result);
+  }
+
+  // function to take config array and create config file contents, without writing it to a file.
+  function create_ini_file ($conf_array) {
+    $config_contents = "";
+    foreach ($conf_array as $key => $value) {
+      $config_contents .= "$key=\"$value\"\n";
+    }
+    
+    return $config_contents;
+  }
+
+
 
   // check for post commands.
   // if update_script_contents exists, then update the user script file.
