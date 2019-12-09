@@ -3,7 +3,7 @@
 #arrayStarted=true
 #noParity=true
 
-# v1.0.0 - Development
+# v0.1.0 - Development
 
 #### DISCLAIMER ####
 # Use at your own risk. This is a work-in-progress and provided as is.

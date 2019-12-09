@@ -4,7 +4,7 @@
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
 <!ENTITY version    "2019.12.02">
-<!ENTITY tag        "v1.0.0">
+<!ENTITY tag        "v0.1.0">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "laptop-code">
