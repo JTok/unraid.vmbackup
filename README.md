@@ -1,6 +1,6 @@
 # unraid-vmbackup-plugin
 
-v0.1.0 - Development
+v0.1.1 - Development
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
