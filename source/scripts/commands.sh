@@ -1,5 +1,7 @@
 #!/bin/bash
-#
+
+# v0.1.0 - Development
+
 # usage: update_user_script
 
 

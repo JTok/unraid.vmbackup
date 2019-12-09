@@ -1,5 +1,7 @@
 <?php
 
+  // v0.1.0 - Development
+
   // function to remove white space from around commas in a list.
   function remove_list_whitespace($string) {
     $string = preg_replace('/\s*,\s*/', ',', $string);

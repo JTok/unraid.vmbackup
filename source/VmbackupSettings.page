@@ -8,14 +8,14 @@ Icon="clone"
 /* vmbackup plugin
    copyright 2019 JTok */
 
-require_once '/usr/local/emhttp/plugins/vmbackup/functions.php';
+require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 
 // create local variables.
 // plugin name
 $plugin = 'vmbackup';
 // default files
 $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
-$default_script_file = $plugin_source_path . '/default-script.sh';
+$default_script_file = $plugin_source_path . '/scripts/default-script.sh';
 $default_conf_file = $plugin_source_path . '/default.cfg';
 // user files
 $plugin_path = '/boot/config/plugins/' . $plugin;
