@@ -37,12 +37,29 @@ if (!file_exists($user_conf_file)) {
 
 } else {
 
+  // if so, get an array of the user config settings with any new default config settings added to it.
+  $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
+
+  // create user config file contents from new array.
+  $user_conf_contents = write_ini_file($user_conf_array);
+  
+  // write new config contents variable as the new user config.
+  file_put_content($user_conf_file, $user_conf_contents);
+
   // parse user config file.
   $conf_array = parse_ini_file($user_conf_file);
 }
 
 // see if user script already exists.
 if (!file_exists($user_script_file)) {
+  
+  // if not, create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
+
+} else {
   
   // if not, create a variable with the default script contents and user config file merged.
   $script_contents = update_script_contents($default_script_file, $user_conf_file);
