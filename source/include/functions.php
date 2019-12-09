@@ -1,6 +1,6 @@
 <?php
 
-  // v0.1.1 - Development
+  // v0.1.2 - Development
 
   // function to remove white space from around commas in a list.
   function remove_list_whitespace($string) {
@@ -48,12 +48,16 @@
     // get an array of the differences between the two configs.
     $conf_diff = array_diff($first_conf_array, $second_conf_array);
 
-    // add the missing config options to the second config.
-    foreach ($conf_diff as $key => $value) {
-      
-      // only add missing keys, do not change existing values.
-      if (!array_key_exists($key)){
-        $second_conf_array[$key] = $value;
+    // if differences were found, continue.
+    if (!empty($conf_diff)) {
+
+      // add the missing config options to the second config.
+      foreach ($conf_diff as $key => $value) {
+        
+        // only add missing keys, do not change existing values.
+        if (!array_key_exists($key)){
+          $second_conf_array[$key] = $value;
+        }
       }
     }
 
