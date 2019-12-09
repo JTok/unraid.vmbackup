@@ -41,10 +41,10 @@ if (!file_exists($user_conf_file)) {
   $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
 
   // create user config file contents from new array.
-  $user_conf_contents = write_ini_file($user_conf_array);
+  $user_conf_contents = create_ini_file($user_conf_array);
   
   // write new config contents variable as the new user config.
-  file_put_content($user_conf_file, $user_conf_contents);
+  file_put_contents($user_conf_file, $user_conf_contents);
 
   // parse user config file.
   $conf_array = parse_ini_file($user_conf_file);
