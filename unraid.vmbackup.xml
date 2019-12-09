@@ -9,7 +9,7 @@
   <Description>
     Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
   </Description>
-  <Date>2019-12-09</Date>
+  <Date>2019-12-09a</Date>
   <MinVer>6.7.0</MinVer>
   <Support>https://forums.unraid.net/</Support>
   <Icon>clone/Icon>
