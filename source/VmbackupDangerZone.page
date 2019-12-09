@@ -18,7 +18,7 @@ Icon="clone"
   </br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
-<div style="width:90%; float:none">
+<div style="width:90%; float:left">
   <form name="vmbackup_danger_zone" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
@@ -26,7 +26,7 @@ Icon="clone"
 
     <!-- danger zone -->
     <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Danger Zone</div>
-    <div markdown="1" style="width:90%; clear:both; float:left">
+    <div markdown="1" style="width:45%; clear:both; float:left">
 
       Keep error log file?
       : <select name="keep_error_log_file" size="1">
