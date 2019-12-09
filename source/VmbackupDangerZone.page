@@ -10,7 +10,7 @@ Icon="clone"
 
 ?>
 
-<div style="width: 90%; float:left">
+<div style="width: 90%; float:left; margin:auto">
   <p><u>Warning</u></p>
 	<p>The settings below can be dangerous or have unintended side effects if used improperly.
   </br>Many of them can result in corrupted backups, or no backups at all.
@@ -18,14 +18,14 @@ Icon="clone"
   </br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
-<div style="width:90%; float:none">
+<div style="width:90%; float:none; margin:auto">
   <form name="vmbackup_danger_zone" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
     <!-- danger zone -->
-    <div markdown="1" style="width:90%; clear:both">
+    <div markdown="1" style="width:90%; clear:both; margin:auto">
       <div id="title" class="nocontrol">Danger Zone</div>
 
       Keep error log file?
@@ -175,7 +175,7 @@ Icon="clone"
 
     </div>
 
-    <div markdown="1" style="width:90%; clear:both">
+    <div markdown="1" style="width:90%; clear:both; margin:auto">
      <input type="submit" name="#default" value="Default" title="Load and apply default values.">
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
