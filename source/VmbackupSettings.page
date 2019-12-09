@@ -9,6 +9,7 @@ Icon="clone"
    copyright 2019 JTok */
 
 require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
+require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
 // create local variables.
 // plugin name
@@ -70,6 +71,17 @@ if (!file_exists($user_script_file)) {
 
 ?>
 
+<!-- import jquery sources -->
+<script type="text/javascript" src="<?=autov("/webGui/javascript/jquery.filetree.js")?>"></script>
+
+<!-- import stylesheets -->
+<link type="text/css" rel="stylesheet" href="<?autov("/webGui/styles/jquery.filetree.css")?>">
+
+<!-- add file tree to inputs -->
+<script type="text/javascript">
+  $("#backup_location").fileTreeAttach();
+</script>
+
 <div style="width:90%; float:left">
   <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
@@ -93,11 +105,12 @@ if (!file_exists($user_script_file)) {
 
 
       Set backup location:
-      : <input type="text" name="backup_location" class="narrow" maxlength="1000" value="<?=$conf_array['backup_location'];?>">
+      : <input type="text" name="backup_location" id="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" placeholder="Select a backup location" data-pickfilter="HIDE_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
 
       <blockquote class="inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
+          <li>This should be a share you have already created.</li>
           <li>Each VM will have a subfolder made for it in this location.</li>
         </ul>
       </blockquote>
