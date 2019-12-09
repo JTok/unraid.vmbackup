@@ -129,7 +129,7 @@
     removepkg &xmlstarlet;
 
     # remove plugin.
-    removepkg &name;*
+    removepkg &name;-&tag;
 
     echo ""
     echo "-----------------------------------------------------------"
