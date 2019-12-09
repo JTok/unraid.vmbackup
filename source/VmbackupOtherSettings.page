@@ -196,7 +196,7 @@ Icon="clone"
       </blockquote>
 
 
-      Number of times to check if a VM is shutdown:
+      Number of VM shutdown checks:
       : <input type="text" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>">
 
       <blockquote class="inline_help">
@@ -207,7 +207,7 @@ Icon="clone"
       </blockquote>
 
 
-      Number of seconds to wait between shutdown checks:
+      Seconds between shutdown checks:
       : <input type="text" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>">
 
       <blockquote class="inline_help">
