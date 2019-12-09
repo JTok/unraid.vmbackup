@@ -73,13 +73,22 @@ if (!file_exists($user_script_file)) {
 
 <!-- import jquery sources -->
 <script type="text/javascript" src="<?=autov("/webGui/javascript/jquery.filetree.js")?>"></script>
+<script src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
 
 <!-- import stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?autov("/webGui/styles/jquery.filetree.css")?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
+
+<!-- apply css -->
+<style>
+  .fileTree{width:300px;max-height:150px;overflow-y:scroll;overflow-x:hidden;position:absolute;z-index:100;display:none}
+</style>
 
 <!-- add file tree to inputs -->
 <script type="text/javascript">
-  $("#backup_location").fileTreeAttach();
+  $(function() {
+    $("#backup_location").fileTreeAttach();
+  });
 </script>
 
 <div style="width:90%; float:left">
@@ -105,7 +114,7 @@ if (!file_exists($user_script_file)) {
 
 
       Set backup location:
-      : <input type="text" name="backup_location" id="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" placeholder="Select a backup location" data-pickfilter="HIDE_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
+      : <input type="text" name="backup_location" id="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
 
       <blockquote class="inline_help">
         <p>Folder location to save backups. Must be full path.</p>
