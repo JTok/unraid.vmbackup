@@ -10,7 +10,7 @@ Icon="clone"
 
 ?>
 
-<div style="width: 90%; float:left; margin:auto">
+<div style="width: 90%; float:none">
   <p><u>Warning</u></p>
 	<p>The settings below could have unintended side effects if used improperly.
   </br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
@@ -18,15 +18,15 @@ Icon="clone"
   </br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
-<div style="width:90%; float:none; margin:auto">
+<div style="width:90%; float:none">
   <form name="vmbackup_other_settings" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
     <!-- logging -->
-    <div markdown="1" style="width:90%; clear:both; margin:auto">
-      <div id="title" class="nocontrol">Logging</div>
+    <div id="title" class="nocontrol" style="width:90%; float:left">Logging</div>
+    <div markdown="1" style="width:90%; float:left">
 
       Keep log file?
       : <select name="keep_log_file" size="1">
@@ -71,8 +71,8 @@ Icon="clone"
 
 
     <!-- notifications -->
-    <div markdown="1" style="width:90%; clear:both; margin:auto">
-      <div id="title" class="nocontrol">Notifications</div>
+    <div id="title" class="nocontrol" style="width:90%; float:left">Notifications</div>
+    <div markdown="1" style="width:90%; clear:both; float:left">
 
       Send notifications?
       : <select name="send_notifications" size="1">
@@ -112,8 +112,8 @@ Icon="clone"
 
 
     <!-- advanced features -->
-    <div markdown="1" style="width:90%; clear:both; margin:auto">
-      <div id="title" class="nocontrol">Advanced Features</div>
+    <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Features</div>
+    <div markdown="1" style="width:90%; clear:both; float:left">
 
       Timestamp backups?
       : <select name="timestamp_files" size="1">
@@ -179,8 +179,8 @@ Icon="clone"
 
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; margin:auto">
-     <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+    <div markdown="1" style="width:90%; clear:both; float:left">
+     <input type="submit" name="#default" value="Default" title="Load defaults.">
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>

@@ -60,8 +60,8 @@ if (!file_exists($user_script_file)) {
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
     <!-- basic settings -->
-    <div markdown="1" style="width:45%; float:left; margin-left:5%">
-      <div id="title" class="nocontrol">Basic Settings</div>
+    <div id="title" class="nocontrol" style="width:45%; float:left">Basic Settings</div>
+    <div markdown="1" style="width:45%; float:left">
 
       Enable backups?
       : <select name="enabled" size="1">
@@ -125,8 +125,8 @@ if (!file_exists($user_script_file)) {
 
 
     <!-- schedule -->
-    <div markdown="1" style="width:45%; float:right; margin-right:5%">
-      <div id="title" class="nocontrol">Schedule</div>
+    <div id="title" class="nocontrol" style="width:45%; float:left">Schedule</div>
+    <div markdown="1" style="width:45%; float:left">
 
       Backup Frequency:
       : <select name="frequency" size="1">
@@ -210,8 +210,8 @@ if (!file_exists($user_script_file)) {
 
 
     <!-- advanced settings -->
-    <div markdown="1" style="width:90%; clear:both; margin:auto">
-      <div id="title" class="nocontrol">Advanced Settings</div>
+    <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Settings</div>
+    <div markdown="1" style="width:90%; clear:both; float:left">
 
       List vdisks to skip:
       : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
@@ -274,8 +274,8 @@ if (!file_exists($user_script_file)) {
 
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; margin:auto">
-     <input type="submit" name="#default" value="Default" title="Load and apply default values.">
+    <div markdown="1" style="width:90%; clear:both; float:left">
+     <input type="submit" name="#default" value="Default" title="Load defaults.">
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>
