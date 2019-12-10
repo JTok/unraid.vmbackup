@@ -16,7 +16,7 @@ require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 $plugin = 'vmbackup';
 // default files.
 $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
-$script_path = $plugin_source_path . 'scripts';
+$script_path = $plugin_source_path . '/scripts';
 $command_script_file = $script_path . '/command.sh';
 $default_script_file = $script_path . '/default-script.sh';
 $default_conf_file = $plugin_source_path . '/default.cfg';
