@@ -41,6 +41,9 @@
     # get a list of all vms by name.
     vm_list=$(virsh list --all --name)
 
+    SAVEIFS=$IFS   # Save current IFS
+    IFS=$'\n'      # Change IFS to new line
+
     for vmname in $vm_list
     do
       # create working xml file.
@@ -50,13 +53,13 @@
       sed -i 's|vmtemplate xmlns="unraid"|vmtemplate xmlns="http://unraid.net/xmlns"|g' "$vm_temp_xml"
 
       # add vdisk paths to vdisk list variable.
-      if [[ -z "$vdisk_list" ]]; then
-        vdisk_list="$(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")"
-      else
-        vdisk_list="$vdisk_list"$'\n'"$(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")"
-      fi
-
+      for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")
+      do
+        vdisk_list+=("$vdisk_path")
+      done
     done
+
+    IFS=$SAVEIFS   # Restore IFS
 
     # remove working xml file.
     if [ -f "$vm_temp_xml" ]; then
@@ -64,10 +67,10 @@
     fi
 
     # create vm list text file.
-    "$vm_list" > "$vm_list_file"
+    printf "%s\n" "${vm_list[@]}" > "$vm_list_file"
 
     # create vm vdisk list text file.
-    "$vdisk_list" > "$vdisk_list_file"
+    printf "%s\n" "${vdisk_list[@]}" > "$vdisk_list_file"
   }
 
 #### end script functions ####
