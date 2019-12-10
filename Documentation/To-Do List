@@ -12,3 +12,4 @@
 #  - have backup all vms switch change functionality of vm list from inclusion to exclusion.
 #  - set up separate css stylesheets.
 #  - add file version checks.
+#  - remove prefix from vdisk list for /diskX.
