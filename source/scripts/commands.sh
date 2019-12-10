@@ -36,7 +36,7 @@
     # create local variables.
     local vm_temp_xml="/boot/config/plugins/vmbackup/vm.xml"
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
-    local vm_vdisk_list_file="/boot/config/plugins/vmbackup/vm-vdisk-list.txt"
+    local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
 
     # get a list of all vms by name.
     vm_list=$(virsh list --all --name)
@@ -50,49 +50,13 @@
       sed -i 's|vmtemplate xmlns="unraid"|vmtemplate xmlns="http://unraid.net/xmlns"|g' "$vm_temp_xml"
 
       # add vdisk paths to vdisk list variable.
-      if [[ -z "$vm_vdisk_list_full_path" ]]; then
-        vm_vdisk_list_full_path="$(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")"
+      if [[ -z "$vdisk_list" ]]; then
+        vdisk_list="$(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")"
       else
-        vm_vdisk_list_full_path="$vm_vdisk_list_full_path"$'\n'"$(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")"
+        vdisk_list="$vdisk_list"$'\n'"$(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")"
       fi
 
     done
-
-    # remove common prefixes from disk paths.
-    while read -r line;
-    do
-      if [[ -z "$vm_vdisk_list" ]]; then
-        case "$line" in
-          "/mnt/cache/domains/"*)
-            vm_vdisk_list=${line#"/mnt/cache/domains/"}
-            ;;
-          "/mnt/user/domains/"*)
-            vm_vdisk_list=${line#"/mnt/user/domains/"}
-            ;;
-          "/mnt/user/isos/"*)
-            vm_vdisk_list=${line#"/mnt/user/isos/"}
-            ;;
-          *)
-            vm_vdisk_list="$line"
-            ;;
-        esac
-      else
-        case "$line" in
-          "/mnt/cache/domains/"*)
-            vm_vdisk_list="$vm_vdisk_list"$'\n'${line#"/mnt/cache/domains/"}
-            ;;
-          "/mnt/user/domains/"*)
-            vm_vdisk_list="$vm_vdisk_list"$'\n'${line#"/mnt/user/domains/"}
-            ;;
-          "/mnt/user/isos/"*)
-            vm_vdisk_list="$vm_vdisk_list"$'\n'${line#"/mnt/user/isos/"}
-            ;;
-          *)
-            vm_vdisk_list="$vm_vdisk_list"$'\n'"$line"
-            ;;
-        esac
-      fi
-    done <<< "$vm_vdisk_list_full_path"
 
     # remove working xml file.
     if [ -f "$vm_temp_xml" ]; then
@@ -103,7 +67,7 @@
     "$vm_list" > "$vm_list_file"
 
     # create vm vdisk list text file.
-    "$vm_vdisk_list" > "$vm_vdisk_list_file"
+    "$vdisk_list" > "$vdisk_list_file"
   }
 
 #### end script functions ####
