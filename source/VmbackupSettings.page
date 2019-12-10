@@ -78,8 +78,8 @@ if (!file_exists($user_script_file)) {
 }
 
 // get vm and vdisk lists as arrays.
-$vm_list_array = file($vm_list);
-$vdisk_list_array = file($vdisk_list);
+$vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$vdisk_list_array = file($vdisk_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 // get selected vms and vdisks as arrays.
 $vm_selected_array = make_comma_array($conf_array['vms_to_backup']);
@@ -102,13 +102,31 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 <!-- add file tree to inputs -->
 <script type="text/javascript">
+  // function to prepare form for submission.
+  function prepare_form(form) {
+  // make vdisks to skip a comma separated list.
+    var vdisks_to_skip = '';
+    for (var i=0,item; item=form.vdisks_to_skip.options[i]; i++) {
+      if (item.selected) {
+        if (vdisks_to_skip.length) vdisks_to_skip += ',';
+        vdisks_to_skip += item.value;
+        item.selected = false;
+      }
+    }
+    item = form.vdisks_to_skip.options[0];
+    item.value = vdisks_to_skip;
+    item.selected = true;
+  }
+
+  // main function
   $(function() {
     $("#backup_location").fileTreeAttach();
+    $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
   });
 </script>
 
 <div style="width:90%; float:left">
-  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame">
+  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
@@ -299,14 +317,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     <div markdown="1" style="width:45%; clear:both; float:left">
 
       List vdisks to skip:
-      : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple style="display:none">
-        <?php
-          foreach($vdisk_list_array as $vdisk) {
-        ?>
-            <option value="<?php echo $vdisk; ?>"><?php echo $vdisk; ?></option>
-          <?php
-          }
-          ?>
+      : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
         <?foreach ($vdisk_list_array as $vdisk):?>
           <?=mk_option_check($conf_array['vdisks_to_skip'], $vdisk, $vdisk)?>
         <?endforeach;?>
