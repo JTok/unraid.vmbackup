@@ -12,16 +12,24 @@ require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
 // create local variables.
-// plugin name
+// plugin name.
 $plugin = 'vmbackup';
-// default files
+// default files.
 $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
-$default_script_file = $plugin_source_path . '/scripts/default-script.sh';
+$script_path = $plugin_source_path . 'scripts';
+$command_script_file = $script_path . '/command.sh';
+$default_script_file = $script_path . '/default-script.sh';
 $default_conf_file = $plugin_source_path . '/default.cfg';
-// user files
+// user files.
 $plugin_path = '/boot/config/plugins/' . $plugin;
 $user_script_file = $plugin_path . '/user-script.sh';
 $user_conf_file = $plugin_path . '/user.cfg';
+// generated files.
+$vm_list = $plugin_path . '/vm-list.txt';
+$vdisk_list = $plugin_path . '/vdisk-list.txt';
+
+// create text files containing a list of vms and a list of vdisks respectively.
+exec("$command_script_file create_vm_lists");
 
 // see if user config file already exists.
 if (!file_exists($user_conf_file)) {
@@ -68,6 +76,14 @@ if (!file_exists($user_script_file)) {
   // write script contents variable as the user script file.
   file_put_contents($user_script_file, $script_contents);
 }
+
+// get vm and vdisk lists as arrays.
+$vm_list_array = file($vm_list);
+$vdisk_list_array = file($vdisk_list);
+
+// get selected vms and vdisks as arrays.
+$vm_selected_array = make_comma_array($conf_array['vms_to_backup']);
+$vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 ?>
 
@@ -167,7 +183,6 @@ if (!file_exists($user_script_file)) {
 
       Number of backups to keep:
       : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
-
       
       <blockquote class="inline_help">
         <p>Set this to the number of backups that should be kept.
@@ -284,7 +299,18 @@ if (!file_exists($user_script_file)) {
     <div markdown="1" style="width:45%; clear:both; float:left">
 
       List vdisks to skip:
-      : <input type="text" name="vdisks_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisks_to_skip'];?>">
+      : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple style="display:none">
+        <?php
+          foreach($vdisk_list_array as $vdisk) {
+        ?>
+            <option value="<?php echo $vdisk; ?>"><?php echo $vdisk; ?></option>
+          <?php
+          }
+          ?>
+        <?foreach ($vdisk_list_array as $vdisk):?>
+          <?=mk_option_check($conf_array['vdisks_to_skip'], $vdisk, $vdisk)?>
+        <?endforeach;?>
+      </select>
 
       <blockquote class="inline_help">
         <p>Comma separated list of specific vdisks to skip.
