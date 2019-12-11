@@ -37,12 +37,39 @@
     local vm_temp_xml="/boot/config/plugins/vmbackup/vm.xml"
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
+    local user_config_file="/boot/config/plugins/vmbackup/user.cfg"
 
     # get a list of all vms by name.
     vm_list=$(virsh list --all --name)
+    
+    # disable case matching.
+    shopt -s nocasematch
 
-    SAVEIFS=$IFS   # Save current IFS
-    IFS=$'\n'      # Change IFS to new line
+    # parse user config to get extensions to skip, including snapshot extension.
+    while IFS='=' read -r name value
+    do
+      if [ "$name" == "vdisk_extensions_to_skip" ] || [ "$name" == "snapshot_extension" ]; then
+        value="${value%\"*}"     # remove opening string quotes.
+        value="${value#\"*}"     # remove closing string quotes.
+      fi
+
+      # verify extension is not already in the extensions to skip array.
+      extension_exists=false
+      for extension in "${extensions_to_skip[@]}"
+      do
+        if [ "$extension" == "$value" ]; then
+          extension_exists=true
+        fi
+      done
+
+      # add extension to extensions to skip array.
+      if [ "$extension_exists" = false ]; then
+        extensions_to_skip+=("$value")
+      fi
+    done < $user_config_file
+
+    SAVEIFS=$IFS   # save current IFS.
+    IFS=$'\n'      # change IFS to new line.
 
     for vmname in $vm_list
     do
@@ -55,11 +82,23 @@
       # add vdisk paths to vdisk list variable.
       for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")
       do
-        vdisk_list+=("$vdisk_path")
+        # get the extension of the disk.
+        disk_extension="${vdisk_path##*.}"
+
+        for extension in "${extensions_to_skip[@]}"
+        do
+          if [ ! "$extension" == "$disk_extension" ]; then
+            # add vdisk to array list.
+            vdisk_list+=("$vdisk_path")
+          fi
+        done
       done
     done
 
-    IFS=$SAVEIFS   # Restore IFS
+    IFS=$SAVEIFS   # restore original IFS.
+
+    # enable case matching.
+    shopt -u nocasematch
 
     # remove working xml file.
     if [ -f "$vm_temp_xml" ]; then
