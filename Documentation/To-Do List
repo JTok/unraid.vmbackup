@@ -14,3 +14,4 @@
 #  - add file version checks.
 #  - display vdisks with common prefixes removed.
 #  - don't list skipped vdisk extensions in list of vdisks to skip.
+#  - ignore snapshot extensions for functions when snapshots are disabled.
