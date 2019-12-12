@@ -89,7 +89,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 <!-- import jquery sources -->
 <script type="text/javascript" src="<?=autov("/webGui/javascript/jquery.filetree.js")?>"></script>
-<script src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
+<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
 
 <!-- import stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?autov("/webGui/styles/jquery.filetree.css")?>">
