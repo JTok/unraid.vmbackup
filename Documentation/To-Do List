@@ -14,3 +14,4 @@
 #  - add file version checks.
 #  - display vdisks with common prefixes removed.
 #  - ignore snapshot extensions for functions when snapshots are disabled.
+#  - ability to edit script run variables such as noParity.
