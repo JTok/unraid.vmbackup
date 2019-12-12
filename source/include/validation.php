@@ -13,13 +13,13 @@
     return (is_numeric($num) && $num >= 0 && $num == round($num));
   }
 
-  // function to validate if a string follows a relative linux file naming path convention without trailing slashes.
+  // function to validate if a string follows a relative linux file naming path convention with trailing slashes.
   function is_relative_path($path) {
-    return (preg_match("^[^\/]([\w-]*)+(\/[\w-]*)*[^\/]$", $path));
+    return (preg_match("^[^\/]([\w-]*)+(\/[\w-]*)*[\/]$", $path));
   }
 
-// function to validate if a string follows a absolute linux file naming path convention without trailing slashes.
+// function to validate if a string follows a absolute linux file naming path convention with trailing slashes.
   function is_absolute_path($path) {
-    return (preg_match("(^\/$)|(^\/([\w-]*)+(\/[\w-]*)*[^\/]$)", $path));
+    return (preg_match("(^\/$)|(^\/([\w-]*)+(\/[\w-]*)*[\/]$)", $path));
   }
 ?>
