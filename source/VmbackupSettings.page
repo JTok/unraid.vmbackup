@@ -302,11 +302,11 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
       Backup Frequency:
       : <select id="frequency" name="frequency" size="1" onchange="backup_frequency()">
-        <option value="disabled">Disabled</option>
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-        <option value="custom">Custom</option>
+        <?=mk_option($conf_array['frequency'], "disabled", "Disabled");?>
+        <?=mk_option($conf_array['frequency'], "daily", "Daily");?>
+        <?=mk_option($conf_array['frequency'], "weekly", "Weekly");?>
+        <?=mk_option($conf_array['frequency'], "monthly", "Monthly");?>
+        <?=mk_option($conf_array['frequency'], "custom", "Custom");?>
       </select>
 
       <blockquote class="inline_help">
@@ -319,13 +319,13 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
       Day of the Week:
       : <select id="week" name="week" size="1">
-        <option value="0">Sunday</option>
-        <option value="1">Monday</option>
-        <option value="2">Tuesday</option>
-        <option value="3">Wednesday</option>
-        <option value="4">Thursday</option>
-        <option value="5">Friday</option>
-        <option value="6">Saturday</option>
+        <?=mk_option($conf_array['week'], "0", "Sunday");?>
+        <?=mk_option($conf_array['week'], "1", "Monday");?>
+        <?=mk_option($conf_array['week'], "2", "Tuesday");?>
+        <?=mk_option($conf_array['week'], "3", "Wednesday");?>
+        <?=mk_option($conf_array['week'], "4", "Thursday");?>
+        <?=mk_option($conf_array['week'], "5", "Friday");?>
+        <?=mk_option($conf_array['week'], "6", "Saturday");?>
       </select>
 
       <blockquote class="inline_help">
@@ -339,7 +339,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
           $days = create_number_array(1,31,"2");
           foreach($days as $key => $value) {
         ?>
-            <option value="<?php echo $value; ?>"><?php echo $key; ?></option>
+            <?=mk_option($conf_array['month'], $value, $key);?>
           <?php
           }
           ?>
@@ -356,7 +356,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
           $days = create_number_array(0,23,"2");
           foreach($days as $key => $value) {
         ?>
-            <option value="<?php echo $value; ?>"><?php echo $key; ?></option>
+            <?=mk_option($conf_array['hour'], $value, $key);?>
           <?php
           }
           ?>
@@ -373,7 +373,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
           $days = create_number_array(0,59,"2");
           foreach($days as $key => $value) {
         ?>
-            <option value="<?php echo $value; ?>"><?php echo $key; ?></option>
+            <?=mk_option($conf_array['minute'], $value, $key);?>
           <?php
           }
           ?>
@@ -385,7 +385,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Custom Cron:
-      : <input type="text" id="custom" name="custom" class="narrow" maxlength="20">
+      : <input type="text" id="custom" name="custom" class="narrow" maxlength="100">
 
       <blockquote class="inline_help">
         <p>Set a custom Cron schedule.</p>
