@@ -74,7 +74,7 @@
   }
 
 
-  // function to create an array of numbers with matching keys.
+  // function to create an array of padded numbers as the key with un-padded values.
   function create_number_array($start_number, $finish_number, $padding_depth = "0") {
 
     // create an empty array.
@@ -86,7 +86,7 @@
     // loop through each number and add it to the array.
     for ($i = $start_number; $i <= $finish_number; $i++) {
       $padded_number = sprintf($sprintf_arg, $i);
-      $number_array[$padded_number] = $padded_number;
+      $number_array[$padded_number] = $i;
     }
 
     return $number_array;
