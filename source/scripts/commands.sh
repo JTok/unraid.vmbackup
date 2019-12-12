@@ -42,8 +42,8 @@
     # check to see if a user config file has been created yet.
     if [[ ! -f "$user_config_file" ]]; then
       # if not, give the extensions to skip their default values.
-      extensions_to_skip+=("iso")
-      extensions_to_skip+=("snap")
+      vdisk_extensions_to_skip+=("iso")
+      snapshot_extension+=("snap")
     fi
 
     SAVEIFS=$IFS   # save current IFS.
