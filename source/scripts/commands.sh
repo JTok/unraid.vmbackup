@@ -25,9 +25,93 @@
 
       php "$php_functions_script" "update_user_script" "$default_script" "$user_script" "$user_config"
 
-    else
+      # update cronjob.
+      update_cron_job
+    fi
+  }
 
-      echo "could not find default script and/or user config."
+  # function to update cronjob
+  update_cron_job () {
+    # create local variables.
+    local user_script="/boot/config/plugins/vmbackup/user-script.sh"
+    local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    local cronjob_comment="# Job for VM Backup plugin:"
+
+    # verify user config file exists.
+    if [[ -f "$user_config" ]]; then
+      # read cron settings from user config file.
+      # parse user config to get cron variables and remove any double quotes.
+      while IFS='=' read -r name value
+      do
+        case "$name" in
+          "frequency")
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            frequency="$value"
+            ;;
+          "day")
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            day="$value"
+            ;;
+          "month")
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            month="$value"
+            ;;
+          "hour")
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            hour="$value"
+            ;;
+          "minute")
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            minute="$value"
+            ;;
+          "custom")
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            custom="$value"
+            ;;
+        esac
+      done < $user_config
+
+      # check value of frequency and build a cronjob from that.
+      case "$frequency" in
+        "disabled")
+          # no schedule set. remove existing cron job and exit function.
+          ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
+          ( crontab -l | grep -v -F "$user_script" ) | crontab -
+          return 0
+          ;;
+        "daily")
+          cronjob="$minute $hour "'* * *'
+          ;;
+        "weekly")
+          cronjob="$minute $hour "'* * '"$day"
+          ;;
+        "monthly")
+          cronjob="$minute $hour $month "'* *'
+          ;;
+        "custom")
+          cronjob="$custom"
+          ;;
+        *)
+          # schedule setting is not valid. exiting function.
+          return 1
+          ;;
+      esac
+
+      # append the user script path to the cronjob variable.
+      cronjob="$cronjob $user_script > /dev/null 2>&1"
+
+      # prepend comment to cronjob variable.
+      cronjob="$cronjob_comment"$'\n'"$cronjob"
+
+      # write cronjob to crontab.
+      ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
+      ( crontab -l | grep -v -F "$user_script" ; echo "$cronjob" ) | crontab -
     fi
   }
 
@@ -37,10 +121,10 @@
     local vm_temp_xml="/boot/config/plugins/vmbackup/vm.xml"
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
-    local user_config_file="/boot/config/plugins/vmbackup/user.cfg"
+    local user_config="/boot/config/plugins/vmbackup/user.cfg"
 
     # check to see if a user config file has been created yet.
-    if [[ ! -f "$user_config_file" ]]; then
+    if [[ ! -f "$user_config" ]]; then
       # if not, give the extensions to skip their default values.
       vdisk_extensions_to_skip+=("iso")
       snapshot_extension+=("snap")
@@ -80,7 +164,7 @@
           snapshot_extension+=("$value")
         fi
       fi
-    done < $user_config_file
+    done < $user_config
 
     extensions_to_skip=("${vdisk_extensions_to_skip[@]}" "${snapshot_extension[@]}")
 
