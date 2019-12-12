@@ -104,7 +104,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 <script type="text/javascript">
   // function to prepare form for submission.
   function prepare_form(form) {
-  // make vdisks to skip a comma separated list.
+  // make vdisks to skip a comma separated list for user config.
     var vdisks_to_skip = '';
     for (var i=0,item; item=form.vdisks_to_skip.options[i]; i++) {
       if (item.selected) {
@@ -116,12 +116,26 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     item = form.vdisks_to_skip.options[0];
     item.value = vdisks_to_skip;
     item.selected = true;
+    
+    // make vdisks to skip a comma separated list for user config.
+    var vms_to_backup = '';
+    for (var i=0,item; item=form.vms_to_backup.options[i]; i++) {
+      if (item.selected) {
+        if (vms_to_backup.length) vms_to_backup += ',';
+        vms_to_backup += item.value;
+        item.selected = false;
+      }
+    }
+    item = form.vms_to_backup.options[0];
+    item.value = vms_to_backup;
+    item.selected = true;
   }
 
   // main function
   $(function() {
     $("#backup_location").fileTreeAttach();
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
   });
 </script>
 
@@ -176,7 +190,11 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       List VMs to backup:
-      : <input type="text" name="vms_to_backup" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup'];?>">
+      : <select id="vms_to_backup" name="vms_to_backup" size="1" multiple="multiple" style="display:none">
+        <?foreach ($vm_list_array as $vm):?>
+          <?=mk_option_check($conf_array['vms_to_backup'], $vm, $vm)?>
+        <?endforeach;?>
+      </select>
 
       <blockquote class="inline_help">
         <p>Comma separated list of VM names to backup.
