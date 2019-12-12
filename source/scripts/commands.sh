@@ -73,8 +73,9 @@
           snapshot_extension+=("$value")
         fi
       fi
-      extensions_to_skip=("${vdisk_extensions_to_skip[@]}" "${snapshot_extension[@]}")
     done < $user_config_file
+
+    extensions_to_skip=("${vdisk_extensions_to_skip[@]}" "${snapshot_extension[@]}")
 
     IFS=$'\n'      # change IFS to new line.
 
@@ -92,24 +93,32 @@
         # get the extension of the disk.
         disk_extension="${vdisk_path##*.}"
 
+        # create variable for skipping disk and set to false.
+        skip_disk=false
+
         # make sure the vdisk extension should not be skipped and added it to the list array.
         for extension in "${extensions_to_skip[@]}"
         do
-          if [ ! "$extension" == "$disk_extension" ]; then
-            vdisk_exists=false
-            for vdisk in "${vdisk_list[@]}"
-            do
-              if [ ! "$vdisk" == "$vdisk_path" ]; then
-                vdisk_exists=true
-              fi
-            done
-
-            # add vdisk to array list.
-            if [ "$vdisk_exists" = true ]; then
-              vdisk_list+=("$vdisk_path")
-            fi
+          if [ "$extension" == "$disk_extension" ]; then
+            skip_disk=true
           fi
         done
+
+        # if the disk should not be skipped, verify it is not already in the vdisk list.
+        if [ "$skip_disk" = false ]; then
+          vdisk_exists=false
+          for vdisk in "${vdisk_list[@]}"
+          do
+            if [ "$vdisk" == "$vdisk_path" ]; then
+              vdisk_exists=true
+            fi
+          done
+
+          # add vdisk to array list.
+          if [ "$vdisk_exists" = false ]; then
+            vdisk_list+=("$vdisk_path")
+          fi
+        fi
       done
     done
 
