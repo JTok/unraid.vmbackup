@@ -113,7 +113,11 @@ Icon="clone"
 
 
       List VMs to backup while running:
-      : <input type="text" name="vms_to_backup_running" class="narrow" maxlength="9999" value="<?=$conf_array['vms_to_backup_running'];?>">
+      : <select id="vms_to_backup_running" name="vms_to_backup_running" size="1" multiple="multiple" style="display:none">
+        <?foreach ($vm_list_array as $vm):?>
+          <?=mk_option_check($conf_array['vms_to_backup_running'], $vm, $vm)?>
+        <?endforeach;?>
+      </select>
 
       <blockquote class="inline_help">
         <p>Comma separated list of VM names to keep running during backup.</p>
