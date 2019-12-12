@@ -123,7 +123,7 @@
     rm -rf /usr/local/emhttp/plugins/&name;
 
     # remove old cron files.
-    rm -rf /boot/config/plugins/dynamix/vmbackup.cron
+    rm -rf /boot/config/plugins/&name;/&name;.cron
 
     # remove xmlstarlet.
     removepkg &xmlstarlet;
