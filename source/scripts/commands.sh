@@ -79,6 +79,9 @@
 
     IFS=$'\n'      # change IFS to new line.
 
+    # create empty vdisk_list array.
+    vdisk_list=()
+
     for vmname in $vm_list
     do
       # create working xml file.
@@ -117,6 +120,7 @@
           # add vdisk to array list.
           if [ "$vdisk_exists" = false ]; then
             vdisk_list+=("$vdisk_path")
+            logger "added: $vdisk_path"
           fi
         fi
       done
