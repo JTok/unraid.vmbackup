@@ -39,6 +39,13 @@
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
     local user_config_file="/boot/config/plugins/vmbackup/user.cfg"
 
+    # check to see if a user config file has been created yet.
+    if [[ ! -f "$user_config_file" ]]; then
+      # if not, give the extensions to skip their default values.
+      extensions_to_skip+=("iso")
+      extensions_to_skip+=("snap")
+    fi
+
     SAVEIFS=$IFS   # save current IFS.
 
     # get a list of all vms by name.
@@ -120,7 +127,6 @@
           # add vdisk to array list.
           if [ "$vdisk_exists" = false ]; then
             vdisk_list+=("$vdisk_path")
-            logger "added: $vdisk_path"
           fi
         fi
       done
