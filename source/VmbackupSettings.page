@@ -129,6 +129,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     item = form.vms_to_backup.options[0];
     item.value = vms_to_backup;
     item.selected = true;
+    
     // make vms to backup running a comma separated list for user config.
     var vms_to_backup_running = '';
     for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
@@ -143,14 +144,62 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     item.selected = true;
   }
 
-  // main function
+  // function to change a specific attribute for a specific control.
+  function change_attr(control_name, attr_name, desired_state) {
+    $(control_name).attr(attr_name, desired_state);
+  }
+
+  // function executed when frequency control is set.
+  function backup_frequency() {
+    if ($('#frequency').val() == "disabled"){
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", true);
+      change_attr("#minute", "disabled", true);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "daily"){
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "weekly"){
+      change_attr("#week", "disabled", false);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "monthly"){
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", false);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "custom") {
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", true);
+      change_attr("#minute", "disabled", true);
+      change_attr("#custom", "disabled", false);
+    } else {
+      change_attr("#week", "disabled", false);
+      change_attr("#month", "disabled", false);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    }
+  }
+
+  // main function executed at page load.
   $(function() {
-    // add file tree to inputs
+    // add file tree to inputs.
     $("#backup_location").fileTreeAttach();
-    //configure dropdown checklists
+    //configure dropdown checklists.
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    // set the initial attributes for controls.
+    backup_frequency();
   });
 </script>
 
@@ -252,7 +301,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     <div id="title" class="nocontrol">Schedule</div>
 
       Backup Frequency:
-      : <select name="frequency" size="1">
+      : <select id="frequency" name="frequency" size="1" onchange="backup_frequency()">
         <option value="disabled">Disabled</option>
         <option value="daily">Daily</option>
         <option value="weekly">Weekly</option>
@@ -269,7 +318,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Day of the Week:
-      : <select name="day" size="1">
+      : <select id="week" name="week" size="1">
         <option value="0">Sunday</option>
         <option value="1">Monday</option>
         <option value="2">Tuesday</option>
@@ -285,7 +334,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Day of the Month:
-      : <select name="month" size="1">
+      : <select id="month" name="month" size="1">
         <?php
           $days = create_number_array(1,31,"2");
           foreach($days as $key => $value) {
@@ -302,7 +351,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Hour:
-      : <select name="hour" size="1">
+      : <select id="hour" name="hour" size="1">
         <?php
           $days = create_number_array(0,23,"2");
           foreach($days as $key => $value) {
@@ -319,7 +368,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Minute:
-      : <select name="minute" size="1">
+      : <select id="minute" name="minute" size="1">
         <?php
           $days = create_number_array(0,59,"2");
           foreach($days as $key => $value) {
@@ -336,7 +385,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Custom Cron:
-      : <input type="text" name="custom" class="narrow" maxlength="20">
+      : <input type="text" id="custom" name="custom" class="narrow" maxlength="20">
 
       <blockquote class="inline_help">
         <p>Set a custom Cron schedule.</p>
