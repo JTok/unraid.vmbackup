@@ -129,6 +129,18 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     item = form.vms_to_backup.options[0];
     item.value = vms_to_backup;
     item.selected = true;
+    // make vms to backup running a comma separated list for user config.
+    var vms_to_backup_running = '';
+    for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
+      if (item.selected) {
+        if (vms_to_backup_running.length) vms_to_backup_running += ',';
+        vms_to_backup_running += item.value;
+        item.selected = false;
+      }
+    }
+    item = form.vms_to_backup_running.options[0];
+    item.value = vms_to_backup_running;
+    item.selected = true;
   }
 
   // main function
@@ -138,6 +150,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     //configure dropdown checklists
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
   });
 </script>
 
