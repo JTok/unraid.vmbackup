@@ -97,7 +97,24 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 <!-- apply css -->
 <style>
-  .fileTree{width:300px;max-height:150px;overflow-y:scroll;overflow-x:hidden;position:absolute;z-index:100;display:none}
+  /* set fileTree properties */
+  .fileTree {
+    width:300px;
+    max-height:150px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    position:absolute;
+    z-index:100;
+    display:none
+  }
+
+  input:invalid {
+    border-color: red;
+  }
+  input,
+  input:valid {
+      border-color: #ccc;
+  }
 </style>
 
 <!-- run jquery/javascript -->
@@ -190,6 +207,12 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     }
   }
 
+  var input = document.getElementById('backup_location');
+
+  input.oninvalid = function(event) {
+    event.target.setCustomValidity('Path must be located in /mnt/.');
+  }
+
   // main function executed at page load.
   $(function() {
     // add file tree to inputs.
@@ -226,8 +249,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Set backup location:
-      : <input type="text" name="backup_location" id="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
-
+      : <input type="text" name="backup_location" id="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="(^\/mnt\/([\w-]*)+(\/[\w-]*)*[\/]$)" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
       <blockquote class="inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
