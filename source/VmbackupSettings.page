@@ -9,6 +9,7 @@ Icon="clone"
    copyright 2019 JTok */
 
 require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
+require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
 require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
 // create local variables.
@@ -87,9 +88,10 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 ?>
 
-<!-- import jquery sources -->
+<!-- import javascript sources -->
 <script type="text/javascript" src="<?=autov("/webGui/javascript/jquery.filetree.js")?>"></script>
 <script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
+<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/source/functions.js')?>"></script>
 
 <!-- import stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?autov("/webGui/styles/jquery.filetree.css")?>">
@@ -110,10 +112,6 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
   input:invalid {
     border-color: red;
-  }
-  input,
-  input:valid {
-      border-color: #ccc;
   }
 </style>
 
@@ -159,11 +157,10 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     item = form.vms_to_backup_running.options[0];
     item.value = vms_to_backup_running;
     item.selected = true;
-  }
 
-  // function to change a specific attribute for a specific control.
-  function change_attr(control_name, attr_name, desired_state) {
-    $(control_name).attr(attr_name, desired_state);
+    //remove whitespace and prepare comma separated lists.
+    var input = document.getElementById('vdisk_extensions_to_skip');
+    input.value = remove_list_whitespace(input.value);
   }
 
   // function executed when frequency control is set.
@@ -207,10 +204,14 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     }
   }
 
-  var input = document.getElementById('backup_location');
-
-  input.oninvalid = function(event) {
-    event.target.setCustomValidity('Path must be located in /mnt/.');
+  // function to enable and set validation for page elements.
+  function set_validation() {
+    // set validation message for each page element, as well as a custom error message.
+    add_validation_events('backup_location','Path must be located in /mnt/.')
+    add_validation_events('number_of_days_to_keep_backups','Please input a valid whole number.')
+    add_validation_events('number_of_backups_to_keep','Please input a valid whole number.')
+    add_validation_events('custom','Please enter a valid cron statement.')
+    add_validation_events('vdisk_extensions_to_skip','This should be blank, or a comma separated list.')
   }
 
   // main function executed at page load.
@@ -221,6 +222,11 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    // add regex pattern to the custom cron control.
+    var cron_regex = create_cron_regex();
+    document.getElementById('custom').pattern = cron_regex;
+    // set the validation for each control.
+    set_validation();
     // set the initial attributes for controls.
     backup_frequency();
   });
@@ -249,7 +255,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Set backup location:
-      : <input type="text" name="backup_location" id="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="(^\/mnt\/([\w-]*)+(\/[\w-]*)*[\/]$)" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
+      : <input type="text" id="backup_location" name="backup_location"class="setting" value="<?=$conf_array['backup_location'];?>" pattern="(^\/mnt\/([\w-]*)+(\/[\w-]*)*[\/]$)" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true">
       <blockquote class="inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
@@ -292,7 +298,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Number of days to keep backups:
-      : <input type="text" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>">
+      : <input type="text" id="number_of_days_to_keep_backups" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>" pattern="^(0|([1-9])+(\d+)?)$">
 
       <blockquote class="inline_help">
         <p>Set this to the number of days backups should be kept.
@@ -304,7 +310,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Number of backups to keep:
-      : <input type="text" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>">
+      : <input type="text" id="number_of_backups_to_keep" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>" pattern="^(0|([1-9])+(\d+)?)$">
       
       <blockquote class="inline_help">
         <p>Set this to the number of backups that should be kept.
@@ -407,7 +413,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Custom Cron:
-      : <input type="text" id="custom" name="custom" class="narrow" maxlength="100">
+      : <input type="text" id="custom" name="custom" class="narrow" maxlength="100" value="<?=$conf_array['custom'];?>">
 
       <blockquote class="inline_help">
         <p>Set a custom Cron schedule.</p>
@@ -438,7 +444,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       List vdisk extensions to skip:
-      : <input type="text" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>">
+      : <input type="text" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>" pattern="^$|^([\w-]*)(,\s{0,1}[\w-]+)*$">
 
       <blockquote class="inline_help">
         <p>Comma separated list of vdisk extensions to skip.</p>
