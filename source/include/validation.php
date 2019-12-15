@@ -1,5 +1,8 @@
 <?php
 
+  /* vmbackup plugin
+    copyright 2019 JTok */
+
   // v0.1.0 - Development
 
 
