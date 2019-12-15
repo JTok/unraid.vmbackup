@@ -29,7 +29,7 @@ Icon="clone"
     <div markdown="1" style="width:45%; float:left">
 
       Keep log file?
-      : <select name="keep_log_file" size="1">
+      : <select id="keep_log_file" name="keep_log_file" size="1">
         <?=mk_option($conf_array['keep_log_file'], "0", "No");?>
         <?=mk_option($conf_array['keep_log_file'], "1", "Yes");?>
       </select>
@@ -44,7 +44,7 @@ Icon="clone"
 
       
       Number of log files to keep:
-      : <input type="text" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>">
+      : <input type="text" id="number_of_log_files_to_keep" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>">
 
       <blockquote class="inline_help">
         <p>Set this to the number of successful log files that should be kept.
@@ -56,7 +56,7 @@ Icon="clone"
 
 
       Log file subfolder:
-      : <input type="text" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>">
+      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>">
 
       <blockquote class="inline_help">
         <p>Choose a folder name for storing logs.</p>
@@ -69,7 +69,7 @@ Icon="clone"
 
 
       Number of error log files to keep:
-      : <input type="text" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
+      : <input type="text" id="number_of_error_log_files_to_keep" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>">
 
       <blockquote class="inline_help">
         <p>Set this to the number of error log files that should be kept.
@@ -87,7 +87,7 @@ Icon="clone"
     <div markdown="1" style="width:45%; clear:both; float:left">
 
       Send notifications?
-      : <select name="send_notifications" size="1">
+      : <select id="send_notifications" name="send_notifications" size="1">
         <?=mk_option($conf_array['send_notifications'], "0", "No");?>
         <?=mk_option($conf_array['send_notifications'], "1", "Yes");?>
       </select>
@@ -103,7 +103,7 @@ Icon="clone"
 
 
       Enable detailed notifications?
-      : <select name="detailed_notifications" size="1">
+      : <select id="detailed_notifications" name="detailed_notifications" size="1">
         <?=mk_option($conf_array['detailed_notifications'], "0", "No");?>
         <?=mk_option($conf_array['detailed_notifications'], "1", "Yes");?>
       </select>
@@ -118,7 +118,7 @@ Icon="clone"
 
 
       Only send error notifications?
-      : <select name="only_send_error_notifications" size="1">
+      : <select id="only_send_error_notifications" name="only_send_error_notifications" size="1">
         <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
         <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
       </select>
@@ -138,7 +138,7 @@ Icon="clone"
     <div markdown="1" style="width:45%; clear:both; float:left">
 
       Timestamp backups?
-      : <select name="timestamp_files" size="1">
+      : <select id="timestamp_files" name="timestamp_files" size="1">
         <?=mk_option($conf_array['timestamp_files'], "0", "No");?>
         <?=mk_option($conf_array['timestamp_files'], "1", "Yes");?>
       </select>
@@ -153,7 +153,7 @@ Icon="clone"
 
 
       Compare files during backup?
-      : <select name="compare_files" size="1">
+      : <select id="compare_files" name="compare_files" size="1">
         <?=mk_option($conf_array['compare_files'], "0", "No");?>
         <?=mk_option($conf_array['compare_files'], "1", "Yes");?>
       </select>
@@ -168,7 +168,7 @@ Icon="clone"
 
 
       Disable delta syncs for backups?
-      : <select name="disable_delta_sync" size="1">
+      : <select id="disable_delta_sync" name="disable_delta_sync" size="1">
         <?=mk_option($conf_array['disable_delta_sync'], "0", "No");?>
         <?=mk_option($conf_array['disable_delta_sync'], "1", "Yes");?>
       </select>
@@ -182,7 +182,7 @@ Icon="clone"
 
 
       Only use rsync for backups?
-      : <select name="rsync_only" size="1">
+      : <select id="rsync_only" name="rsync_only" size="1">
         <?=mk_option($conf_array['rsync_only'], "0", "No");?>
         <?=mk_option($conf_array['rsync_only'], "1", "Yes");?>
       </select>
@@ -197,7 +197,7 @@ Icon="clone"
 
 
       Number of VM shutdown checks:
-      : <input type="text" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>">
+      : <input type="text" id="clean_shutdown_checks" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>">
 
       <blockquote class="inline_help">
         <p>Set this to the number of times to check if a clean shutdown of a VM has been successful.</p>
@@ -208,7 +208,7 @@ Icon="clone"
 
 
       Seconds between shutdown checks:
-      : <input type="text" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>">
+      : <input type="text" id="seconds_to_wait" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>">
 
       <blockquote class="inline_help">
         <p>Set this to the number of seconds to wait between VM shutdown checks.</p>

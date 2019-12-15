@@ -29,7 +29,7 @@ Icon="clone"
     <div markdown="1" style="width:45%; clear:both; float:left">
 
       Keep error log file?
-      : <select name="keep_error_log_file" size="1">
+      : <select id="keep_error_log_file" name="keep_error_log_file" size="1">
         <?=mk_option($conf_array['keep_error_log_file'], "0", "No");?>
         <?=mk_option($conf_array['keep_error_log_file'], "1", "Yes");?>
       </select>
@@ -43,7 +43,7 @@ Icon="clone"
 
 
       Kill VMs if they can't be shutdown?
-      : <select name="kill_vm_if_cant_shutdown" size="1">
+      : <select id="kill_vm_if_cant_shutdown" name="kill_vm_if_cant_shutdown" size="1">
         <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "0", "No");?>
         <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "1", "Yes");?>
       </select>
@@ -57,7 +57,7 @@ Icon="clone"
 
 
       Return VM to original state?
-      : <select name="set_vm_to_original_state" size="1">
+      : <select id="set_vm_to_original_state" name="set_vm_to_original_state" size="1">
         <?=mk_option($conf_array['set_vm_to_original_state'], "0", "No");?>
         <?=mk_option($conf_array['set_vm_to_original_state'], "1", "Yes");?>
       </select>
@@ -71,7 +71,7 @@ Icon="clone"
 
 
       Snapshot extension:
-      : <input type="text" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
+      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
 
       <blockquote class="inline_help">
         <p>Change the extension used when creating snapshots.</p>
@@ -83,7 +83,7 @@ Icon="clone"
 
 
       Fallback to standard backups?
-      : <select name="snapshot_fallback" size="1">
+      : <select id="snapshot_fallback" name="snapshot_fallback" size="1">
         <?=mk_option($conf_array['snapshot_fallback'], "0", "No");?>
         <?=mk_option($conf_array['snapshot_fallback'], "1", "Yes");?>
       </select>
@@ -98,7 +98,7 @@ Icon="clone"
 
 
       Pause VMs instead of shutting down?
-      : <select name="pause_vms" size="1">
+      : <select id="pause_vms" name="pause_vms" size="1">
         <?=mk_option($conf_array['pause_vms'], "0", "No");?>
         <?=mk_option($conf_array['pause_vms'], "1", "Yes");?>
       </select>
@@ -130,7 +130,7 @@ Icon="clone"
 
 
       Backup configs?
-      : <select name="backup_xml" size="1">
+      : <select id="backup_xml" name="backup_xml" size="1">
         <?=mk_option($conf_array['backup_xml'], "0", "No");?>
         <?=mk_option($conf_array['backup_xml'], "1", "Yes");?>
       </select>
@@ -144,7 +144,7 @@ Icon="clone"
 
 
       Backup nvram?
-      : <select name="backup_nvram" size="1">
+      : <select id="backup_nvram" name="backup_nvram" size="1">
         <?=mk_option($conf_array['backup_nvram'], "0", "No");?>
         <?=mk_option($conf_array['backup_nvram'], "1", "Yes");?>
       </select>
@@ -157,7 +157,7 @@ Icon="clone"
       </blockquote>
 
       Backup vdisks?
-      : <select name="backup_vdisks" size="1">
+      : <select id="backup_vdisks" name="backup_vdisks" size="1">
         <?=mk_option($conf_array['backup_vdisks'], "0", "No");?>
         <?=mk_option($conf_array['backup_vdisks'], "1", "Yes");?>
       </select>
@@ -172,7 +172,7 @@ Icon="clone"
 
 
       Start VMs after successful backup?
-      : <select name="start_vm_after_backup" size="1">
+      : <select id="start_vm_after_backup" name="start_vm_after_backup" size="1">
         <?=mk_option($conf_array['start_vm_after_backup'], "0", "No");?>
         <?=mk_option($conf_array['start_vm_after_backup'], "1", "Yes");?>
       </select>
@@ -187,7 +187,7 @@ Icon="clone"
 
 
       Start VMs after failed backup?
-      : <select name="start_vm_after_failure" size="1">
+      : <select id="start_vm_after_failure" name="start_vm_after_failure" size="1">
         <?=mk_option($conf_array['start_vm_after_failure'], "0", "No");?>
         <?=mk_option($conf_array['start_vm_after_failure'], "1", "Yes");?>
       </select>
@@ -202,7 +202,7 @@ Icon="clone"
 
 
       Actually copy files?
-      : <select name="actually_copy_files" size="1">
+      : <select id="actually_copy_files" name="actually_copy_files" size="1">
         <?=mk_option($conf_array['actually_copy_files'], "0", "No");?>
         <?=mk_option($conf_array['actually_copy_files'], "1", "Yes");?>
       </select>

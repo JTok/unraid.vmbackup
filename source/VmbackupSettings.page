@@ -89,12 +89,12 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 ?>
 
 <!-- import javascript sources -->
-<script type="text/javascript" src="<?=autov("/webGui/javascript/jquery.filetree.js")?>"></script>
+<script type="text/javascript" src="<?=autov('/webGui/javascript/jquery.filetree.js')?>"></script>
 <script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
-<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/source/functions.js')?>"></script>
+<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/functions.js')?>"></script>
 
 <!-- import stylesheets -->
-<link type="text/css" rel="stylesheet" href="<?autov("/webGui/styles/jquery.filetree.css")?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.filetree.css')?>">
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
 
 <!-- apply css -->
@@ -266,7 +266,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Backup all VMs?
-      : <select name="backup_all_vms" size="1">
+      : <select id="backup_all_vms" name="backup_all_vms" size="1">
         <?=mk_option($conf_array['backup_all_vms'], "0", "No");?>
         <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
       </select>
@@ -444,7 +444,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       List vdisk extensions to skip:
-      : <input type="text" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>" pattern="^$|^([\w-]*)(,\s{0,1}[\w-]+)*$">
+      : <input type="text" id="vdisk_extensions_to_skip" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>" pattern="^$|^([\w-]*)(,\s{0,1}[\w-]+)*$">
 
       <blockquote class="inline_help">
         <p>Comma separated list of vdisk extensions to skip.</p>
@@ -456,7 +456,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
 
       Enable snapshots?
-      : <select name="use_snapshots" size="1">
+      : <select id="use_snapshots" name="use_snapshots" size="1">
         <?=mk_option($conf_array['use_snapshots'], "0", "No");?>
         <?=mk_option($conf_array['use_snapshots'], "1", "Yes");?>
       </select>
@@ -472,7 +472,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
       </blockquote>
 
       Compress backups?
-      : <select name="compress_backups" size="1">
+      : <select id="compress_backups" name="compress_backups" size="1">
         <?=mk_option($conf_array['compress_backups'], "0", "No");?>
         <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
       </select>
@@ -488,7 +488,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
       </blockquote>
 
       Enable reconstruct write?
-      : <select name="enable_reconstruct_write" size="1">
+      : <select id="enable_reconstruct_write" name="enable_reconstruct_write" size="1">
         <?=mk_option($conf_array['enable_reconstruct_write'], "0", "No");?>
         <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
       </select>
