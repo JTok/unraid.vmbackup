@@ -1,5 +1,8 @@
 <?php
 
+  /* vmbackup plugin
+    copyright 2019 JTok */
+
   // v0.1.0 - Development
 
 
@@ -25,8 +28,14 @@
     return $conf_contents;
   }
 
+  // function to trim white space.
+  function trim_whitespace($string) {
+    return trim($string);
+  }
+
   // function to remove white space from around commas in a list.
   function remove_list_whitespace($string) {
+    $string = trim($string);
     $string = preg_replace('/\s*,\s*/', ',', $string);
 
     return $string;
