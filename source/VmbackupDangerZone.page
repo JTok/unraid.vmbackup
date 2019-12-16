@@ -71,7 +71,7 @@ Icon="clone"
 
 
       Snapshot extension:
-      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>">
+      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^([\w-.]+)$" required>
 
       <blockquote class="inline_help">
         <p>Change the extension used when creating snapshots.</p>
@@ -213,6 +213,39 @@ Icon="clone"
           <li>Dry-run backups will still create empty files in your backup directory.</li>
           <li>This will only use rsync to perform the dry-run.</li>
           <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
+
+
+      Disable custom cron regex?
+      : <select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex()">
+        <?=mk_option($conf_array['disable_cron_regex'], "0", "No");?>
+        <?=mk_option($conf_array['disable_cron_regex'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' if you would like to disable the regular expression for the custom cron text field.</p>
+        <ul>
+          <li>The regular expression used to validate the custom cron field is not perfect, so you may find yourself needing to disable it.</li>
+          <li>This will completely remove any validation for the custom cron field.</li>
+          <li>Disable with care!</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
+
+
+      Disable restrictive regex?
+      : <select id="disable_restrictive_regex" name="disable_restrictive_regex" size="1" onchange="toggle_restrictive_regex()">
+        <?=mk_option($conf_array['disable_restrictive_regex'], "0", "No");?>
+        <?=mk_option($conf_array['disable_restrictive_regex'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' if you would like to disable the restrictive regular expressions used to validate many of the fields.</p>
+        <ul>
+          <li>The default regular expressions used to validate many of the fields are restricted to values that are considered reasonable.</li>
+          <li>This does not remove validation completely, but instead removes many of the safety checks. Disable with care!</li>
+          <li>Default is 'No'.</li>
         </ul>
       </blockquote>
 
