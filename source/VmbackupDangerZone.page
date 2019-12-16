@@ -71,7 +71,7 @@ Icon="clone"
 
 
       Snapshot extension:
-      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^([\w-.]+)$" required>
+      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^([\w-]+)$" required>
 
       <blockquote class="inline_help">
         <p>Change the extension used when creating snapshots.</p>
@@ -218,7 +218,7 @@ Icon="clone"
 
 
       Disable custom cron regex?
-      : <select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex()">
+      : <select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex();">
         <?=mk_option($conf_array['disable_cron_regex'], "0", "No");?>
         <?=mk_option($conf_array['disable_cron_regex'], "1", "Yes");?>
       </select>
@@ -235,7 +235,7 @@ Icon="clone"
 
 
       Disable restrictive regex?
-      : <select id="disable_restrictive_regex" name="disable_restrictive_regex" size="1" onchange="toggle_restrictive_regex()">
+      : <select id="disable_restrictive_regex" name="disable_restrictive_regex" size="1" onchange="toggle_restrictive_regex();">
         <?=mk_option($conf_array['disable_restrictive_regex'], "0", "No");?>
         <?=mk_option($conf_array['disable_restrictive_regex'], "1", "Yes");?>
       </select>
