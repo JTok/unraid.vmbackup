@@ -169,8 +169,6 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
       change_attr("#custom", "pattern", basic_cron_regex());
     } else if ($('#disable_cron_regex').val() == "1") {
       $("#custom").removeAttr("pattern");
-    } else {
-      change_attr("#custom", "pattern", basic_cron_regex());
     }
   }
 
@@ -260,9 +258,6 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
-    // add regex pattern to the custom cron control.
-
-    change_attr("#custom", "pattern", basic_cron_regex());
     // set the regex pattern each element should use.
     toggle_cron_regex();
     toggle_restrictive_regex();
