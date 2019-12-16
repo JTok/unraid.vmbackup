@@ -6,12 +6,9 @@
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings
 #  - ability to do multiple script variations/schedules.
-#  - move additional items to advanced section.
-#  - php form validation.
 #  - move some of the settings alerts to php form validation instead.
 #  - have backup all vms switch change functionality of vm list from inclusion to exclusion.
 #  - set up separate css stylesheets.
 #  - add file version checks.
 #  - display vdisks with common prefixes removed.
-#  - ignore snapshot extensions for functions when snapshots are disabled.
 #  - ability to edit script run variables such as noParity.
