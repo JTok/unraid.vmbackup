@@ -261,17 +261,6 @@
     do 
       printf "%s\n" "$key=\"${vdisk_list[$key]}\"" >> "$vdisk_list_file"
     done
-    
-    # remove temporary working files.
-    if [[ -f "$vm_temp_xml" ]]; then
-      rm -f "$vm_temp_xml"
-    fi
-    if [[ -f "$vm_list_file" ]]; then
-      rm -f "$vm_list_file"
-    fi
-    if [[ -f "$vdisk_list_file" ]]; then
-      rm -f "$vdisk_list_file"
-    fi
   }
 
 #### end script functions ####
