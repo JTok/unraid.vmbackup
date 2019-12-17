@@ -122,6 +122,20 @@
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    local user_prefix="\/mnt\/user\/domains\/"
+    local cache_prefix="/mnt/cache/domains/"
+    local disk_prefix="/mnt/disk*/domains/"
+
+    # remove previous temporary working files if they still exist.
+    if [[ -f "$vm_temp_xml" ]]; then
+      rm -f "$vm_temp_xml"
+    fi
+    if [[ -f "$vm_list_file" ]]; then
+      rm -f "$vm_list_file"
+    fi
+    if [[ -f "$vdisk_list_file" ]]; then
+      rm -f "$vdisk_list_file"
+    fi
 
     # check to see if a user config file has been created yet.
     if [[ ! -f "$user_config" ]]; then
@@ -171,7 +185,7 @@
     IFS=$'\n'      # change IFS to new line.
 
     # create empty vdisk_list array.
-    vdisk_list=()
+    declare -A vdisk_list
 
     for vmname in $vm_list
     do
@@ -208,9 +222,22 @@
             fi
           done
 
-          # add vdisk to array list.
+          # add vdisk to array list, but first remove common prefixes.
           if [ "$vdisk_exists" = false ]; then
-            vdisk_list+=("$vdisk_path")
+            case "$vdisk_path" in
+              $user_prefix*)
+                vdisk_list+=(["$vdisk_path"]="${vdisk_path##$user_prefix}")
+                ;;
+              $cache_prefix*)
+                vdisk_list+=(["$vdisk_path"]="${vdisk_path##$cache_prefix}")
+                ;;
+              $disk_prefix*)
+                vdisk_list+=(["$vdisk_path"]="${vdisk_path##$disk_prefix}")
+                ;;
+              *)
+                vdisk_list+=(["$vdisk_path"]="$vdisk_path")
+                ;;
+            esac
           fi
         fi
       done
@@ -230,7 +257,21 @@
     printf "%s\n" "${vm_list[@]}" > "$vm_list_file"
 
     # create vm vdisk list text file.
-    printf "%s\n" "${vdisk_list[@]}" > "$vdisk_list_file"
+    for key in "${!vdisk_list[@]}"
+    do 
+      printf "%s\n" "$key=\"${vdisk_list[$key]}\"" >> "$vdisk_list_file"
+    done
+    
+    # remove temporary working files.
+    if [[ -f "$vm_temp_xml" ]]; then
+      rm -f "$vm_temp_xml"
+    fi
+    if [[ -f "$vm_list_file" ]]; then
+      rm -f "$vm_list_file"
+    fi
+    if [[ -f "$vdisk_list_file" ]]; then
+      rm -f "$vdisk_list_file"
+    fi
   }
 
 #### end script functions ####
