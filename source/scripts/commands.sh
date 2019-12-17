@@ -187,6 +187,9 @@
     # create empty vdisk_list array.
     declare -A vdisk_list
 
+    # create an empty array for sorting the vdisk list array.
+    vdisk_list_sort=()
+
     for vmname in $vm_list
     do
       # create working xml file.
@@ -222,8 +225,11 @@
             fi
           done
 
-          # add vdisk to array list, but first remove common prefixes.
+          # if the vdisk is not already in the vdisk list array, add it to both arrays.
           if [ "$vdisk_exists" = false ]; then
+            # add vdisk path to an array to use for sorting.
+            vdisk_list_sort+=("$vdisk_path")
+            # remove common prefixes and add to the vdisk list array.
             case "$vdisk_path" in
               $user_prefix*)
                 vdisk_list+=(["$vdisk_path"]="${vdisk_path##$user_prefix}")
@@ -257,7 +263,7 @@
     printf "%s\n" "${vm_list[@]}" > "$vm_list_file"
 
     # create vm vdisk list text file.
-    for key in "${!vdisk_list[@]}"
+    for key in "${vdisk_list_sort[@]}"
     do 
       printf "%s\n" "$key=\"${vdisk_list[$key]}\"" >> "$vdisk_list_file"
     done
