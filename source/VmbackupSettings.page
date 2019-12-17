@@ -80,7 +80,7 @@ if (!file_exists($user_script_file)) {
 
 // get vm and vdisk lists as arrays.
 $vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-$vdisk_list_array = file($vdisk_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$vdisk_list_array = parse_ini_file($user_conf_file);
 
 // get selected vms and vdisks as arrays.
 $vm_selected_array = make_comma_array($conf_array['vms_to_backup']);
@@ -464,8 +464,8 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
       List vdisks to skip:
       : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
-        <?foreach ($vdisk_list_array as $vdisk):?>
-          <?=mk_option_check($conf_array['vdisks_to_skip'], $vdisk, $vdisk)?>
+        <?foreach ($vdisk_list_array as $key => $value):?>
+          <?=mk_option_check($conf_array['vdisks_to_skip'], $key, $value)?>
         <?endforeach;?>
       </select>
 
