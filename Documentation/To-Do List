@@ -8,7 +8,6 @@
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
 #  - ability to do multiple script variations/schedules.
 #  - move some of the settings alerts to php form validation instead.
-#  - have backup all vms switch change functionality of vm list from inclusion to exclusion.
 #  - set up separate css stylesheets.
 #  - add file version checks.
 #  - ability to edit script run variables such as noParity.

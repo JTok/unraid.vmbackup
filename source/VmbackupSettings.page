@@ -310,8 +310,8 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
       <blockquote class="inline_help">
         <p>Set to 'Yes' to backup all VMs.</p>
         <ul>
-          <li>When set to 'No', "List VMs to backup" will be used.</li>
-          <li>When set to 'Yes', "List VMs to backup" will be ignored.</li>
+          <li>When set to 'No', "List VMs to backup" will be used to determine which VMs to backup.</li>
+          <li>When set to 'Yes', "List VMs to backup" will be used as a list of VMs to exclude from the backup.</li>
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
@@ -326,7 +326,7 @@ $vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
 
       <blockquote class="inline_help">
         <p>Comma separated list of VM names to backup.
-        <br>If "Backup all VMs" is set to 'Yes', then this list will be ignored.</p>
+        <br>If "Backup all VMs" is set to 'Yes', then this list will be used as a list of VMs to exclude from the backup.</p>
         <ul>
           <li>Names should be the same names used in the configs.</li>
         </ul>

@@ -3,7 +3,7 @@
 #arrayStarted=true
 #noParity=true
 
-# v0.1.0 - Development
+# v0.1.1 - Development
 
 #### DISCLAIMER ####
 # Use at your own risk. This is a work-in-progress and provided as is.
@@ -29,10 +29,12 @@ enabled="no_config"
 # backup location to put vdisks.
 backup_location="no_config"
 
-# default is 0. backup all vms or use vms_to_backup. when set to 1, vms_to_backup will be ignored.
+# default is 0. backup all vms or use vms_to_backup.
+# when set to 1, vms_to_backup will be used as an exclusion list.
 backup_all_vms="no_config"
 
 # list of vms that will be backed up separated by a new line.
+# if backup_all_vms is set to 1, this will be used as a list of vms to exclude instead.
 vms_to_backup="no_config"
 
 # list of specific vdisks to be skipped separated by a new line. use the full path.
@@ -480,7 +482,7 @@ only_send_error_notifications="no_config"
             shopt -u extglob
 
             # check to see if a backup already exists for this vdisk and make a copy of it before shutting down the guest.
-            if [ -f "$newest_vdisk_file" ]; then
+            if [[ -f "$newest_vdisk_file" ]]; then
               log_message "information: copy of backup of $newest_vdisk_file vdisk to $backup_location/$vm/$timestamp$new_disk starting." "script starting copy $vm backup" "normal"
 
               # call function copy_files to copy existing backup
@@ -518,6 +520,7 @@ only_send_error_notifications="no_config"
 
             # check to see if snapshots should be used, and if the vm is running.
             if [ "$use_snapshots" -eq 1 ] && [ "$vm_state" == "running" ]; then
+              snapshot_using_traditional_backup=false
               log_message "information: able to perform snapshot for disk $disk on $vm. use_snapshots is $use_snapshots. vm_state is $vm_state. vdisk_type is ${vdisk_types[$disk]}"
 
               # set variable for qemu agent is installed.
@@ -1003,12 +1006,12 @@ only_send_error_notifications="no_config"
   backup_location=${backup_location%/}
 
   # check to see if the backup_location specified by the user exists. if yes, continue if no, exit. if exists check if writable, if yes continue, if not exit. if input invalid, exit.
-  if [ -d "$backup_location" ]; then
+  if [[ -d "$backup_location" ]]; then
 
     notification_message "information: backup_location is $backup_location. this location exists. continuing."
 
     # if backup_location does exist check to see if the backup_location is writable.
-    if [ -w "$backup_location" ]; then
+    if [[ -w "$backup_location" ]]; then
 
       notification_message "information: backup_location is $backup_location. this location is writable. continuing."
 
@@ -1076,12 +1079,12 @@ only_send_error_notifications="no_config"
 
 
   # check to see if the log_file_subfolder specified by the user exists. if yes, continue if no, exit. if exists check if writable, if yes continue, if not exit. if input invalid, exit.
-  if [ -d "$backup_location/$log_file_subfolder" ]; then
+  if [[ -d "$backup_location/$log_file_subfolder" ]]; then
 
     notification_message "information: log_file_subfolder is $backup_location/$log_file_subfolder. this location exists. continuing."
 
     # if log_file_subfolder does exist check to see if the log_file_subfolder is writable.
-    if [ -w "$backup_location/$log_file_subfolder" ]; then
+    if [[ -w "$backup_location/$log_file_subfolder" ]]; then
 
       notification_message "information: log_file_subfolder is $backup_location/$log_file_subfolder. this location is writable. continuing."
 
@@ -1826,6 +1829,63 @@ only_send_error_notifications="no_config"
 
 #### code execution start ####
 
+  # set this to force the for loop to split on new lines and not spaces.
+  IFS=$'\n'
+
+  # check to see if backup_all_vms is enabled.
+  if [ "$backup_all_vms" -eq 1 ]; then
+    # since we are using backup_all_vms, ignore any vms listed in vms_to_backup.
+    vms_to_ignore="$vms_to_backup"
+
+    # unset vms_to_backup
+    unset -v vms_to_backup
+
+    # get a list of the vm names installed on the system.
+    vm_exists=$(virsh list --all --name)
+
+    # check each vm on the system against the list of vms to ignore.
+    for vmname in $vm_exists
+
+    do
+
+      # assume the vm will not be ignored until it is found in the list of vms to ignore.
+      ignore_vm=false
+
+      for vm in $vms_to_ignore
+      
+      do
+
+        if [ "$vmname" == "$vm" ]; then
+
+          # mark the vm as needing to be ignored.
+          ignore_vm=true
+
+          # skips current loop.
+          continue
+
+        fi
+
+      done
+
+      # if vm should not be ignored, add it to the list of vms to backup.
+      if [[ "$ignore_vm" = false ]]; then
+      
+        if [[ -z "$vms_to_backup" ]]; then
+        
+          vms_to_backup="$vmname"
+
+        else
+          
+          vms_to_backup="$vms_to_backup"$'\n'"$vmname"
+          
+        fi
+
+      fi
+
+    done
+
+  fi
+
   # create comma separated list of vms to backup for log file.
   for vm_to_backup in $vms_to_backup
   
@@ -1845,10 +1905,6 @@ only_send_error_notifications="no_config"
   
   log_message "information: started attempt to backup $vms_to_backup_list to $backup_location"
 
-  # set this to force the for loop to split on new lines and not spaces.
-  IFS=$'\n'
-
-
   # check to see if reconstruct write should be enabled by this script. if so, enable and continue.
   if [ "$enable_reconstruct_write" -eq 1 ]; then
 
@@ -1856,34 +1912,6 @@ only_send_error_notifications="no_config"
     log_message "information: Reconstruct write enabled."
 
   fi
-
-  # check to see if backup_all_vms is enabled. if so, set vms_to_backup equal to all vms.
-  if [ "$backup_all_vms" -eq 1 ]; then
-    # unset vms_to_backup
-    unset -v vms_to_backup
-
-    # get a list of the vm names installed on the system.
-    vm_exists=$(virsh list --all --name)
-
-    # add each vm name to vms_to_backup.
-    for vmname in $vm_exists
-
-    do
-
-      if [[ -z "$vms_to_backup" ]]; then
-      
-        vms_to_backup="$vmname"
-
-      else
-        
-        vms_to_backup="$vms_to_backup"$'\n'"$vmname"
-        
-      fi
-
-    done
-
-  fi
-
 
   # loop through the vms in the list and try and back up their associated configs and vdisk(s).
   for vm in $vms_to_backup
@@ -1932,11 +1960,13 @@ only_send_error_notifications="no_config"
     fi
 
     # see if a config file exists for the vm already and remove it.
-    if [ -f "$vm.xml" ]; then
+    if [[ -f "$vm.xml" ]]; then
+      log_message "information: removing old local $vm.xml."
       rm -fv "$vm.xml"
     fi
 
     # dump the vm config locally.
+    log_message "information: creating local $vm.xml to work with during backup."
     virsh dumpxml "$vm" > "$vm.xml"
 
     # replace xmlns value with absolute URI to avoid namespace warning.
@@ -2253,7 +2283,7 @@ only_send_error_notifications="no_config"
 
             # remove any existing list of files to be backup and create a blank backup file list.
             if [[ -f "$backup_file_list" ]]; then
-                rm "$backup_file_list"
+                rm -fv "$backup_file_list"
             fi
 
             log_message "information: creating blank backup file list at $backup_file_list."
@@ -2287,7 +2317,7 @@ only_send_error_notifications="no_config"
 
             # remove backup file list.
             log_message "information: removing backup file list at $backup_file_list."
-            rm "$backup_file_list"
+            rm -fv "$backup_file_list"
 
             log_message "information: finished creating new tarball."
             
@@ -2317,7 +2347,7 @@ only_send_error_notifications="no_config"
 
           # remove any existing list of files to be backup and create a blank file.
           if [[ -f "$backup_file_list" ]]; then
-            rm "$backup_file_list"
+            rm -fv "$backup_file_list"
           fi
 
           log_message "information: creating blank backup file list at $backup_file_list."
@@ -2351,7 +2381,7 @@ only_send_error_notifications="no_config"
 
           # remove backup file list.
           log_message "information: removing backup file list at $backup_file_list."
-          rm "$backup_file_list"
+          rm -fv "$backup_file_list"
 
           log_message "information: finished creating new tarball."
 
@@ -2842,7 +2872,8 @@ only_send_error_notifications="no_config"
     fi
 
     # delete the working copy of the config.
-    rm "$vm.xml"
+    log_message "information: removing local $vm.xml."
+    rm -fv "$vm.xml"
 
   done
 
