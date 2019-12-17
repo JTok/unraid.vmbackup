@@ -33,7 +33,7 @@
   # function to update cronjob
   update_cron_job () {
     # create local variables.
-    local user_script="/boot/config/plugins/vmbackup/user-script.sh"
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local cronjob_comment="# Job for VM Backup plugin:"
 
@@ -82,7 +82,7 @@
         "disabled")
           # no schedule set. remove existing cron job and exit function.
           ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-          ( crontab -l | grep -v -F "$user_script" ) | crontab -
+          ( crontab -l | grep -v -F "$runscript" ) | crontab -
           return 0
           ;;
         "daily")
@@ -104,14 +104,14 @@
       esac
 
       # append the user script path to the cronjob variable.
-      cronjob="$cronjob $user_script > /dev/null 2>&1"
+      cronjob="$cronjob $runscript > /dev/null 2>&1"
 
       # prepend comment to cronjob variable.
       cronjob="$cronjob_comment"$'\n'"$cronjob"
 
       # write cronjob to crontab.
       ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-      ( crontab -l | grep -v -F "$user_script" ; echo "$cronjob" ) | crontab -
+      ( crontab -l | grep -v -F "$runscript" ; echo "$cronjob" ) | crontab -
     fi
   }
 
