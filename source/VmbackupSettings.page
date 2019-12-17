@@ -82,10 +82,6 @@ if (!is_file($user_script_file)) {
 $vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 $vdisk_list_array = parse_ini_file($vdisk_list);
 
-// get selected vms and vdisks as arrays.
-$vm_selected_array = make_comma_array($conf_array['vms_to_backup']);
-$vdisk_selected_array = make_comma_array($conf_array['vdisks_to_skip']);
-
 ?>
 
 <!-- import javascript sources -->
