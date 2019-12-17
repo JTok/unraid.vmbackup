@@ -33,7 +33,7 @@ $vdisk_list = $plugin_path . '/vdisk-list.txt';
 exec("$command_script_file create_vm_lists");
 
 // see if user config file already exists.
-if (!file_exists($user_conf_file)) {
+if (!is_file($user_conf_file)) {
 
   // if not, create it from the default config file.
   if (!copy($default_conf_file, $user_conf_file)) {
@@ -61,7 +61,7 @@ if (!file_exists($user_conf_file)) {
 }
 
 // see if user script already exists.
-if (!file_exists($user_script_file)) {
+if (!is_file($user_script_file)) {
   
   // if not, create a variable with the default script contents and user config file merged.
   $script_contents = update_script_contents($default_script_file, $user_conf_file);
