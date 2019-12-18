@@ -7,7 +7,7 @@
 
   // v0.1.0 - Development
 
-  require_once '/usr/local/emhttp/plugins/vmbackup/include/helpers.php';
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 
   // create local variables.
   // plugin name.
@@ -31,18 +31,18 @@
   }
 
   // get user script config variables.
-  $conf_array = getScriptVariables($user_script_file);
+  $conf_array = get_special_variables($user_script_file);
   // get unraid config variables.
   $unraid_conf = parse_ini_file("/var/local/emhttp/var.ini");
   
   // verify that the array is started before trying to run the script. if not, exit.
-  if ($conf_array['arrayStarted'] && $unraid_conf['mdState'] != "STARTED") {
+  if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
     logger("Array is not started. Cannot run $user_script_file. Exiting.");
     exit();
   }
 
   // verify that the array is not running a parity check or rebuild. if so, exit.
-  if ($conf_array['noParity'] && $unraid_conf['mdResyncPos']) {
+  if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
     logger("Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.");
     exit();
   }

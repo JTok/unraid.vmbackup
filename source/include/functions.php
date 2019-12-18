@@ -95,6 +95,48 @@
     return $number_array;
   }
 
+  // function to determine if a string contains a specific substring using a regular expression.
+  function find_substring($substring, $string) {
+    if (preg_match($substring, $string) === 1) {
+      return true;
+    }
+  }
+
+  // function to get special commented variables from the top of a file.
+  function get_special_variables($file, $num_lines = 10) {
+    // read the file into an array.
+    $file_contents_array = file($file);
+    // determine the number of lines to read from the top of the file.
+    if (count($file_contents_array) >= $num_lines) {
+      $num_lines = $num_lines;
+    } else {
+      $num_lines = count($file_contents_array);
+    }
+    // iterate through each line and add any that appear to be special variables to the commented_variables array.
+    for ($i = 0; $i < $num_lines; $i++) {
+      // check line to see if it starts with just a '#' and not a '#!'.
+      if ((!find_substring('/^#!/', $file_contents_array[$i])) && (find_substring('/^#/', $file_contents_array[$i]))) {
+        // check line to make sure it contains an '='.
+        $is_commented_variable = strpos($file_contents_array[$i], '=');
+        // if the line matches the requirements above, remove the leading '#' and add it to the array as a key/value pair.
+        if ($is_commented_variable !== false) {
+          $no_prefix = preg_replace('/^#/', '', $file_contents_array[$i]);
+          $commented_variable = explode("=", $no_prefix);
+          $commented_variables[$commented_variable[0]] = $commented_variable[1];
+        }
+      } else {
+        // if the line does not start with a '#', continue to the next line.
+        continue;
+      }
+    }
+    // filter array to only contain valid special variables before returning it.
+    $valid_keys = ['arrayStarted', 'noParity'];
+    $special_variables = array_filter($commented_variables, function($key) use ($valid_keys) {
+      return in_array($key, $valid_keys);
+    }, ARRAY_FILTER_USE_KEY);
+    // return the filtered array.
+    return $special_variables;
+  }
 
   // function to send a post command to another php page.
   function send_post($url, $data) {
