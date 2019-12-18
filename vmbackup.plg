@@ -26,11 +26,11 @@
   icon="clone">
 
 <CHANGES>
-  ##&name;
+##&name;
 
-  ###v0.1.4 - 2019/12/18
-  - intial beta release
-  - based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
+###v0.1.4 - 2019/12/18
+- intial beta release
+- based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
 </CHANGES>
 
 
