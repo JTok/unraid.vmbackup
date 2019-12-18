@@ -161,6 +161,15 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     input.value = remove_list_whitespace(input.value);
   }
 
+  // function to set the label vms_to_backup based on backup_all_vms value.
+  function set_vms_to_backup_lbl() {
+    if ($('#backup_all_vms').val() == "0") {
+      change_attr('#vms_to_backup_lbl', "innerHTML", "List VMs to backup:")
+    } else if ($('#backup_all_vms').val() == "1") {
+      change_attr('#vms_to_backup_lbl', "innerHTML", "List VMs to exclude:")
+    }
+  }
+
   // function to toggle custom cron regex.
   function toggle_cron_regex() {
     if ($('#disable_cron_regex').val() == "0") {
@@ -263,6 +272,8 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     set_validation();
     // set the initial attributes for cron controls.
     backup_frequency();
+    // set the label for vms_to_backup based on backup_all_vms.
+    set_vms_to_backup_lbl();
   });
 </script>
 
@@ -300,7 +311,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
 
 
       Backup all VMs?
-      : <select id="backup_all_vms" name="backup_all_vms" size="1">
+      : <select id="backup_all_vms" name="backup_all_vms" size="1" onchange="set_vms_to_backup_lbl()">
         <?=mk_option($conf_array['backup_all_vms'], "0", "No");?>
         <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
       </select>
@@ -315,7 +326,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       </blockquote>
 
 
-      List VMs to backup:
+      <label id="vms_to_backup_lbl">List VMs to backup:</label>
       : <select id="vms_to_backup" name="vms_to_backup" size="1" multiple="multiple" style="display:none">
         <?foreach ($vm_list_array as $vm):?>
           <?=mk_option_check($conf_array['vms_to_backup'], $vm, $vm)?>
