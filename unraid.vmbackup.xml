@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Containers>
   <Plugin>True</Plugin>
-  <PluginURL>https://raw.githubusercontent.com/jtok/unraid.vmbackup/tree/v0.1.4;</PluginURL>
+  <PluginURL>https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.4;</PluginURL>
   <PluginAuthor>JTok</PluginAuthor>
   <Beta>True</Beta>
   <Category>Backup: Tools:</Category>
