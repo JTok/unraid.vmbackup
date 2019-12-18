@@ -5,8 +5,10 @@ Icon="clone"
 
 <?php
 
-/* vmbackup plugin
-   copyright 2019 JTok */
+  /* vmbackup plugin
+    copyright 2019 JTok */
+
+  // v0.1.0 - Development
 
 require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
