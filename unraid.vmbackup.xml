@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Containers>
+  <Plugin>True</Plugin>
+  <PluginURL>https://raw.githubusercontent.com/jtok/unraid.vmbackup/tree/v0.1.4;</PluginURL>
+  <PluginAuthor>JTok</PluginAuthor>
+  <Beta>True</Beta>
+  <Category>Backup: Tools:</Category>
+  <Name>VM Backup</Name>
+  <Description>
+    Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
+  </Description>
+  <Date>2019-12-18</Date>
+  <MinVer>6.7.0</MinVer>
+  <Support>https://forums.unraid.net/</Support>
+  <Icon>clone/Icon>
+  <DonateImg>https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif</DonateImg>
+  <DonateLink>https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=NG5HGW4Q3CZU4</DonateLink>
+</Containers>

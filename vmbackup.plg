@@ -1,0 +1,141 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name       "vmbackup">
+<!ENTITY author     "jtok">
+<!ENTITY version    "2019.12.18">
+<!ENTITY tag        "v0.1.4">
+<!ENTITY branch     "master">
+<!ENTITY launch     "Settings/Vmbackup">
+<!ENTITY icon       "laptop-code">
+<!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/tree/&tag;">
+<!ENTITY pluginURL  "&gitURL;/&name;.plg">
+<!ENTITY supportURL	"https://forums.unraid.net/">
+<!ENTITY packages 	"/boot/config/plugins/&name;/packages">
+<!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
+<!ENTITY MD5	    	"BLANK">
+]>
+
+<PLUGIN name="&name;"
+  author="&author;"
+  version="&version;"
+  pluginURL="&pluginURL;"
+  support="&supportURL;"
+  launch="&launch;"
+  min="6.7.0"
+  icon="clone">
+
+<CHANGES>
+  ##&name;
+
+  ###v0.1.4 - 2019/12/18
+  - intial beta release
+  - based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
+</CHANGES>
+
+
+<!--
+  pre-install script.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+
+    # remove plugin files from emhttp.
+    rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
+
+    # remove xmlstarlet.
+    removepkg xmlstarlet* 2>/dev/null
+  </INLINE>
+</FILE>
+
+
+<!--
+  xmlstarlet package file.
+-->
+<FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
+  <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
+</FILE>
+
+
+<!--
+  plugin package file.
+-->
+<FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz" Run="upgradepkg --install-new">
+  <URL>&gitURL;/&name;-&tag;.txz</URL>
+</FILE>
+
+
+<!--
+  set plugin permissions.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    chmod -R 755 /usr/local/emhttp/plugins/&name;
+  </INLINE>
+</FILE>
+
+
+<!--
+  clean old files.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
+    find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
+  </INLINE>
+</FILE>
+
+
+<!--
+  finished message.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    echo ""
+    echo "-----------------------------------------------------------"
+    echo " &name; has been installed."
+    echo " copyright 2019, &author;"
+    echo " version: &tag; - &version;"
+    echo "-----------------------------------------------------------"
+    echo ""
+  </INLINE>
+</FILE>
+
+
+<!--
+  remove plugin.
+-->
+<FILE Run="/bin/bash" Method="remove">
+  <INLINE>
+    # remove installed packages.
+    find "&packages;/" -type f -iname "*.txz" -delete
+    
+    # remove plugin config folder.
+    rm -rf /boot/config/plugins/&name;
+
+    # remove plugin folder.
+    rm -rf /usr/local/emhttp/plugins/&name;
+
+    # remove plugin packages folder.
+    rm -rf &packages;/
+
+    # remove plugin files from emhttp.
+    rm -rf /usr/local/emhttp/plugins/&name;
+
+    # remove xmlstarlet.
+    removepkg &xmlstarlet;
+
+    # remove plugin.
+    removepkg &name;-&tag;
+
+    echo ""
+    echo "-----------------------------------------------------------"
+    echo " &name; has been uninstalled."
+    echo " copyright 2019, &author;"
+    echo " version: &tag; - &version;"
+    echo "-----------------------------------------------------------"
+    echo ""
+  </INLINE>
+</FILE>
+
+</PLUGIN>

@@ -1,0 +1,5 @@
+Menu="Utilities"
+Title="VM Backup"
+Type="xmenu"
+Tabs="true"
+Icon="clone"

@@ -1,0 +1,565 @@
+Menu="Vmbackup:1"
+Title="Settings"
+Icon="clone"
+---
+
+<?php
+
+  /* vmbackup plugin
+    copyright 2019 JTok */
+
+  // v0.1.4 - 2019/12/18
+
+require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
+require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
+require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
+
+// create local variables.
+// plugin name.
+$plugin = 'vmbackup';
+// default files.
+$plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
+$script_path = $plugin_source_path . '/scripts';
+$command_script_file = $script_path . '/commands.sh';
+$default_script_file = $script_path . '/default-script.sh';
+$default_conf_file = $plugin_source_path . '/default.cfg';
+// user files.
+$plugin_path = '/boot/config/plugins/' . $plugin;
+$user_script_file = $plugin_path . '/user-script.sh';
+$user_conf_file = $plugin_path . '/user.cfg';
+// generated files.
+$vm_list = $plugin_path . '/vm-list.txt';
+$vdisk_list = $plugin_path . '/vdisk-list.txt';
+
+// create text files containing a list of vms and a list of vdisks respectively.
+exec("$command_script_file create_vm_lists");
+
+// see if user config file already exists.
+if (!is_file($user_conf_file)) {
+
+  // if not, create it from the default config file.
+  if (!copy($default_conf_file, $user_conf_file)) {
+    echo "failed to create user config file.\n";
+
+  } else {
+
+    // parse user config file.
+    $conf_array = parse_ini_file($user_conf_file);
+  }
+
+} else {
+
+  // if so, get an array of the user config settings with any new default config settings added to it.
+  $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
+
+  // create user config file contents from new array.
+  $user_conf_contents = create_ini_file($user_conf_array);
+  
+  // write new config contents variable as the new user config.
+  file_put_contents($user_conf_file, $user_conf_contents);
+
+  // parse user config file.
+  $conf_array = parse_ini_file($user_conf_file);
+}
+
+// see if user script already exists.
+if (!is_file($user_script_file)) {
+  
+  // if not, create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
+
+} else {
+  
+  // if not, create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
+}
+
+// get vm and vdisk lists as arrays.
+$vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$vdisk_list_array = parse_ini_file($vdisk_list);
+
+?>
+
+<!-- import javascript sources -->
+<script type="text/javascript" src="<?=autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
+<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/functions.js')?>"></script>
+
+<!-- import stylesheets -->
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.filetree.css')?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
+
+<!-- apply css -->
+<style>
+  /* set fileTree properties */
+  .fileTree {
+    width:300px;
+    max-height:150px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    position:absolute;
+    z-index:100;
+    display:none;
+  }
+
+  /* set cursor for help */
+  .help {
+    cursor:help;
+  }
+
+  /* set border color for failed validation */
+  input:invalid {
+    border-color: red;
+  }
+</style>
+
+<!-- run jquery/javascript -->
+<script type="text/javascript">
+  // function to prepare form for submission.
+  function prepare_form(form) {
+  // make vdisks to skip a comma separated list for user config.
+    var vdisks_to_skip = '';
+    for (var i=0,item; item=form.vdisks_to_skip.options[i]; i++) {
+      if (item.selected) {
+        if (vdisks_to_skip.length) vdisks_to_skip += ',';
+        vdisks_to_skip += item.value;
+        item.selected = false;
+      }
+    }
+    item = form.vdisks_to_skip.options[0];
+    item.value = vdisks_to_skip;
+    item.selected = true;
+    
+    // make vms to backup a comma separated list for user config.
+    var vms_to_backup = '';
+    for (var i=0,item; item=form.vms_to_backup.options[i]; i++) {
+      if (item.selected) {
+        if (vms_to_backup.length) vms_to_backup += ',';
+        vms_to_backup += item.value;
+        item.selected = false;
+      }
+    }
+    item = form.vms_to_backup.options[0];
+    item.value = vms_to_backup;
+    item.selected = true;
+    
+    // make vms to backup running a comma separated list for user config.
+    var vms_to_backup_running = '';
+    for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
+      if (item.selected) {
+        if (vms_to_backup_running.length) vms_to_backup_running += ',';
+        vms_to_backup_running += item.value;
+        item.selected = false;
+      }
+    }
+    item = form.vms_to_backup_running.options[0];
+    item.value = vms_to_backup_running;
+    item.selected = true;
+
+    //remove whitespace and prepare comma separated lists.
+    var input = document.getElementById('vdisk_extensions_to_skip');
+    input.value = remove_list_whitespace(input.value);
+  }
+
+  // function to set the label vms_to_backup based on backup_all_vms value.
+  function set_vms_to_backup_lbl() {
+    if ($('#backup_all_vms').val() == "0") {
+      $("label[for=vms_to_backup]").text("List VMs to backup:");
+    } else if ($('#backup_all_vms').val() == "1") {
+      $("label[for=vms_to_backup]").text("List VMs to exclude:");
+    }
+  }
+
+  // function to toggle custom cron regex.
+  function toggle_cron_regex() {
+    if ($('#disable_cron_regex').val() == "0") {
+      change_attr("#custom", "pattern", basic_cron_regex());
+    } else if ($('#disable_cron_regex').val() == "1") {
+      $("#custom").removeAttr("pattern");
+    }
+  }
+
+  // function to toggle restrictive regex.
+  function toggle_restrictive_regex() {
+    if ($('#disable_restrictive_regex').val() == "0") {
+      change_attr("#backup_location", "pattern", "^\\/mnt\\/([\\w.-]*)+(\\/[\\w.-]*)*\\/$");
+      change_attr("#number_of_days_to_keep_backups", "pattern", "^(0|([7-9]|[1-8][0-9]|9[0-9]|1[0-7][0-9]|180))$");
+      change_attr("#number_of_backups_to_keep", "pattern", "^(0|([2-9]|[1-3][0-9]|40))$");
+      change_attr("#number_of_log_files_to_keep", "pattern", "^(0|([1-9]|[1-3][0-9]|40))$");
+      change_attr("#number_of_error_log_files_to_keep", "pattern", "^(0|([2-9]|[1-3][0-9]|40))$");
+      change_attr("#clean_shutdown_checks", "pattern", "^([5-9]|[1-4][0-9]|50)$");
+      change_attr("#seconds_to_wait", "pattern", "^([3-8][0-9]|9[0-9]|[1-5][0-9]{2}|600)$");
+    } else if ($('#disable_restrictive_regex').val() == "1") {
+      change_attr("#backup_location", "pattern", "^\\/([\\w.-]*)+(\\/[\\w.-]*)*\\/$");
+      change_attr("#number_of_days_to_keep_backups", "pattern", "^(0|([1-9])+(\\d+)?)$");
+      change_attr("#number_of_backups_to_keep", "pattern", "^(0|([1-9])+(\\d+)?)$");
+      change_attr("#number_of_log_files_to_keep", "pattern", "^(0|([1-9])+(\\d+)?)$");
+      change_attr("#number_of_error_log_files_to_keep", "pattern", "^(0|([1-9])+(\\d+)?)$");
+      change_attr("#clean_shutdown_checks", "pattern", "^([1-9])+(\\d+)?$");
+      change_attr("#seconds_to_wait", "pattern", "^([1-9])+(\\d+)?$");
+    }
+  }
+
+  // function to enable and set validation for page elements.
+  function set_validation() {
+    // set validation message for each page element, as well as a custom error message.
+    add_validation_events('backup_location','Path must be located in /mnt/, or disable restrictive validation. Must contain a trailing slash. Cannot be blank.')
+    add_validation_events('number_of_days_to_keep_backups','Please input a zero, a number from 7-180, or disable restrictive validation. Cannot be blank.')
+    add_validation_events('number_of_backups_to_keep','Please input a zero, a number from 2-40, or disable restrictive validation. Cannot be blank.')
+    add_validation_events('custom','Please enter a valid cron statement, or disable cron validation. Cannot be blank.')
+    add_validation_events('vdisk_extensions_to_skip','This should be blank, or a comma separated list.')
+    add_validation_events('number_of_log_files_to_keep','Please input a zero, a number from 1-40, or disable restrictive validation. Cannot be blank.')
+    add_validation_events('log_file_subfolder','Path must be relative (no leading slash), and contain a trailing slash. Cannot be blank.')
+    add_validation_events('number_of_error_log_files_to_keep','Please input a zero, a number from 2-40, or disable restrictive validation. Cannot be blank.')
+    add_validation_events('clean_shutdown_checks','Please input a number from 5-50, or disable restrictive validation. Cannot be blank.')
+    add_validation_events('seconds_to_wait','Please input a number from 30-600, or disable restrictive validation. Cannot be blank.')
+    add_validation_events('snapshot_extension','Please enter a valid extension. Cannot be blank.')
+  }
+
+  // function executed when frequency control is set.
+  function backup_frequency() {
+    if ($('#frequency').val() == "disabled") {
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", true);
+      change_attr("#minute", "disabled", true);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "daily") {
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "weekly") {
+      change_attr("#week", "disabled", false);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "monthly") {
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", false);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    } else if ($('#frequency').val() == "custom") {
+      change_attr("#week", "disabled", true);
+      change_attr("#month", "disabled", true);
+      change_attr("#hour", "disabled", true);
+      change_attr("#minute", "disabled", true);
+      change_attr("#custom", "disabled", false);
+    } else {
+      change_attr("#week", "disabled", false);
+      change_attr("#month", "disabled", false);
+      change_attr("#hour", "disabled", false);
+      change_attr("#minute", "disabled", false);
+      change_attr("#custom", "disabled", true);
+    }
+  }
+
+  // main function executed at page load.
+  $(function() {
+    // add file tree to inputs.
+    $("#backup_location").fileTreeAttach();
+    //configure dropdown checklists.
+    $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    // set the regex pattern each element should use.
+    toggle_cron_regex();
+    toggle_restrictive_regex();
+    // set the validation for each element.
+    set_validation();
+    // set the initial attributes for cron controls.
+    backup_frequency();
+    // set the label for vms_to_backup based on backup_all_vms.
+    set_vms_to_backup_lbl();
+  });
+</script>
+
+<div style="width:90%; float:left">
+  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
+    <input type="hidden" name="#file" value="vmbackup/user.cfg">
+    <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+    <input type="hidden" name="#arg[1]" value="update_user_script">
+
+    <!-- basic settings -->
+    <div markdown="1" style="width:45%; float:left">
+    <div id="title" class="nocontrol">Basic Settings</div>
+
+      Enable backups?
+      : <select name="enabled" size="1">
+        <?=mk_option($conf_array['enabled'], "0", "No");?>
+        <?=mk_option($conf_array['enabled'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Must be set to 'Yes' to enable backups.
+        <br>Set to 'No' to disable backups without disabling the schedule.</p>
+      </blockquote>
+
+
+      Set backup location:
+      : <input type="text" id="backup_location" name="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="^\/mnt\/([\w.-]*)+(\/[\w.-]*)*\/$" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true" required>
+      <blockquote class="inline_help">
+        <p>Folder location to save backups. Must be full path.</p>
+        <ul>
+          <li>This should be a share you have already created.</li>
+          <li>Each VM will have a subfolder made for it in this location.</li>
+        </ul>
+      </blockquote>
+
+
+      Backup all VMs?
+      : <select id="backup_all_vms" name="backup_all_vms" size="1" onchange="set_vms_to_backup_lbl()">
+        <?=mk_option($conf_array['backup_all_vms'], "0", "No");?>
+        <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to backup all VMs.</p>
+        <ul>
+          <li>When set to 'No', "List VMs to backup" will be used to determine which VMs to backup.</li>
+          <li>When set to 'Yes', "List VMs to backup" will be used as a list of VMs to exclude from the backup.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
+
+
+      <label for="vms_to_backup" class="help">List VMs to backup:</label>
+      : <select id="vms_to_backup" name="vms_to_backup" size="1" multiple="multiple" style="display:none">
+        <?foreach ($vm_list_array as $vm):?>
+          <?=mk_option_check($conf_array['vms_to_backup'], $vm, $vm)?>
+        <?endforeach;?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Comma separated list of VM names to backup.
+        <br>If "Backup all VMs" is set to 'Yes', then this list will be used as a list of VMs to exclude from the backup.</p>
+        <ul>
+          <li>Names should be the same names used in the configs.</li>
+        </ul>
+      </blockquote>
+
+
+      Number of days to keep backups:
+      : <input type="text" id="number_of_days_to_keep_backups" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>" pattern="^(0|([7-9]|[1-8][0-9]|9[0-9]|1[0-7][0-9]|180))$">
+
+      <blockquote class="inline_help">
+        <p>Set this to the number of days backups should be kept.
+        <br>'0' means indefinitely.</p>
+        <ul>
+          <li>Default is '0'.</li>
+        </ul>
+      </blockquote>
+
+
+      Number of backups to keep:
+      : <input type="text" id="number_of_backups_to_keep" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$">
+      
+      <blockquote class="inline_help">
+        <p>Set this to the number of backups that should be kept.
+        <br>'0' means indefinitely.</p>
+        <ul>
+          <li>WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).</li>
+          <li>Default is '0'.</li>
+        </ul>
+      </blockquote>
+
+    </div>
+
+
+    <!-- schedule -->
+    <div markdown="1" style="width:45%; float:left">
+    <div id="title" class="nocontrol">Schedule</div>
+
+      Backup Frequency:
+      : <select id="frequency" name="frequency" size="1" onchange="backup_frequency()">
+        <?=mk_option($conf_array['frequency'], "disabled", "Disabled");?>
+        <?=mk_option($conf_array['frequency'], "daily", "Daily");?>
+        <?=mk_option($conf_array['frequency'], "weekly", "Weekly");?>
+        <?=mk_option($conf_array['frequency'], "monthly", "Monthly");?>
+        <?=mk_option($conf_array['frequency'], "custom", "Custom");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to the desired backup frequency.</p>
+        <ul>
+          <li>Selecting 'Custom' will allow for a custom Cron setting.</li>
+        </ul>
+      </blockquote>
+
+
+      Day of the Week:
+      : <select id="week" name="week" size="1">
+        <?=mk_option($conf_array['week'], "0", "Sunday");?>
+        <?=mk_option($conf_array['week'], "1", "Monday");?>
+        <?=mk_option($conf_array['week'], "2", "Tuesday");?>
+        <?=mk_option($conf_array['week'], "3", "Wednesday");?>
+        <?=mk_option($conf_array['week'], "4", "Thursday");?>
+        <?=mk_option($conf_array['week'], "5", "Friday");?>
+        <?=mk_option($conf_array['week'], "6", "Saturday");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set the day of the week to perform the backup.</p>
+      </blockquote>
+
+
+      Day of the Month:
+      : <select id="month" name="month" size="1">
+        <?php
+          $days = create_number_array(1,31,"2");
+          foreach($days as $key => $value) {
+        ?>
+            <?=mk_option($conf_array['month'], $value, $key);?>
+          <?php
+          }
+          ?>
+      </select>
+
+      <blockquote class="inline_help">
+        </p>Set the day of the month to perform the backup.</p>
+      </blockquote>
+
+
+      Hour:
+      : <select id="hour" name="hour" size="1">
+        <?php
+          $days = create_number_array(0,23,"2");
+          foreach($days as $key => $value) {
+        ?>
+            <?=mk_option($conf_array['hour'], $value, $key);?>
+          <?php
+          }
+          ?>
+      </select>
+
+    <blockquote class="inline_help">
+      <p>Set the hour to perform the backup.</p>
+    </blockquote>
+
+
+      Minute:
+      : <select id="minute" name="minute" size="1">
+        <?php
+          $days = create_number_array(0,59,"2");
+          foreach($days as $key => $value) {
+        ?>
+            <?=mk_option($conf_array['minute'], $value, $key);?>
+          <?php
+          }
+          ?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set the minute to perform the backup.</p>
+      </blockquote>
+
+
+      Custom Cron:
+      : <input type="text" id="custom" name="custom" class="narrow" maxlength="100" value="<?=$conf_array['custom'];?>" required>
+
+      <blockquote class="inline_help">
+        <p>Set a custom Cron schedule.</p>
+      </blockquote>
+
+    </div>
+
+
+    <!-- advanced settings -->
+    <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Settings</div>
+    <div markdown="1" style="width:45%; clear:both; float:left">
+
+      List vdisks to skip:
+      : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
+        <?foreach ($vdisk_list_array as $key => $value):?>
+          <?=mk_option_check($conf_array['vdisks_to_skip'], $key, $value)?>
+        <?endforeach;?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Comma separated list of specific vdisks to skip.
+        <br>Full path must be used.</p>
+        <ul>
+          <li>IMPORTANT: Path must match path used in config.</li>
+          <li>IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.</li>
+        </ul>
+      </blockquote>
+
+
+      List vdisk extensions to skip:
+      : <input type="text" id="vdisk_extensions_to_skip" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>" pattern="^([\w.-]*)(,\s{0,1}[\w.-]+)*$">
+
+      <blockquote class="inline_help">
+        <p>Comma separated list of vdisk extensions to skip.</p>
+        <ul>
+          <li>WARNING: Choosing an extension that is the same as one of your vdisks will cause it not to be backed up.</li>
+          <li>iso extensions are skipped by default.</li>
+        </ul>
+      </blockquote>
+
+
+      Enable snapshots?
+      : <select id="use_snapshots" name="use_snapshots" size="1">
+        <?=mk_option($conf_array['use_snapshots'], "0", "No");?>
+        <?=mk_option($conf_array['use_snapshots'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.</p>
+        <ul>
+          <li>WARNING: This will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.</li>
+          <li>IMPORTANT: It is highly recommended that you install the qemu guest agent on your VMs before using snapshots to ensure the integrity of your backups.</li>
+          <li>If a VM is already shutdown the default backup method will be used instead.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
+
+      Compress backups?
+      : <select id="compress_backups" name="compress_backups" size="1">
+        <?=mk_option($conf_array['compress_backups'], "0", "No");?>
+        <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to compress backups.</p>
+        <ul>
+          <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
+          <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
+          <li>Compression uses tar.gz for sparse file compatibility.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
+
+      Enable reconstruct write?
+      : <select id="enable_reconstruct_write" name="enable_reconstruct_write" size="1">
+        <?=mk_option($conf_array['enable_reconstruct_write'], "0", "No");?>
+        <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.</p>
+        <ul>
+          <li>IMPORTANT: Do not use if reconstruct write is already enabled.</li>
+          <li>IMPORTANT: May break auto functionality whenever it is implemented.</li>
+          <li>When set to 'Yes', reconstruct write will be disabled after the backup finishes.</li>
+          <li>Backups may run faster with this enabled.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
+
+    </div>
+
+    <div markdown="1" style="width:90%; clear:both; float:left">
+     <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
+      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+    </div>
+  </form>
+</div>

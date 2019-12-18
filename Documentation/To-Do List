@@ -4,4 +4,12 @@
 #  - option to backup vdisks using full paths. will resolve issues with unique names.
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
-#  - ignore/change number of backups to keep and number of days to keep backups warnings
+#  - ignore/change number of backups to keep and number of days to keep backups warnings.
+#  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
+#  - ability to do multiple script variations/schedules.
+#  - move some of the settings alerts to php form validation instead.
+#  - set up separate css stylesheets.
+#  - add file version checks.
+#  - ability to edit script run variables such as noParity.
+#  - update script to use xmlstarlet.
+#  - update readme to include more explanation, as well as field names.

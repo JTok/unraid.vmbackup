@@ -3,7 +3,7 @@
 #arrayStarted=true
 #noParity=true
 
-# v1.2.0 - 2019/11/27
+# v0.1.4 - 2019/12/18
 
 #### DISCLAIMER ####
 # Use at your own risk. This is a work-in-progress and provided as is.
@@ -12,7 +12,7 @@
 
 
 # what is the scripts' official name.
-official_script_name="script"
+official_script_name="no_config"
 
 # set the name of the script to a variable so it can be used.
 me=$(basename "$0")
@@ -24,145 +24,138 @@ me=$(basename "$0")
 ################################################## script variables start ######################################################
 
 # default 0 but set the master switch to 1 if you want to enable the script otherwise it will not run.
-enabled="0"
+enabled="no_config"
 
 # backup location to put vdisks.
-backup_location="/mnt/user/share/backup_folder/"
+backup_location="no_config"
 
-# default is 0. backup all vms or use vms_to_backup. when set to 1, vms_to_backup will be ignored.
-backup_all_vms="0"
+# default is 0. backup all vms or use vms_to_backup.
+# when set to 1, vms_to_backup will be used as an exclusion list.
+backup_all_vms="no_config"
 
 # list of vms that will be backed up separated by a new line.
-vms_to_backup="
-vm1
-vm2
-"
+# if backup_all_vms is set to 1, this will be used as a list of vms to exclude instead.
+vms_to_backup="no_config"
 
 # list of specific vdisks to be skipped separated by a new line. use the full path.
 # NOTE: must match path in vm config file. remember this if you change the virtual disk path to enable snapshots.
-vdisks_to_skip="
-/mnt/user/domains/vm1/vdisk2.img
-/mnt/user/domains/vm1/vdisk3.img
-"
+vdisks_to_skip="no_config"
 
 # list of specific vdisk extensions to be skipped separated by a new line. this replaces the old ignore_isos variable.
-vdisk_extensions_to_skip="
-iso
-"
+vdisk_extensions_to_skip="no_config"
 
 # default is 0. use snapshots to backup vms.
 # NOTE: vms that are backed up using snapshots will not be shutdown. if a vm is already shutdown the default backup method will be used.
 # NOTE: it is highly recommended that you install the qemu guest agent on your vms before using snapshots to ensure the integrity of your backups.
 # WARNING: this will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.
-use_snapshots="0"
+use_snapshots="no_config"
 
 # default is 0. set this to 1 if you would like to kill a vm if it cant be shutdown cleanly.
-kill_vm_if_cant_shutdown="0"
+kill_vm_if_cant_shutdown="no_config"
 
 # default is 1. set this to 0 if you do not want a vm to be started if it was running before the backup started. Paused VMs will be left stopped.
-set_vm_to_original_state="1"
+set_vm_to_original_state="no_config"
 
 # default is 0. set this to the number of days backups should be kept. 0 means indefinitely.
-number_of_days_to_keep_backups="0"
+number_of_days_to_keep_backups="no_config"
 
 # default is 0. set this to the number of backups that should be kept. 0 means infinitely.
 # WARNING: If VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
-number_of_backups_to_keep="0"
+number_of_backups_to_keep="no_config"
 
 # default is 0. set this to 1 if you would like to compress backups. This can add a significant amount of time to the backup process. uses tar.gz for sparse file compatibility.
 # WARNING: do not turn on if you already have uncompressed backups. You will need to move or delete uncompressed backups before using. this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
-compress_backups="0"
+compress_backups="no_config"
 
 # default is 1. set this to 0 if you would like to have backups without a timestamp. Timestamps are dropped only when number_of_backups_to_keep is equal to 1.
-timestamp_files="1"
+timestamp_files="no_config"
 
 
 #### logging and notifications ####
 
 # default is 1. set to 0 to have log file deleted after the backup has completed.
 # NOTE: error logs are separate. settings for error logs can be found in the advanced variables.
-keep_log_file="1"
+keep_log_file="no_config"
 
 # default is 1. number of successful log files to keep. 0 means infinitely.
-number_of_log_files_to_keep="1"
+number_of_log_files_to_keep="no_config"
 
 # default is "logs". set to "" to put in root of backups folder. set to "logs/<subfolder>" to keep logs separate if running multiple versions of this script.
-log_file_subfolder="logs"
+log_file_subfolder="no_config"
 
 # default is 1. set to 0 to prevent notification system from being used. Script failures that occur before logging can start, and before this variable is validated will still be sent.
-send_notifications="1"
+send_notifications="no_config"
 
 # default is 0. set to 1 to receive more detailed notifications. will not work with send_notifications disabled or only_send_error_notifications enabled.
-detailed_notifications="0"
+detailed_notifications="no_config"
 
 
 #### advanced variables ####
 
 # default is snap. extension used when creating snapshots.
 # WARNING: do not choose an extension that is the same as one of your vdisks or the script will error out. cannot be blank.
-snapshot_extension="snap"
+snapshot_extension="no_config"
 
 # default is 0. fallback to standard backup if snapshot creation fails.
 # NOTE: this will act as though use_snapshots was disabled for just the vm with the failed snapshot command.
-snapshot_fallback="0"
+snapshot_fallback="no_config"
 
 # default is 0. pause vms instead of shutting them down during standard backups.
 # WARNING: this could result in unusable backups, but I have not thoroughly tested.
-pause_vms="0"
+pause_vms="no_config"
 
 # list of vms that will be backed up WITHOUT first shutting down separated by a new line. these must also be listed in vms_to_backup.
 # NOTE: vms backed up via snapshot will not be shutdown (see use_snapshots option).
 # WARNING: using this setting can result in an unusable backup. not recommended.
-vms_to_backup_running="
-"
+vms_to_backup_running="no_config"
 
 # default is 0. set to 1 to have reconstruct write (a.k.a. turbo write) enabled during the backup and then disabled after the backup completes.
 # NOTE: may break auto functionality when it is implemented. do not use if reconstruct write is already enabled. backups may run faster with this enabled.
-enable_reconstruct_write="0"
+enable_reconstruct_write="no_config"
 
 # default is 0. set this to 1 to compare files after copy and run rsync in the event of failure. could add significant amount of time depending on the size of vms.
-compare_files="0"
+compare_files="no_config"
 
 # default is 1. set to 0 if you would like to skip backing up xml configuration files.
-backup_xml="1"
+backup_xml="no_config"
 
 # default is 1. set to 0 if you would like to skip backing up nvram files.
-backup_nvram="1"
+backup_nvram="no_config"
 
 # default is 1. set to 0 if you would like to skip backing up vdisks. setting this to 0 will automatically disable compression.
-backup_vdisks="1"
+backup_vdisks="no_config"
 
 # default is 0. set this to 1 if you would like to start a vm after it has successfully been backed up. will override set_vm_to_original_state when set to 1.
-start_vm_after_backup="0"
+start_vm_after_backup="no_config"
 
 # default is 0. set this to 1 if you would like to start a vm after it has failed to have been backed up. will override set_vm_to_original_state when set to 1.
-start_vm_after_failure="0"
+start_vm_after_failure="no_config"
 
 # default is 0. set this to 1 to disable rsync delta syncs.
-disable_delta_sync="0"
+disable_delta_sync="no_config"
 
 # default is 0. set this to 1 to always use rsync instead of cp.
 # NOTE: rsync was significantly slower in my tests.
-rsync_only="0"
+rsync_only="no_config"
 
 # default is 1. set this to 0 if you would like to perform a dry-run backup. 
 # NOTE: dry run will not work unless rsync_only is set to 1. if this is set to 1 rsync_only will be set to 1.
-actually_copy_files="1"
+actually_copy_files="no_config"
 
 # default is 20. set this to the number of times you would like to check if a clean shutdown of a vm has been successful.
-clean_shutdown_checks="20"
+clean_shutdown_checks="no_config"
 
 # default is 30. set this to the number of seconds to wait in between checks to see if a clean shutdown has been successful.
-seconds_to_wait="30"
+seconds_to_wait="no_config"
 
 # default is 1. set to 0 to have error log files deleted after the backup has completed.
-keep_error_log_file="1"
+keep_error_log_file="no_config"
 
 # default is 10. number of error log files to keep. 0 means infinitely.
-number_of_error_log_files_to_keep="10"
+number_of_error_log_files_to_keep="no_config"
 
 # default is 0. set to 1 to only send error notifications.
-only_send_error_notifications="0"
+only_send_error_notifications="no_config"
 
 ################################################## script variables end #########################################################
 
@@ -489,7 +482,7 @@ only_send_error_notifications="0"
             shopt -u extglob
 
             # check to see if a backup already exists for this vdisk and make a copy of it before shutting down the guest.
-            if [ -f "$newest_vdisk_file" ]; then
+            if [[ -f "$newest_vdisk_file" ]]; then
               log_message "information: copy of backup of $newest_vdisk_file vdisk to $backup_location/$vm/$timestamp$new_disk starting." "script starting copy $vm backup" "normal"
 
               # call function copy_files to copy existing backup
@@ -527,6 +520,7 @@ only_send_error_notifications="0"
 
             # check to see if snapshots should be used, and if the vm is running.
             if [ "$use_snapshots" -eq 1 ] && [ "$vm_state" == "running" ]; then
+              snapshot_using_traditional_backup=false
               log_message "information: able to perform snapshot for disk $disk on $vm. use_snapshots is $use_snapshots. vm_state is $vm_state. vdisk_type is ${vdisk_types[$disk]}"
 
               # set variable for qemu agent is installed.
@@ -1012,12 +1006,12 @@ only_send_error_notifications="0"
   backup_location=${backup_location%/}
 
   # check to see if the backup_location specified by the user exists. if yes, continue if no, exit. if exists check if writable, if yes continue, if not exit. if input invalid, exit.
-  if [ -d "$backup_location" ]; then
+  if [[ -d "$backup_location" ]]; then
 
     notification_message "information: backup_location is $backup_location. this location exists. continuing."
 
     # if backup_location does exist check to see if the backup_location is writable.
-    if [ -w "$backup_location" ]; then
+    if [[ -w "$backup_location" ]]; then
 
       notification_message "information: backup_location is $backup_location. this location is writable. continuing."
 
@@ -1085,12 +1079,12 @@ only_send_error_notifications="0"
 
 
   # check to see if the log_file_subfolder specified by the user exists. if yes, continue if no, exit. if exists check if writable, if yes continue, if not exit. if input invalid, exit.
-  if [ -d "$backup_location/$log_file_subfolder" ]; then
+  if [[ -d "$backup_location/$log_file_subfolder" ]]; then
 
     notification_message "information: log_file_subfolder is $backup_location/$log_file_subfolder. this location exists. continuing."
 
     # if log_file_subfolder does exist check to see if the log_file_subfolder is writable.
-    if [ -w "$backup_location/$log_file_subfolder" ]; then
+    if [[ -w "$backup_location/$log_file_subfolder" ]]; then
 
       notification_message "information: log_file_subfolder is $backup_location/$log_file_subfolder. this location is writable. continuing."
 
@@ -1835,6 +1829,63 @@ only_send_error_notifications="0"
 
 #### code execution start ####
 
+  # set this to force the for loop to split on new lines and not spaces.
+  IFS=$'\n'
+
+  # check to see if backup_all_vms is enabled.
+  if [ "$backup_all_vms" -eq 1 ]; then
+    # since we are using backup_all_vms, ignore any vms listed in vms_to_backup.
+    vms_to_ignore="$vms_to_backup"
+
+    # unset vms_to_backup
+    unset -v vms_to_backup
+
+    # get a list of the vm names installed on the system.
+    vm_exists=$(virsh list --all --name)
+
+    # check each vm on the system against the list of vms to ignore.
+    for vmname in $vm_exists
+
+    do
+
+      # assume the vm will not be ignored until it is found in the list of vms to ignore.
+      ignore_vm=false
+
+      for vm in $vms_to_ignore
+      
+      do
+
+        if [ "$vmname" == "$vm" ]; then
+
+          # mark the vm as needing to be ignored.
+          ignore_vm=true
+
+          # skips current loop.
+          continue
+
+        fi
+
+      done
+
+      # if vm should not be ignored, add it to the list of vms to backup.
+      if [[ "$ignore_vm" = false ]]; then
+      
+        if [[ -z "$vms_to_backup" ]]; then
+        
+          vms_to_backup="$vmname"
+
+        else
+          
+          vms_to_backup="$vms_to_backup"$'\n'"$vmname"
+          
+        fi
+
+      fi
+
+    done
+
+  fi
+
   # create comma separated list of vms to backup for log file.
   for vm_to_backup in $vms_to_backup
   
@@ -1854,10 +1905,6 @@ only_send_error_notifications="0"
   
   log_message "information: started attempt to backup $vms_to_backup_list to $backup_location"
 
-  # set this to force the for loop to split on new lines and not spaces.
-  IFS=$'\n'
-
-
   # check to see if reconstruct write should be enabled by this script. if so, enable and continue.
   if [ "$enable_reconstruct_write" -eq 1 ]; then
 
@@ -1865,34 +1912,6 @@ only_send_error_notifications="0"
     log_message "information: Reconstruct write enabled."
 
   fi
-
-  # check to see if backup_all_vms is enabled. if so, set vms_to_backup equal to all vms.
-  if [ "$backup_all_vms" -eq 1 ]; then
-    # unset vms_to_backup
-    unset -v vms_to_backup
-
-    # get a list of the vm names installed on the system.
-    vm_exists=$(virsh list --all --name)
-
-    # add each vm name to vms_to_backup.
-    for vmname in $vm_exists
-
-    do
-
-      if [[ -z "$vms_to_backup" ]]; then
-      
-        vms_to_backup="$vmname"
-
-      else
-        
-        vms_to_backup="$vms_to_backup"$'\n'"$vmname"
-        
-      fi
-
-    done
-
-  fi
-
 
   # loop through the vms in the list and try and back up their associated configs and vdisk(s).
   for vm in $vms_to_backup
@@ -1941,11 +1960,13 @@ only_send_error_notifications="0"
     fi
 
     # see if a config file exists for the vm already and remove it.
-    if [ -f "$vm.xml" ]; then
+    if [[ -f "$vm.xml" ]]; then
+      log_message "information: removing old local $vm.xml."
       rm -fv "$vm.xml"
     fi
 
     # dump the vm config locally.
+    log_message "information: creating local $vm.xml to work with during backup."
     virsh dumpxml "$vm" > "$vm.xml"
 
     # replace xmlns value with absolute URI to avoid namespace warning.
@@ -2262,7 +2283,7 @@ only_send_error_notifications="0"
 
             # remove any existing list of files to be backup and create a blank backup file list.
             if [[ -f "$backup_file_list" ]]; then
-                rm "$backup_file_list"
+                rm -fv "$backup_file_list"
             fi
 
             log_message "information: creating blank backup file list at $backup_file_list."
@@ -2296,7 +2317,7 @@ only_send_error_notifications="0"
 
             # remove backup file list.
             log_message "information: removing backup file list at $backup_file_list."
-            rm "$backup_file_list"
+            rm -fv "$backup_file_list"
 
             log_message "information: finished creating new tarball."
             
@@ -2326,7 +2347,7 @@ only_send_error_notifications="0"
 
           # remove any existing list of files to be backup and create a blank file.
           if [[ -f "$backup_file_list" ]]; then
-            rm "$backup_file_list"
+            rm -fv "$backup_file_list"
           fi
 
           log_message "information: creating blank backup file list at $backup_file_list."
@@ -2360,7 +2381,7 @@ only_send_error_notifications="0"
 
           # remove backup file list.
           log_message "information: removing backup file list at $backup_file_list."
-          rm "$backup_file_list"
+          rm -fv "$backup_file_list"
 
           log_message "information: finished creating new tarball."
 
@@ -2851,7 +2872,8 @@ only_send_error_notifications="0"
     fi
 
     # delete the working copy of the config.
-    rm "$vm.xml"
+    log_message "information: removing local $vm.xml."
+    rm -fv "$vm.xml"
 
   done
 
