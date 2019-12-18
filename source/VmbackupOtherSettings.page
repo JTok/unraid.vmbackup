@@ -58,7 +58,7 @@ Icon="clone"
 
 
       Log file subfolder:
-      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/]([\w.-]*)+(\/[\w.-]*)*[\/]$" required>
+      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/]([\w.-]*)+(\/[\w.-]*)*[\/]$">
 
       <blockquote class="inline_help">
         <p>Choose a folder name for storing logs.</p>
