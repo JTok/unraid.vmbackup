@@ -4,7 +4,7 @@ v0.1.1 - Development
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
-Currently the plugin is in a relatively stable state, and most of the features have been implemented. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
+Currently the plugin is in beta. Most of the features have been implemented. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
 
 ## Important
 
@@ -13,21 +13,47 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 ## Installation
 
-- Add the script and description files to the CA User Scripts plugin. No other files are necessary to make the script work.
+- Install the plugin using Community Applications, or the link below:
 
-- Set the variables in the script file.
+  - [https://raw.githubusercontent.com/jtok/unraid.vmbackup/development/vmbackup.plg](https://raw.githubusercontent.com/jtok/unraid.vmbackup/development/vmbackup.plg "unraid.vmbackups plugin")
 
-  - be sure to set enabled = "1" to ensure that the script will run.
+- Choose your settings by going to Settings -> VM Backup.
 
-  - to enable the script while parity check is running change line 4 from "noParity=true" to "noParity=false"
+  - make certain to read the help for each setting you want to change before changing it.
 
-- Choose a schedule in the CA User Scripts plugin.
+  - be sure to set "Enable backups?" to 'Yes' to ensure that your backups will run.
 
-### Script options
+  - also make certain to disable the script version in user.scripts if you are still using that version.
+
+  - currently the plugin cannot be configured to run a backup while parity is running.
+
+  - set a schedule.
+
+### Settings
+
+#### Basic Settings
+
+- Enable backups.
 
 - Choose a backup location.
 
 - Choose to backup all VMs, or list specific VMs to be backed up.
+
+  - If backup all VMs is enabled, the list of VMs to backup is used as an exclusion list instead.
+
+- Choose the number of days to keep backups.
+
+- Choose the number backups to keep.
+
+#### Schedule
+
+- Choose a backup frequency.
+
+  - Use dropdown boxes specify when backups should occur.
+
+  - Use "Custom Cron" field to create a backup schedule based on [crontab](https://crontab.guru/ "crontab guru").
+
+#### Advanced Settings
 
 - List specific vdisks to skip, if any.
 
@@ -39,31 +65,25 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
   - the disk path in the VM config cannot be /mnt/user, but instead must be /mnt/cache or /mnt/diskX.
 
-- Option to kill a VM that won't shutdown cleanly.
+- Option to compress backups.
 
-#### VM restart options
+- Option to enable reconstruct write during backups.
 
-- Option to have VMs start after backup based on their previous state.
+### Other Settings
 
-- Advanced: Option to have VMs start after successful backup regardless of previous state.
+#### Logging
 
-- Advanced: Option to have VMs start after failed backup regardless of previous state.
+- Option to keep log files from successful backups.
 
-#### Backup retention options
+- Change the number of log files to keep.
 
-- Choose the number of days to keep backups.
+- Change the log file subfolder, or choose not to use one.
 
-- Choose the number backups to keep.
+- Change the number of error log files to keep.
 
-#### Logging and notification options
+#### Notifications
 
-- Option to log to file.
-
-- Choose the number of log files to keep.
-
-- Option to log messages through unRAID notification system.
-
-  - Option to only receive error notifications
+- Option to send notifications through unRAID notification system.
 
   - Option to receive detailed notifications.
 
@@ -71,44 +91,58 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
     - sends notifications when old backups are deleted.
 
-#### Additional options
+  - Option to only receive error notifications.
 
-- Option to compress backups.
+#### Advanced Features
 
 - Option to timestamp backups.
+
+- Option to compare files and retry backup in the event of failure.
 
 - Option to disable delta syncs.
 
 - Option to only use rsync.
 
-- Advanced: Choose the extension used for snapshots.
+- Change the number of times to check if a VM is shut down.
 
-- Advanced: Option to fallback to standard backups if snapshot creation fails.
+- Change the number of seconds to wait between checks to see if a VM is shut down.
 
-- Advanced: Option to pause VMs instead of shutting them down during standard backups. Could result in unusable backups.
+#### Danger Zone
 
-- Advanced: Option to keep specific VMs running during backup. Not recommended.
+- Option to keep log files from failed backups.
 
-- Advanced: Option to enable reconstruct write during backups.
+- Option to kill a VM that won't shutdown cleanly.
 
-- Advanced: Option to compare files and retry backup in the event of failure.
+- Option to have VMs start after backup based on their previous state.
 
-- Advanced: Option to skip backing up xml configuration.
+- Change the extension used for snapshots.
 
-- Advanced: Option to skip backing up nvram.
+- Option to fallback to standard backups if snapshot creation fails.
 
-- Advanced: Option to skip backing up vdisks.
+- Option to pause VMs instead of shutting them down during standard backups. Could result in unusable backups.
 
-- Advanced: Choose the number of times to check if a VM is shut down.
+- List specific VMs to keep running during backup. Not recommended.
 
-- Advanced: Choose the number of seconds to wait between checks to see if a VM is shut down.
+- Option to skip backing up xml configuration.
+
+- Option to skip backing up nvram.
+
+- Option to skip backing up vdisks.
+
+- Option to have VMs start after successful backup regardless of previous state.
+
+- Option to have VMs start after failed backup regardless of previous state.
+
+- Option to perform a dry-run backup.
+
+- Disable validation for the custom cron text box.
+
+- Disable restrictive validation for the other text fields.
 
 ##### Disclaimer
 
-I do not make any guarantees as to the function of this script. It is provided as-is. Use at your own risk.
+I do not make any guarantees as to the function of this plugin. It is provided as-is. Use at your own risk.
 
-###### Originally from unraid-autovmbackup by Daniel Jackson (danioj) [here](https://lime-technology.com/forums/topic/46281-unraid-autovmbackup-automate-backup-of-virtual-machines-in-unraid-v04/ "unraid-autovmbackup")
+###### Based on unraid-vmbackup by JTok [here](https://github.com/JTok/unraid-vmbackup "unraid-vmbackup JTok's script")
 
-###### Includes additions for removing old backups added by Deeks [here](https://lime-technology.com/forums/topic/46281-unraid-autovmbackup-automate-backup-of-virtual-machines-in-unraid-v04/?do=findComment&comment=589821 "unraid-autovmbackup Deeks' script")
-
-###### Includes additions for creating snapshots added by Dikkekop (thies88) [here](https://github.com/thies88/unraid-vmbackup "unraid-vmbackup Dikkekop's script")
+###### Big thanks to all the other plugin developers in the unRAID community, especially (but not limited to) [Squid](https://forums.unraid.net/profile/10290-squid/ "Squid"), [bonienl](https://forums.unraid.net/profile/2736-bonienl/ "bonienl"), [dlandon](https://forums.unraid.net/profile/6013-dlandon/ "dlandon"), and [dmacias](https://forums.unraid.net/profile/11874-dmacias/ "dmacias"); without whose efforts I might not have been able to complete this project
