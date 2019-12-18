@@ -105,9 +105,15 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     overflow-x:hidden;
     position:absolute;
     z-index:100;
-    display:none
+    display:none;
   }
 
+  /* set cursor for help */
+  .help {
+    cursor:help;
+  }
+
+  /* set border color for failed validation */
   input:invalid {
     border-color: red;
   }
@@ -164,9 +170,9 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
   // function to set the label vms_to_backup based on backup_all_vms value.
   function set_vms_to_backup_lbl() {
     if ($('#backup_all_vms').val() == "0") {
-      change_attr('#vms_to_backup_lbl', "innerHTML", "List VMs to backup:")
+      $("label[for=vms_to_backup]").text("List VMs to backup:");
     } else if ($('#backup_all_vms').val() == "1") {
-      change_attr('#vms_to_backup_lbl', "innerHTML", "List VMs to exclude:")
+      $("label[for=vms_to_backup]").text("List VMs to exclude:");
     }
   }
 
@@ -326,7 +332,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       </blockquote>
 
 
-      <label id="vms_to_backup_lbl">List VMs to backup:</label>
+      <label for="vms_to_backup" class="help">List VMs to backup:</label>
       : <select id="vms_to_backup" name="vms_to_backup" size="1" multiple="multiple" style="display:none">
         <?foreach ($vm_list_array as $vm):?>
           <?=mk_option_check($conf_array['vms_to_backup'], $vm, $vm)?>
