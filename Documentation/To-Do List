@@ -12,5 +12,4 @@
 #  - add file version checks.
 #  - ability to edit script run variables such as noParity.
 #  - update script to use xmlstarlet.
-#  - change text for "List VMs to backup" based on "Backup all VMs" setting.
 #  - update readme to include more explanation, as well as field names.
