@@ -5,10 +5,10 @@
 <!ENTITY author     "jtok">
 <!ENTITY version    "2019.12.18">
 <!ENTITY tag        "v0.1.4">
-<!ENTITY branch     "development">
+<!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "laptop-code">
-<!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
+<!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/tree/&tag;">
 <!ENTITY pluginURL  "&gitURL;/&name;.plg">
 <!ENTITY supportURL	"https://forums.unraid.net/">
 <!ENTITY packages 	"/boot/config/plugins/&name;/packages">
@@ -17,21 +17,21 @@
 ]>
 
 <PLUGIN name="&name;"
-    author="&author;"
-    version="&version;"
-    pluginURL="&pluginURL;"
-    support="&supportURL;"
-    launch="&launch;"
-    min="6.7.0"
-    icon="clone">
+  author="&author;"
+  version="&version;"
+  pluginURL="&pluginURL;"
+  support="&supportURL;"
+  launch="&launch;"
+  min="6.7.0"
+  icon="clone">
 
 <CHANGES>
-##&name;
+  ##&name;
 
-###v0.1.2 - Development
- - intial release
-
- </CHANGES>
+  ###v0.1.4 - 2019/12/18
+  - intial beta release
+  - based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
+</CHANGES>
 
 
 <!--
