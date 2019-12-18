@@ -3,7 +3,7 @@
   /* vmbackup plugin
     copyright 2019 JTok */
 
-  // v0.1.0 - Development
+  // v0.1.4 - 2019/12/18
 
 
   // function to return sanitized config file contents, without writing it to a file.
