@@ -2,6 +2,8 @@
 /* vmbackup plugin
   copyright 2019 JTok */
 
+// v0.1.0 - Development
+
 // function to change a specific attribute for a specific control.
 function change_attr(control_name, attr_name, desired_state) {
   $(control_name).attr(attr_name, desired_state);
