@@ -2,7 +2,7 @@
 
 # v0.1.1 - Development
 
-# usage: update_user_script
+# usage: update_user_script, create_vm_lists
 
 
 #### start script functions ####
