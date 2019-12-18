@@ -1,4 +1,4 @@
-# unraid-vmbackup-plugin
+# unraid.vmbackup plugin
 
 ## currently in beta
 
