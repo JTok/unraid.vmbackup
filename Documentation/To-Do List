@@ -13,3 +13,4 @@
 #  - ability to edit script run variables such as noParity.
 #  - update script to use xmlstarlet.
 #  - update readme to include more explanation, as well as field names.
+#  - verify that dry-run does not perform deletions on existing files.
