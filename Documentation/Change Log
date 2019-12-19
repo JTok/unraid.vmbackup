@@ -1,5 +1,11 @@
 ## Change Log ##
 
+# v0.1.6 - 2019/12/18b
+# Powered by Caffeine
+#
+# - fixed spacing in tmp log file.
+# - fixed issue with xml plugin url.
+
 # v0.1.5 - 2019/12/18a
 # This Beer is Tasty
 #

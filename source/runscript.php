@@ -67,9 +67,9 @@
   exec("chmod +x ".escapeshellarg($tmp_user_script_file));
   
   // start logging to tmp log file.
-  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')."Starting VM Backup user-script.sh."."\n", FILE_APPEND);
+  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup user-script.sh."."\n", FILE_APPEND);
   // log the process id of the current process running the script.
-  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')."PID: ".getmypid()."\n", FILE_APPEND);
+  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
 
   // build command to run script with logging.
   $run_cmd = $tmp_user_script_file." >> $tmp_log_file 2>&1";
@@ -78,7 +78,7 @@
   exec($run_cmd);
 
   // end logging to tmp log file.
-  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')."Finished VM Backup user-script.sh."."\n\n", FILE_APPEND);
+  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Finished VM Backup user-script.sh."."\n\n", FILE_APPEND);
 
   // remove tmp user script file.
   unlink($tmp_user_script_file);
