@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Containers>
   <Plugin>True</Plugin>
-  <PluginURL>https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.4;</PluginURL>
+  <PluginURL>https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.5;</PluginURL>
   <PluginAuthor>JTok</PluginAuthor>
   <Beta>True</Beta>
   <Category>Backup: Tools:</Category>
@@ -9,7 +9,7 @@
   <Description>
     Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
   </Description>
-  <Date>2019-12-18</Date>
+  <Date>2019-12-18a</Date>
   <MinVer>6.7.0</MinVer>
   <Support>https://forums.unraid.net/</Support>
   <Icon>clone/Icon>

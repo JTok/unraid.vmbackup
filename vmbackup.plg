@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.18">
-<!ENTITY tag        "v0.1.4">
+<!ENTITY version    "2019.12.18a">
+<!ENTITY tag        "v0.1.5">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "laptop-code">
@@ -28,7 +28,15 @@
 <CHANGES>
 ##&name;
 
+###v0.1.5 - 2019/12/18a
+**This Beer is Tasty**
+
+- fixed issue with runscript.php not being included in plugin package.
+- changed how logging is handled when running the script.
+
 ###v0.1.4 - 2019/12/18
+**Aging Gracelessly**
+
 - intial beta release
 - based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
 </CHANGES>
