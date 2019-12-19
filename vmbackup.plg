@@ -7,7 +7,7 @@
 <!ENTITY tag        "v0.1.6">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
-<!ENTITY icon       "laptop-code">
+<!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL  "&gitURL;/&name;.plg">
 <!ENTITY supportURL	"https://forums.unraid.net/topic/86303-vm-backup-plugin/">
@@ -22,8 +22,8 @@
   pluginURL="&pluginURL;"
   support="&supportURL;"
   launch="&launch;"
-  min="6.7.0"
-  icon="clone">
+  icon="&icon;"
+  min="6.7.0">
 
 <CHANGES>
 ##&name;
