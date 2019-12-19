@@ -10,7 +10,7 @@
 <!ENTITY icon       "laptop-code">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL  "&gitURL;/&name;.plg">
-<!ENTITY supportURL	"https://forums.unraid.net/">
+<!ENTITY supportURL	"https://forums.unraid.net/topic/86303-vm-backup-plugin/">
 <!ENTITY packages 	"/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY MD5	    	"BLANK">
