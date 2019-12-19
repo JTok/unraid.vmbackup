@@ -16,13 +16,25 @@
   $plugin_path = '/boot/config/plugins/' . $plugin;
   $user_script_file = $plugin_path . '/user-script.sh';
   // tmp files.
+  $current_datetime = date('Ymd_His');
   $tmp_plugin_path = '/tmp/vmbackup/scripts';
   $tmp_user_script_file = $tmp_plugin_path . '/user-script.sh';
-  $tmp_log_file = $tmp_plugin_path . '/user-script-log.txt';
+  $tmp_log_file = $tmp_plugin_path . '/'. $current_datetime .'_user-script.log';
 
   // make directory in tmp to run script from.
   exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
-  
+
+  // remove any old logs from the tmp path.
+  $old_logs = glob($tmp_plugin_path . "/*_user-script.log");
+  foreach ($old_logs as $log_file) {
+    unlink($log_file);
+  }
+
+  // check if tmp_user_script_file exists. if so, delete it.
+  if (is_file($tmp_user_script_file)) {
+    unlink($tmp_user_script_file);
+  }
+
   // make sure that the user script file exists.
   if (! is_file($user_script_file)) {
     // if not, exit the script.
@@ -46,7 +58,7 @@
     logger("Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.");
     exit();
   }
-  
+
   // get the contents of the user script file.
   $user_script_contents = file_get_contents($user_script_file);
   
@@ -56,6 +68,8 @@
   
   // start logging to tmp log file.
   file_put_contents($tmp_log_file, date('Y-m-d H:i:s')."Starting VM Backup user-script.sh."."\n", FILE_APPEND);
+  // log the process id of the current process running the script.
+  file_put_contents($tmp_log_file, date('Y-m-d H:i:s')."PID: ".getmypid()."\n", FILE_APPEND);
 
   // build command to run script with logging.
   $run_cmd = $tmp_user_script_file." >> $tmp_log_file 2>&1";
@@ -68,8 +82,5 @@
 
   // remove tmp user script file.
   unlink($tmp_user_script_file);
-
-  // remove tmp log file.
-  unlink($tmp_log_file);
 
 ?>
