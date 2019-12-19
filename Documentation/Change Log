@@ -1,5 +1,11 @@
 ## Change Log ##
 
+# v0.1.5 - 2019/12/18a
+# This Beer is Tasty
+#
+# - fixed issue with runscript.php not being included in plugin package.
+# - changed how logging is handled when running the script.
+
 # v0.1.4 - 2019/12/18
 # Aging Gracelessly
 #

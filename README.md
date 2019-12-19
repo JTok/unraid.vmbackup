@@ -2,7 +2,7 @@
 
 ## currently in beta
 
-v0.1.4 - 2019/12/18
+v0.1.5 - 2019/12/18a
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
@@ -17,7 +17,7 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Install the plugin using Community Applications, or the link below:
 
-  - [https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.4/vmbackup.plg](https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.4/vmbackup.plg "unraid.vmbackups plugin")
+  - [https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.5/vmbackup.plg](https://raw.githubusercontent.com/jtok/unraid.vmbackup/v0.1.5/vmbackup.plg "unraid.vmbackups plugin")
 
 - Choose your settings by going to Settings -> VM Backup.
 
