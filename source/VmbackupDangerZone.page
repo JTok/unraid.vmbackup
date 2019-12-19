@@ -94,6 +94,7 @@ Icon="clone"
         <p>Set to 'Yes' to fallback to standard backup method if snapshot creation fails.</p>
         <ul>
           <li>This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.</li>
+          <li>If a snapshot fails and this is enabled, VMs will be shutdown or paused based on standard backup settings.</li>
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
@@ -126,7 +127,7 @@ Icon="clone"
         <ul>
           <li>WARNING: Using this setting can result in an unusable backup. Not recommended.</li>
           <li>VMs already being backed up using a snapshot will not be shutdown.</li>
-          <li>These must also be listed in "List VMs to backup".</li>
+          <li>These must also be selected as part of the VMs that are going to be backed up.</li>
         </ul>
       </blockquote>
 

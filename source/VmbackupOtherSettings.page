@@ -114,10 +114,11 @@ Icon="clone"
         <p>Set to 'Yes' to receive more detailed notifications.</p>
         <ul>
           <li>Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.</li>
+          <li>Sends notifications when vm backups are started and stopped.</li>
+          <li>Sends notifications when old backups are deleted</li>
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
-
 
       Only send error notifications?
       : <select id="only_send_error_notifications" name="only_send_error_notifications" size="1">
@@ -178,6 +179,7 @@ Icon="clone"
       <blockquote class="inline_help">
         <p>Set to 'Yes' to disable rsync delta syncs.</p>
         <ul>
+          <li>When not using snapshots, delta syncs make a copy of the latest backup and then write just the changes since the last backup.</li>
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
