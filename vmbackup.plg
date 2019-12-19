@@ -30,16 +30,19 @@
 
 ### v0.1.6 - 2019/12/18b
 **Powered by Caffeine**
+
 - fixed spacing in tmp log file.
 - fixed issue with xml plugin url.
 
 ###v0.1.5 - 2019/12/18a
 **This Beer is Tasty**
+
 - fixed issue with runscript.php not being included in plugin package.
 - changed how logging is handled when running the script.
 
 ###v0.1.4 - 2019/12/18
 **Aging Gracelessly**
+
 - intial beta release
 - based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
 </CHANGES>
