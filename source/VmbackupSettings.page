@@ -294,7 +294,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     <div id="title" class="nocontrol">Basic Settings</div>
 
       Enable backups?
-      : <select name="enabled" size="1">
+      : <select id="enabled" name="enabled" size="1">
         <?=mk_option($conf_array['enabled'], "0", "No");?>
         <?=mk_option($conf_array['enabled'], "1", "Yes");?>
       </select>
@@ -306,7 +306,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
 
 
       Set backup location:
-      : <input type="text" id="backup_location" name="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="^\/mnt\/([\w.-]*)+(\/[\w.-]*)*$" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/user/" data-pickfolders="true" required>
+      : <input type="text" id="backup_location" name="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="^\/mnt\/([\w.-]*)+(\/[\w.-]*)*$" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickroot="/mnt/" data-pickfolders="true" required>
       <blockquote class="inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
