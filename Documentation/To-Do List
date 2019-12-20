@@ -1,6 +1,4 @@
 ## To-Do List ##
-#  - create script to update scripts. will need ability to skip update if it will break functionality of existing scripts. plus ability to keep existing user variables.
-#  - possible to make into a plugin?
 #  - option to backup vdisks using full paths. will resolve issues with unique names.
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
@@ -14,3 +12,8 @@
 #  - update script to use xmlstarlet.
 #  - update readme to include more explanation, as well as field names.
 #  - verify that dry-run does not perform deletions on existing files.
+#  - look into issues with folder drop-down and black theme.
+#  - relax trailing slash restriction on backup location regex.
+#  - when restrictive regex is disabled, changed default folder start location for backup location drop-down.
+#  - add backup now button.
+#  - add restore options.
