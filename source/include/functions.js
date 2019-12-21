@@ -8,6 +8,11 @@ function change_attr(control_name, attr_name, desired_state) {
   $(control_name).attr(attr_name, desired_state);
 }
 
+// function to change a specific property for a specific control.
+function change_prop(control_name, prop_name, desired_state) {
+  $(control_name).prop(prop_name, desired_state);
+}
+
 // function to add validation events to page element.
 function add_validation_events(id, message) {
   // get page element by id.
