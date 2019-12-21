@@ -3,8 +3,6 @@
   /* vmbackup plugin
     copyright 2019 JTok */
 
-  // v0.1.4 - 2019/12/18
-
 
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
   require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';

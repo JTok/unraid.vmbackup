@@ -5,8 +5,6 @@
   /* vmbackup plugin
   copyright 2019 JTok */
 
-  // v0.1.6 - 2019/12/18
-
   require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 
   // create local variables.

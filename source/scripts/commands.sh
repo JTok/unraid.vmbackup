@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# v0.1.4 - 2019/12/18
-
 # usage: update_user_script, create_vm_lists
 
 

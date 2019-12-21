@@ -3,8 +3,6 @@
   /* vmbackup plugin
     copyright 2019 JTok */
 
-  // v0.1.4 - 2019/12/18
-
 
   // function to validate form options.
   function validate_form() {
