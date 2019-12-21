@@ -106,6 +106,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     position:absolute;
     z-index:100;
     display:none;
+    color:initial;
   }
 
   /* set cursor for help */
