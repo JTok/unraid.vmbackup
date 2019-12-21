@@ -175,6 +175,7 @@
   // check for arguments passed from bash.
   // if first argument is update_user_script, then update the user script file.
   if ($argv[1] == "update_user_script") {
+    // create variables for passed parameters.
     $default_script_file = $argv[2];
     $user_script_file = $argv[3];
     $conf_file = $argv[4];
