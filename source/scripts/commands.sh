@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, create_vm_lists
+# usage: update_user_script, create_vm_lists, backup_now
 
 
 #### start script functions ####
@@ -267,6 +267,13 @@
     done
   }
 
+  function backup_now() {
+    # create local variables.
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+
+    "$runscript" | at NOW -M > /dev/null 2>&1
+  }
+
 #### end script functions ####
 
 
@@ -279,8 +286,11 @@
     'create_vm_lists')
       create_vm_lists
       ;;
+    'backup_now')
+      backup_now
+      ;;
     *)
-     echo "usage $0 update_user_script"
+     echo "usage $0 update_user_script, create_vm_lists, backup_now"
      ;;
   esac
 
