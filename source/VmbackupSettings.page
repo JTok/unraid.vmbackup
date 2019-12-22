@@ -8,8 +8,6 @@ Icon="clone"
   /* vmbackup plugin
     copyright 2019 JTok */
 
-  // v0.1.4 - 2019/12/18
-
 require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
 require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
@@ -125,47 +123,61 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
   // function to prepare form for submission.
   function prepare_form(form) {
   // make vdisks to skip a comma separated list for user config.
-    var vdisks_to_skip = '';
-    for (var i=0,item; item=form.vdisks_to_skip.options[i]; i++) {
-      if (item.selected) {
-        if (vdisks_to_skip.length) vdisks_to_skip += ',';
-        vdisks_to_skip += item.value;
-        item.selected = false;
+    if (typeof form.vdisks_to_skip !== 'undefined') {
+      var vdisks_to_skip = '';
+      for (var i=0,item; item=form.vdisks_to_skip.options[i]; i++) {
+        if (item.selected) {
+          if (vdisks_to_skip.length) vdisks_to_skip += ',';
+          vdisks_to_skip += item.value;
+          item.selected = false;
+        }
       }
+      item = form.vdisks_to_skip.options[0];
+      item.value = vdisks_to_skip;
+      item.selected = true;
     }
-    item = form.vdisks_to_skip.options[0];
-    item.value = vdisks_to_skip;
-    item.selected = true;
     
     // make vms to backup a comma separated list for user config.
-    var vms_to_backup = '';
-    for (var i=0,item; item=form.vms_to_backup.options[i]; i++) {
-      if (item.selected) {
-        if (vms_to_backup.length) vms_to_backup += ',';
-        vms_to_backup += item.value;
-        item.selected = false;
+    if (typeof form.vms_to_backup !== 'undefined') {
+      var vms_to_backup = '';
+      for (var i=0,item; item=form.vms_to_backup.options[i]; i++) {
+        if (item.selected) {
+          if (vms_to_backup.length) vms_to_backup += ',';
+          vms_to_backup += item.value;
+          item.selected = false;
+        }
       }
+      item = form.vms_to_backup.options[0];
+      item.value = vms_to_backup;
+      item.selected = true;
     }
-    item = form.vms_to_backup.options[0];
-    item.value = vms_to_backup;
-    item.selected = true;
     
     // make vms to backup running a comma separated list for user config.
-    var vms_to_backup_running = '';
-    for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
-      if (item.selected) {
-        if (vms_to_backup_running.length) vms_to_backup_running += ',';
-        vms_to_backup_running += item.value;
-        item.selected = false;
+    if (typeof form.vms_to_backup_running !== 'undefined') {
+      var vms_to_backup_running = '';
+      for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
+        if (item.selected) {
+          if (vms_to_backup_running.length) vms_to_backup_running += ',';
+          vms_to_backup_running += item.value;
+          item.selected = false;
+        }
       }
+      item = form.vms_to_backup_running.options[0];
+      item.value = vms_to_backup_running;
+      item.selected = true;
     }
-    item = form.vms_to_backup_running.options[0];
-    item.value = vms_to_backup_running;
-    item.selected = true;
 
     //remove whitespace and prepare comma separated lists.
     var input = document.getElementById('vdisk_extensions_to_skip');
     input.value = remove_list_whitespace(input.value);
+  }
+
+  // function to run when backup now button is clicked.
+  function backup_now_submit() {
+    if ($("#vmbackup_settings").data("changed")) {
+      document.getElementById("vmbackup_settings").submit();
+    }
+    document.getElementById("backup_now_form").submit();
   }
 
   // function to set the label vms_to_backup based on backup_all_vms value.
@@ -264,7 +276,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     }
   }
 
-  // main function executed at page load.
+  // document ready function.
   $(function() {
     // add file tree to inputs.
     $("#backup_location").fileTreeAttach();
@@ -281,11 +293,25 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     backup_frequency();
     // set the label for vms_to_backup based on backup_all_vms.
     set_vms_to_backup_lbl();
+    // add click to backup now button.
+    $("#backup").click(function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var vmbackup_settings_form = document.getElementById('vmbackup_settings');
+      prepare_form(vmbackup_settings_form);
+      $.post($("#vmbackup_settings").attr("action"), $("#vmbackup_settings").serialize(),
+        function() {
+          $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize(),
+            function() {
+              change_prop("#apply", "disabled", true);
+            });
+        });
+    });
   });
 </script>
 
 <div style="width:90%; float:left">
-  <form name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
+  <form id="vmbackup_settings" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
@@ -559,10 +585,18 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     </div>
 
     <div markdown="1" style="width:90%; clear:both; float:left">
-     <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+      <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
+      : <input type="submit" id="apply" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>
+  <div markdown="1" style="clear:right; float:left">
+    <form id="backup_now_form" name="backup_now_form" method="POST" action="/update.php" target="progressFrame">
+      <input type="hidden" name="#file" value="vmbackup/user.cfg">
+      <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
+      <input type="hidden" name="#arg[1]" value="backup_now">
+      <input type="button" id="backup" name="#backup" value="Backup Now">
+    </form>
+  </div>
 </div>
 
 <div align="center" style="width:50%; clear:both">
