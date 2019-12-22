@@ -1,5 +1,18 @@
 ## Change Log ##
 
+# v0.1.7 - 2019/12/19
+# Ms. Frizzle
+#
+# - fixed minor issues.
+# - fixed paths requiring trailing slashes.
+# - fixed backup location drop-down color when using black theme.
+# - added additional logging.
+# - added donate button.
+# - added backup now button.
+# - changed backup location drop-down start folder to /mnt/.
+# - updated help.
+# - updated readme.
+
 # v0.1.6 - 2019/12/18b
 # Powered by Caffeine
 #
