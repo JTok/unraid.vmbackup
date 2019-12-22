@@ -25,6 +25,13 @@
   // log the process id of the current process running the script.
   file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
 
+  // check to see if a backup is already running.
+  if (is_file($tmp_user_script_file)) {
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
+    logger("A backup is already running. Exiting.");
+    exit();
+  }
+
   // make directory in tmp to run script from.
   exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
   file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Created directory: ".$tmp_plugin_path."\n", FILE_APPEND);
@@ -34,12 +41,6 @@
   foreach ($old_logs as $log_file) {
     unlink($log_file);
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed old log file: ".$log_file."\n", FILE_APPEND);
-  }
-
-  // check if tmp_user_script_file exists. if so, delete it.
-  if (is_file($tmp_user_script_file)) {
-    unlink($tmp_user_script_file);
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed old script file: ".$tmp_user_script_file."\n", FILE_APPEND);
   }
 
   // make sure that the user script file exists.
