@@ -3,7 +3,7 @@
 #arrayStarted=true
 #noParity=true
 
-# v0.1.4 - 2019/12/18
+# v1.2.2 - 2019/12/18
 
 #### DISCLAIMER ####
 # Use at your own risk. This is a work-in-progress and provided as is.
