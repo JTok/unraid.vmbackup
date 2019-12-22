@@ -462,8 +462,8 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       Hour:
       : <select id="hour" name="hour" size="1">
         <?php
-          $days = create_number_array(0,23,"2");
-          foreach($days as $key => $value) {
+          $hours = create_number_array(0,23,"2");
+          foreach($hours as $key => $value) {
         ?>
             <?=mk_option($conf_array['hour'], $value, $key);?>
           <?php
@@ -479,8 +479,8 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       Minute:
       : <select id="minute" name="minute" size="1">
         <?php
-          $days = create_number_array(0,59,"2");
-          foreach($days as $key => $value) {
+          $minutes = create_number_array(0,59,"2");
+          foreach($minutes as $key => $value) {
         ?>
             <?=mk_option($conf_array['minute'], $value, $key);?>
           <?php
