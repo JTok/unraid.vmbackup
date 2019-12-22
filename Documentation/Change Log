@@ -1,5 +1,10 @@
 ## Change Log ##
 
+# v0.1.8 - 2019/12/22a
+#
+# - fixed weekly cronjob.
+# - changed default folder start location based on restrictive validation setting.
+
 # v0.1.7 - 2019/12/22
 # Ms. Frizzle
 #
