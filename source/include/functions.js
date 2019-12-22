@@ -2,11 +2,15 @@
 /* vmbackup plugin
   copyright 2019 JTok */
 
-// v0.1.4 - 2019/12/18
 
 // function to change a specific attribute for a specific control.
 function change_attr(control_name, attr_name, desired_state) {
   $(control_name).attr(attr_name, desired_state);
+}
+
+// function to change a specific property for a specific control.
+function change_prop(control_name, prop_name, desired_state) {
+  $(control_name).prop(prop_name, desired_state);
 }
 
 // function to add validation events to page element.
@@ -22,6 +26,14 @@ function add_validation_events(id, message) {
   input.oninput = function (event) {
     event.target.setCustomValidity('');
   }
+}
+
+// function to remove white space from around commas in a list.
+function remove_list_whitespace(string) {
+  string = string.trim();
+  string = string.replace(/\s*,\s*/gi, ",");
+
+  return string;
 }
 
 // function to return basic regular expression to validate a cron statement.

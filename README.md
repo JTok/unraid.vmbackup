@@ -2,7 +2,7 @@
 
 ## currently in beta
 
-v0.1.6 - 2019/12/18b
+v0.1.7 - 2019/12/22
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
@@ -19,7 +19,7 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
   - [https://raw.githubusercontent.com/jtok/unraid.vmbackup/master/vmbackup.plg](https://raw.githubusercontent.com/jtok/unraid.vmbackup/master/vmbackup.plg "unraid.vmbackups plugin")
 
-- Choose your settings by going to Settings -> VM Backup.
+- Choose your settings by going to Settings -> User Utilities -> VM Backup.
 
   - make certain to read the help for each setting you want to change before changing it.
 
@@ -37,7 +37,13 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Enable backups.
 
+  - Must be set to 'Yes' to enable backups.
+
 - Choose a backup location.
+
+  - This should be a share you have already created.
+
+  - Each VM will have a subfolder made for it in this location.
 
 - Choose to backup all VMs, or list specific VMs to be backed up.
 
@@ -46,6 +52,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Choose the number of days to keep backups.
 
 - Choose the number backups to keep.
+
+  - If a VM has multiple vdisks, the names of those vdisks must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
 
 #### Schedule
 
@@ -69,7 +77,17 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to compress backups.
 
-- Option to enable reconstruct write during backups.
+  - Do not turn this on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into one tarball.
+
+  - This can add a significant amount of time to the backup.
+
+  - Compression uses tar.gz for sparse file compatibility.
+
+- Option to enable reconstruct write (a.k.a. turbo write) during backups.
+
+  - Do not use this if reconstruct write is already enabled.
+
+  - When set to 'Yes' reconstruct write will be disabled after the backup finishes.
 
 ### Other Settings
 
@@ -101,9 +119,15 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to compare files and retry backup in the event of failure.
 
+  - This can add a significant amount of time to the backup.
+
 - Option to disable delta syncs.
 
+  - When not using snapshots, delta syncs make a copy of the latest backup and then write just the changes since the last backup.
+
 - Option to only use rsync.
+
+  - Rsync was significantly slower in some scenarios, so other quicker options are used when possible by default.
 
 - Change the number of times to check if a VM is shut down.
 
@@ -111,7 +135,7 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 #### Danger Zone
 
-- Option to keep log files from failed backups.
+- Option to keep log files from backups with errors.
 
 - Option to kill a VM that won't shutdown cleanly.
 
@@ -121,9 +145,15 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to fallback to standard backups if snapshot creation fails.
 
+  - When enabled, this will cause the backups to act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.
+
+  - If a snapshot fails and this is enabled, VMs will be shutdown or paused based on standard backup settings.
+
 - Option to pause VMs instead of shutting them down during standard backups. Could result in unusable backups.
 
 - List specific VMs to keep running during backup. Not recommended.
+
+  - VMs already being backed up using a snapshot will not be shutdown.
 
 - Option to skip backing up xml configuration.
 
@@ -136,6 +166,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Option to have VMs start after failed backup regardless of previous state.
 
 - Option to perform a dry-run backup.
+
+  - Dry-run backups will still create empty files in your backup directory.
 
 - Disable validation for the custom cron text box.
 
