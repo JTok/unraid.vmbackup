@@ -12,8 +12,8 @@
 #  - update script to use xmlstarlet.
 #  - update readme to include more explanation, as well as field names.
 #  - verify that dry-run does not perform deletions on existing files.
-#  - look into issues with folder drop-down and black theme.
-#  - relax trailing slash restriction on backup location regex.
 #  - when restrictive regex is disabled, changed default folder start location for backup location drop-down.
-#  - add backup now button.
-#  - add restore options.
+#  - add restore functionality.
+#  - create more advanced regex for custom cron.
+#  - fix vms to backup while running drop-down.
+#  - alter to use XHR (ajax), so as to make user experience more fluid.
