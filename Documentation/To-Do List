@@ -18,3 +18,5 @@
 #  - fix vms to backup while running drop-down.
 #  - alter to use XHR (ajax), so as to make user experience more fluid.
 #  - add abort option to Danger Zone.
+#  - ability to view latest log/error log files.
+#  - fix weekly cron job.
