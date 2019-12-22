@@ -5,7 +5,7 @@
 <!ENTITY author     "jtok">
 <!ENTITY version    "2019.12.22">
 <!ENTITY tag        "v0.1.7">
-<!ENTITY branch     "development">
+<!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
