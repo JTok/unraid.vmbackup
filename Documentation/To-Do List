@@ -17,3 +17,4 @@
 #  - create more advanced regex for custom cron.
 #  - fix vms to backup while running drop-down.
 #  - alter to use XHR (ajax), so as to make user experience more fluid.
+#  - add abort option to Danger Zone.
