@@ -2,7 +2,7 @@
 
 ## currently in beta
 
-v0.1.6 - 2019/12/18b
+v0.1.7 - 2019/12/22
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
