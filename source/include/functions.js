@@ -28,6 +28,14 @@ function add_validation_events(id, message) {
   }
 }
 
+// function to remove white space from around commas in a list.
+function remove_list_whitespace(string) {
+  string = string.trim();
+  string = string.replace(/\s*,\s*/gi, ",");
+
+  return string;
+}
+
 // function to return basic regular expression to validate a cron statement.
 function basic_cron_regex() {
   return '(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})';
