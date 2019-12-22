@@ -293,18 +293,21 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     backup_frequency();
     // set the label for vms_to_backup based on backup_all_vms.
     set_vms_to_backup_lbl();
-    // add click to backup now button.
+    // add click event to backup now button.
     $("#backup").click(function(e) {
+      // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
+      // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById('vmbackup_settings');
       prepare_form(vmbackup_settings_form);
+      // submit the settings like normal.
       $.post($("#vmbackup_settings").attr("action"), $("#vmbackup_settings").serialize(),
         function() {
-          $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize(),
-            function() {
-              change_prop("#apply", "disabled", true);
-            });
+          // if the form submission was successful, disable the apply button.
+          change_prop("#apply", "disabled", true);
+          // submit the second form to actually perform the backup.
+          $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
         });
     });
   });
