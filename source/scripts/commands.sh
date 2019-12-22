@@ -47,10 +47,10 @@
             value="${value#\"*}"     # remove closing string quotes.
             frequency="$value"
             ;;
-          "day")
+          "week")
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
-            day="$value"
+            week="$value"
             ;;
           "month")
             value="${value%\"*}"     # remove opening string quotes.
@@ -87,7 +87,7 @@
           cronjob="$minute $hour "'* * *'
           ;;
         "weekly")
-          cronjob="$minute $hour "'* * '"$day"
+          cronjob="$minute $hour "'* * '"$week"
           ;;
         "monthly")
           cronjob="$minute $hour $month "'* *'
@@ -120,7 +120,7 @@
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
-    local user_prefix="\/mnt\/user\/domains\/"
+    local user_prefix="/mnt/user/domains/"
     local cache_prefix="/mnt/cache/domains/"
     local disk_prefix="/mnt/disk*/domains/"
 
