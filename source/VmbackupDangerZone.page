@@ -211,6 +211,7 @@ Icon="clone"
       <blockquote class="inline_help">
         <p>Set to 'No' if you would like to perform a dry-run backup.</p>
         <ul>
+          <li>WARNING: Performing a Dry-run backup of an existing VM will still honor the chosen retention policy, which could cause backups to be removed.</li>
           <li>Dry-run backups will still create empty files in your backup directory.</li>
           <li>This will only use rsync to perform the dry-run.</li>
           <li>Default is 'Yes'.</li>
