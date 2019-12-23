@@ -348,8 +348,9 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       <blockquote class="inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
-          <li>This should be a share you have already created.</li>
+          <li>This should be an unassigned device, or a share you have already created.</li>
           <li>Each VM will have a subfolder made for it in this location.</li>
+          <li>To choose a folder in /mnt/ instead of /mnt/users/, disable restrictive validation.</li>
         </ul>
       </blockquote>
 
