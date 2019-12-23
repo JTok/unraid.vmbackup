@@ -410,7 +410,6 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
           <li>Default is '0'.</li>
         </ul>
       </blockquote>
-
     </div>
 
 
@@ -508,13 +507,12 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       <blockquote class="inline_help">
         <p>Set a custom Cron schedule.</p>
       </blockquote>
-
     </div>
 
 
     <!-- advanced settings -->
     <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Settings</div>
-    <div markdown="1" style="width:45%; clear:both; float:left">
+    <div markdown="1" style="width:45%; clear:left; float:left">
 
       List vdisks to skip:
       : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
@@ -593,7 +591,10 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
-
+    </div>
+    <div style="width: 45%; clear:right; float:left">
+      <p>When configuring Advanced Settings, be sure to review the help.
+      <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
     </div>
 
     <div markdown="1" style="width:90%; clear:both; float:left">
