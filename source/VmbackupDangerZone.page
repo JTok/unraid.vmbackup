@@ -15,7 +15,7 @@ Icon="clone"
 	<p>The settings below can be dangerous or have unintended side effects if used improperly.
   <br>Many of them can result in corrupted backups, or no backups at all.
   <br>It is recommended not to change these settings.
-  <br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
+  <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
 <div style="width:90%; float:left">
@@ -249,7 +249,6 @@ Icon="clone"
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
-
     </div>
 
     <div markdown="1" style="width:90%; clear:both; float:left">
