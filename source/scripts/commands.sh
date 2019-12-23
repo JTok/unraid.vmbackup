@@ -153,12 +153,12 @@
     # parse user config to get extensions to skip, including snapshot extension.
     while IFS='=' read -r name value
     do
-      if [ "$name" == "vdisk_extensions_to_skip" ]; then
+      if [[ "$name" == "vdisk_extensions_to_skip" ]]; then
         value="${value%\"*}"     # remove opening string quotes.
         value="${value#\"*}"     # remove closing string quotes.
 
         IFS=',' read -r -a vdisk_extensions_to_skip <<< "$value"
-      elif [ "$name" == "snapshot_extension" ]; then
+      elif [[ "$name" == "snapshot_extension" ]]; then
         value="${value%\"*}"     # remove opening string quotes.
         value="${value#\"*}"     # remove closing string quotes.
         
@@ -166,7 +166,7 @@
         extension_exists=false
         for extension in "${vdisk_extensions_to_skip[@]}"
         do
-          if [ "$extension" == "$value" ]; then
+          if [[ "$extension" == "$value" ]]; then
             extension_exists=true
           fi
         done
@@ -208,7 +208,7 @@
         # make sure the vdisk extension should not be skipped and added it to the list array.
         for extension in "${extensions_to_skip[@]}"
         do
-          if [ "$extension" == "$disk_extension" ]; then
+          if [[ "$extension" == "$disk_extension" ]]; then
             skip_disk=true
           fi
         done
@@ -218,7 +218,7 @@
           vdisk_exists=false
           for vdisk in "${vdisk_list[@]}"
           do
-            if [ "$vdisk" == "$vdisk_path" ]; then
+            if [[ "$vdisk" == "$vdisk_path" ]]; then
               vdisk_exists=true
             fi
           done
