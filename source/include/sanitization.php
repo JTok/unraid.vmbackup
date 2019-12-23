@@ -26,11 +26,6 @@
     return $conf_contents;
   }
 
-  // function to trim white space.
-  function trim_whitespace($string) {
-    return trim($string);
-  }
-
   // function to remove white space from around commas in a list.
   function remove_list_whitespace($string) {
     $string = trim($string);
