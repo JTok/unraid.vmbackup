@@ -21,10 +21,12 @@ $script_path = $plugin_source_path . '/scripts';
 $command_script_file = $script_path . '/commands.sh';
 $default_script_file = $script_path . '/default-script.sh';
 $default_conf_file = $plugin_source_path . '/default.cfg';
+$default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
 // user files.
 $plugin_path = '/boot/config/plugins/' . $plugin;
 $user_script_file = $plugin_path . '/user-script.sh';
 $user_conf_file = $plugin_path . '/user.cfg';
+$user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
 // generated files.
 $vm_list = $plugin_path . '/vm-list.txt';
 $vdisk_list = $plugin_path . '/vdisk-list.txt';
@@ -76,6 +78,24 @@ if (!is_file($user_script_file)) {
 
   // write script contents variable as the user script file.
   file_put_contents($user_script_file, $script_contents);
+}
+
+// see if user fix snapshots script already exists.
+if (!is_file($user_fix_snapshots_file)) {
+  
+  // if not, create a variable with the default fix snapshots script contents and user config file merged.
+  $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
+
+  // write script contents variable as the user fix snapshots script file.
+  file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+
+} else {
+  
+  // if not, create a variable with the default fix snapshots script contents and user config file merged.
+  $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
+
+  // write script contents variable as the user fix snapshots script file.
+  file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
 }
 
 // get vm and vdisk lists as arrays.
