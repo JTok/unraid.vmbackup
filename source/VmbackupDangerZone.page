@@ -250,6 +250,22 @@ Icon="clone"
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
+
+
+      Show Fix Stuck Snapshots Button?
+      : <select id="show_fix_snapshots" name="show_fix_snapshots" size="1" onchange="toggle_fix_snapshots();">
+        <?=mk_option($conf_array['show_fix_snapshots'], "0", "No");?>
+        <?=mk_option($conf_array['show_fix_snapshots'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' to show the 'Fix Snapshots' button.</p>
+        <ul>
+          <li>WARNING: This button may make things worse if you are having issues.</li>
+          <li>This will run a script that can fix issues with stuck snapshots. Enable with care!</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
     </div>
 
     <div markdown="1" style="width:90%; clear:both; float:left">
