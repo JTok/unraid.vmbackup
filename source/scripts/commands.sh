@@ -147,6 +147,9 @@
     # get a list of all vms by name.
     vm_list=$(virsh list --all --name)
 
+    # sort vm_list alphabetically.
+    vm_list=$(echo "$vm_list" | sort -f)
+
     # disable case matching.
     shopt -s nocasematch
 
