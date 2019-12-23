@@ -32,6 +32,7 @@
   update_cron_job () {
     # create local variables.
     local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local runscript_argument="run_backup"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local cronjob_comment="# Job for VM Backup plugin:"
 
@@ -102,7 +103,7 @@
       esac
 
       # append the user script path to the cronjob variable.
-      cronjob="$cronjob $runscript > /dev/null 2>&1"
+      cronjob="$cronjob $runscript $runscript_argument > /dev/null 2>&1"
 
       # prepend comment to cronjob variable.
       cronjob="$cronjob_comment"$'\n'"$cronjob"
@@ -272,10 +273,18 @@
 
   function backup_now() {
     # create local variables.
-    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup"
 
     "$runscript" | at NOW -M > /dev/null 2>&1
   }
+
+  function fix_snapshots() {
+    # create local variables.
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php fix_snapshots"
+
+    "$runscript" | at NOW -M > /dev/null 2>&1
+  }
+
 
 #### end script functions ####
 
@@ -291,6 +300,9 @@
       ;;
     'backup_now')
       backup_now
+      ;;
+    'fix_snapshots')
+      fix_snapshots
       ;;
     *)
      echo "usage $0 update_user_script, create_vm_lists, backup_now"
