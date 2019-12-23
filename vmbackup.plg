@@ -134,6 +134,10 @@
 -->
 <FILE Run="/bin/bash" Method="remove">
   <INLINE>
+    # remove cronjob.
+    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
+    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php" ) | crontab -
+
     # remove installed packages.
     find "&packages;/" -type f -iname "*.txz" -delete
     
