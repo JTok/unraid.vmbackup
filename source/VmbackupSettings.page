@@ -168,8 +168,8 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     }
 
     //remove whitespace and prepare comma separated lists.
-    var input = document.getElementById('vdisk_extensions_to_skip');
-    input.value = remove_list_whitespace(input.value);
+    var vdisk_extensions_to_skip = document.getElementById('vdisk_extensions_to_skip');
+    vdisk_extensions_to_skip.value = remove_list_whitespace(vdisk_extensions_to_skip.value);
   }
 
   // function to run when backup now button is clicked.
