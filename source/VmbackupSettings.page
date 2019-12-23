@@ -206,7 +206,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       // add file tree to backup location.
       $("#backup_location").fileTreeAttach();
       // set regex patterns for validation.
-      change_attr("#backup_location", "pattern", "^\\/mnt\\/([\\w.-]*)+(\\/[\\w.-]*)*$");
+      change_attr("#backup_location", "pattern", "^\\/mnt\\/(([\\w.-]+)( [\\w.-]+)*)*(\\/(([\\w.-]+)( [\\w.-]+)*)*)*$");
       change_attr("#number_of_days_to_keep_backups", "pattern", "^(0|([7-9]|[1-8][0-9]|9[0-9]|1[0-7][0-9]|180))$");
       change_attr("#number_of_backups_to_keep", "pattern", "^(0|([2-9]|[1-3][0-9]|40))$");
       change_attr("#number_of_log_files_to_keep", "pattern", "^(0|([1-9]|[1-3][0-9]|40))$");
@@ -219,7 +219,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       // add file tree to backup location.
       $("#backup_location").fileTreeAttach();
       // set regex patterns for validation.
-      change_attr("#backup_location", "pattern", "^\\/([\\w.-]*)+(\\/[\\w.-]*)*$");
+      change_attr("#backup_location", "pattern", "^\\/(([\\w.-]+)( [\\w.-]+)*)*(\\/(([\\w.-]+)( [\\w.-]+)*)*)*$");
       change_attr("#number_of_days_to_keep_backups", "pattern", "^(0|([1-9])+(\\d+)?)$");
       change_attr("#number_of_backups_to_keep", "pattern", "^(0|([1-9])+(\\d+)?)$");
       change_attr("#number_of_log_files_to_keep", "pattern", "^(0|([1-9])+(\\d+)?)$");
