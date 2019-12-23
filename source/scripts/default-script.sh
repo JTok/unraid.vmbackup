@@ -3,7 +3,7 @@
 #arrayStarted=true
 #noParity=true
 
-# v1.2.2 - 2019/12/18
+# v1.2.3 - 2019/12/23
 
 #### DISCLAIMER ####
 # Use at your own risk. This is a work-in-progress and provided as is.
@@ -427,7 +427,7 @@ only_send_error_notifications="no_config"
         shopt -s nocasematch
 
         # check to see if vdisk extension is the same as the snapshot extension. if it is, error and skip the vm.
-        if [ "$disk_extension" == "$snapshot_extension" ]; then
+        if [[ "$disk_extension" == "$snapshot_extension" ]]; then
           log_message "failure: extension for $disk on $vm is the same as the snapshot extension $snapshot_extension. disk will always be skipped. this usually means that the disk path in the config was not changed from /mnt/user. if disk path is correct, then try changing snapshot_extension or vdisk extension." "cannot backup vdisk on $vm" "alert"
         fi
 
@@ -435,7 +435,7 @@ only_send_error_notifications="no_config"
         for skipvdisk_extension in $vdisk_extensions_to_skip
         do
 
-          if [ "$skipvdisk_extension" == "$disk_extension" ]; then
+          if [[ "$skipvdisk_extension" == "$disk_extension" ]]; then
             skip_disk="1"
             log_message "information: extension for $disk on $vm was found in vdisks_extensions_to_skip. skipping disk."
           fi
