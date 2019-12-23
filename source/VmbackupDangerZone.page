@@ -121,7 +121,7 @@ Icon="clone"
       </select>
 
       <blockquote class="inline_help">
-        <p>Comma separated list of VM names to keep running during backup.</p>
+        <p>Check the names of VMs to keep running during backup.</p>
         <ul>
           <li>WARNING: Using this setting can result in an unusable backup. Not recommended.</li>
           <li>VMs already being backed up using a snapshot will not be shutdown.</li>

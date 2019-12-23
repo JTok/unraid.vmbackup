@@ -379,7 +379,7 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       </select>
 
       <blockquote class="inline_help">
-        <p>Comma separated list of VM names to backup.
+        <p>Check the names of VMs to backup.
         <br>If "Backup all VMs" is set to 'Yes', then this list will be used as a list of VMs to exclude from the backup.</p>
         <ul>
           <li>Names should be the same names used in the configs.</li>
@@ -522,10 +522,8 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       </select>
 
       <blockquote class="inline_help">
-        <p>Comma separated list of specific vdisks to skip.
-        <br>Full path must be used.</p>
+        <p>Check the specific vdisks to skip.</p>
         <ul>
-          <li>IMPORTANT: Path must match path used in config.</li>
           <li>IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.</li>
         </ul>
       </blockquote>
