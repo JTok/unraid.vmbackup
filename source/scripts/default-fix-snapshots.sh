@@ -129,8 +129,8 @@ do
   else
 
     # could not fix snapshot the vm was already running.
-    echo "failure: could not remove snapshot because $vm is $vm_state."
-    /usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup snapshot fix" -d "failed to fix $vm" -i "alert" -m "$(date '+%Y-%m-%d %H:%M') failure: could not remove snapshot because $vm is $vm_state."
+    echo "warning: could not remove snapshot because $vm is $vm_state."
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup snapshot fix" -d "failed to fix $vm" -i "warning" -m "$(date '+%Y-%m-%d %H:%M') warining: could not remove snapshot because $vm is $vm_state. it is possible that no snapshot was associated with this vm."
 
   fi
 
