@@ -252,18 +252,18 @@ Icon="clone"
       </blockquote>
 
 
-      Show Fix Stuck Snapshots Button?
-      : <select id="show_fix_snapshots" name="show_fix_snapshots" size="1" onchange="toggle_fix_snapshots();">
-        <?=mk_option($conf_array['show_fix_snapshots'], "0", "No");?>
-        <?=mk_option($conf_array['show_fix_snapshots'], "1", "Yes");?>
+      Enable Fix Stuck Snapshots?
+      : <select id="enable_fix_snapshots" name="enable_fix_snapshots" size="1">
+        <option value="0" selected>No</option>
+        <option value="1">Yes</option>
       </select>
 
       <blockquote class="inline_help">
-        <p>Set to 'Yes' to show the 'Fix Snapshots' button.</p>
+        <p>Set to 'Yes' to enable the 'Fix Snapshots' button.</p>
         <ul>
           <li>WARNING: This button may make things worse if you are having issues.</li>
-          <li>This will run a script that can fix issues with stuck snapshots. Enable with care!</li>
-          <li>Default is 'No'.</li>
+          <li>This will run a script that can fix issues with stuck snapshots. Run with care!</li>
+          <li>This field will always reset to 'No'.</li>
         </ul>
       </blockquote>
     </div>
@@ -273,7 +273,7 @@ Icon="clone"
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>
-  <div markdown="1" style="clear:right; float:left; display:none">
+  <div markdown="1" style="clear:right; float:left">
     <form id="fix_snapshots_form" name="fix_snapshots_form" method="POST" action="/update.php" target="progressFrame">
       <input type="hidden" name="#file" value="vmbackup/user.cfg">
       <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
