@@ -237,7 +237,7 @@
       // remove tmp user pid file.
       unlink($tmp_user_script_pid);
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_user_script_pid."\n", FILE_APPEND);
-      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $tmp_user_script_pid.\n", FILE_APPEND);
+      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $user_script_pid.\n", FILE_APPEND);
     }
 
     // check for fix snapshots script pid.
@@ -259,7 +259,7 @@
       // remove tmp user pid file.
       unlink($tmp_user_script_pid);
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_user_script_pid."\n", FILE_APPEND);
-      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $tmp_user_script_pid.\n", FILE_APPEND);
+      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $fix_snapshots_pid.\n", FILE_APPEND);
     }
 
     // end logging to tmp fix snapshots log file.
