@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.22">
-<!ENTITY tag        "v0.1.7">
+<!ENTITY version    "2019.12.24">
+<!ENTITY tag        "v0.1.8">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -27,6 +27,19 @@
 
 <CHANGES>
 ##&name;
+
+### v0.1.8 - 2019/12/24
+**Penny Wise and Pound Stupid**
+
+- fixed weekly cronjob.
+- fixed validation to allow spaces in paths.
+- fixed cronjob not being removed during uninstall.
+- fixed extension matching case sensitivity.
+- added fix for stuck snapshots.
+- added ability to abort running scripts.
+- changed default folder start location based on restrictive validation setting.
+- updated help.
+- updated lists to be sorted alphabetically.
 
 ### v0.1.7 - 2019/12/22
 **Ms. Frizzle**
