@@ -6,6 +6,7 @@
 # - fixed weekly cronjob.
 # - fixed validation to allow spaces in paths.
 # - fixed cronjob not being removed during uninstall.
+# - fixed extension matching case sensitivity.
 # - added fix for stuck snapshots.
 # - added ability to abort running scripts.
 # - changed default folder start location based on restrictive validation setting.
