@@ -224,11 +224,11 @@
       // attempt to kill user script process.
       $user_script_pid = file_get_contents("$tmp_user_script_pid");
       // try sigterm for orderly shutdown.
-      exec("kill -SIGTERM $user_script_pid");
+      exec("pkill -SIGTERM -P $user_script_pid");
       // try keyboard interrupt.
-      exec("kill -SIGINT $user_script_pid");
+      exec("pkill -SIGINT -P $user_script_pid");
       // force kill in case those didn't work.
-      exec("kill -SIGKILL $user_script_pid");
+      exec("pkill -SIGKILL -P $user_script_pid");
 
       // remove tmp user script file.
       unlink($tmp_user_script_file);
@@ -246,11 +246,11 @@
       // attempt to kill fix snapshots script process.
       $fix_snapshots_pid = file_get_contents("$tmp_fix_snapshots_pid");
       // try sigterm for orderly shutdown.
-      exec("kill -SIGTERM $fix_snapshots_pid");
+      exec("pkill -SIGTERM -P $fix_snapshots_pid");
       // try keyboard interrupt.
-      exec("kill -SIGINT $fix_snapshots_pid");
+      exec("pkill -SIGINT -P $fix_snapshots_pid");
       // force kill in case those didn't work.
-      exec("kill -SIGKILL $fix_snapshots_pid");
+      exec("pkill -SIGKILL -P $fix_snapshots_pid");
 
       // remove tmp user script file.
       unlink($tmp_fix_snapshots_file);
