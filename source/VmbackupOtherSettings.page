@@ -218,7 +218,7 @@ Icon="clone"
       </blockquote>
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; float:left">
+    <div markdown="1" style="width:50%; clear:both; float:left">
      <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
