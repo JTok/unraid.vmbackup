@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, create_vm_lists, backup_now, fix_snapshots
+# usage: update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script
 
 
 #### start script functions ####
@@ -315,10 +315,10 @@
       fix_snapshots
       ;;
     'abort_script')
-      fix_snapshots
+      abort_script
       ;;
     *)
-     echo "usage $0 update_user_script, create_vm_lists, backup_now, fix_snapshots"
+     echo "usage $0 update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script"
      ;;
   esac
 
