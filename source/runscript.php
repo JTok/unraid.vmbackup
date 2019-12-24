@@ -220,14 +220,21 @@
     // log the process id of the current process running the script.
     file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
 
+    // check to see if both pid files don't exist.
+    if ((!is_file($tmp_user_script_pid)) && (!is_file($tmp_fix_snapshots_pid))) {
+      file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." No PID files found. Nothing to abort.", FILE_APPEND);
+    }
+
     // check for user script pid.
     if (is_file($tmp_user_script_pid)) {
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Found $tmp_user_script_pid. Attempting to kill process.\n", FILE_APPEND);
       // attempt to kill user script process.
       $user_script_pid = file_get_contents("$tmp_user_script_pid");
-      // first try sigterm for orderly shutdown.
+      // try sigterm for orderly shutdown.
       exec("kill -SIGTERM $user_script_pid");
-      // force kill in case sigterm didn't work.
+      // try keyboard interrupt.
+      exec("kill -SIGINT $user_script_pid");
+      // force kill in case those didn't work.
       exec("kill -SIGKILL $user_script_pid");
 
       // remove tmp user script file.
@@ -245,9 +252,11 @@
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Found $tmp_fix_snapshots_pid. Attempting to kill process.\n", FILE_APPEND);
       // attempt to kill fix snapshots script process.
       $fix_snapshots_pid = file_get_contents("$tmp_fix_snapshots_pid");
-      // first try sigterm for orderly shutdown.
+      // try sigterm for orderly shutdown.
       exec("kill -SIGTERM $fix_snapshots_pid");
-      // force kill in case sigterm didn't work.
+      // try keyboard interrupt.
+      exec("kill -SIGINT $fix_snapshots_pid");
+      // force kill in case those didn't work.
       exec("kill -SIGKILL $fix_snapshots_pid");
 
       // remove tmp user script file.
