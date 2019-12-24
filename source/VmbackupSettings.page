@@ -187,9 +187,12 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       item.selected = true;
     }
 
-    //remove whitespace and prepare comma separated lists.
+    // remove whitespace and prepare comma separated lists.
     var vdisk_extensions_to_skip = document.getElementById('vdisk_extensions_to_skip');
     vdisk_extensions_to_skip.value = remove_list_whitespace(vdisk_extensions_to_skip.value);
+
+    // prevent enable fix snapshots drop down from getting saved to the user config file.
+    $("#enable_fix_snapshots").remove();
   }
 
   // function to run when backup now button is clicked.
@@ -306,21 +309,8 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     }
   }
 
-  // document ready function.
-  $(function() {
-    //configure dropdown checklists.
-    $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
-    $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
-    $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
-    // set the regex pattern each element should use.
-    toggle_cron_regex();
-    toggle_restrictive_regex();
-    // set the validation for each element.
-    set_validation();
-    // set the initial attributes for cron controls.
-    backup_frequency();
-    // set the label for vms_to_backup based on backup_all_vms.
-    set_vms_to_backup_lbl();
+  // assign functions to element events.
+  function assign_functions() {
     // add click event to backup now button.
     $("#backup").click(function(e) {
       // prevent normal form submission.
@@ -338,6 +328,47 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
           $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
         });
     });
+    // add change event to fix snapshots drop-down.
+    $("#enable_fix_snapshots").change(function() {
+      if ($('#enable_fix_snapshots').val() == "0") {
+        change_prop("#fix_snapshots", "disabled", true);
+      } else if ($('#enable_fix_snapshots').val() == "1") {
+        change_prop("#fix_snapshots", "disabled", false);
+      }
+    });
+    // add click event to fix snapshots button.
+    $("#fix_snapshots").click(function(e) {
+      // prevent normal form submission.
+      e.preventDefault();
+      e.stopPropagation();
+      // submit the snapshot form.
+      $.post($("#fix_snapshots_form").attr("action"), $("#fix_snapshots_form").serialize());
+      // disable the fix snapshots button.
+      change_prop("#fix_snapshots", "disabled", true);
+      // set enable fix stuck snapshots to 'No'.
+      $('#enable_fix_snapshots').val("0");
+    });
+  }
+
+  // document ready function.
+  $(function() {
+    //configure dropdown checklists.
+    $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    $('#vms_to_backup_running').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    // set the regex pattern each element should use.
+    toggle_cron_regex();
+    toggle_restrictive_regex();
+    // set the validation for each element.
+    set_validation();
+    // set the initial attributes for cron controls.
+    backup_frequency();
+    // set the label for vms_to_backup based on backup_all_vms.
+    set_vms_to_backup_lbl();
+    // disable the fix snapshots button by default.
+    change_prop("#fix_snapshots", "disabled", true);
+    // assign functions to element events.
+    assign_functions();
   });
 </script>
 
