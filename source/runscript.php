@@ -55,21 +55,18 @@
     // check to see if a backup is already running.
     if (is_file($tmp_user_script_file)) {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
-      logger("A backup is already running. Exiting.");
       exit();
     }
 
     // check to see if a snapshot fix is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Fix Snapshots is already running. Exiting.\n", FILE_APPEND);
-      logger("Fix Snapshots is already running. Exiting.");
       exit();
     }
 
     // make sure that the user script file exists.
     if (! is_file($user_script_file)) {
       // if not, exit the script.
-      logger("User script file does not exist. Exiting.");
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." User script file does not exist. Exiting.\n", FILE_APPEND);
       exit();
     }
@@ -81,14 +78,12 @@
     
     // verify that the array is started before trying to run the script. if not, exit.
     if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
-      logger("Array is not started. Cannot run $user_script_file. Exiting.");
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Array is not started. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
       exit();
     }
 
     // verify that the array is not running a parity check or rebuild. if so, exit.
     if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
-      logger("Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.");
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
       exit();
     }
@@ -140,21 +135,18 @@
     // check to see if a backup is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
-      logger("A backup is already running. Exiting.");
       exit();
     }
 
     // check to see if a snapshot fix is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Fix Snapshots is already running. Exiting.\n", FILE_APPEND);
-      logger("Fix Snapshots is already running. Exiting.");
       exit();
     }
 
     // make sure that the fix snapshots script file exists.
     if (! is_file($user_fix_snapshots_file)) {
       // if not, exit the script.
-      logger("Fix Snapshots script file does not exist. Exiting.");
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Fix Snapshots script file does not exist. Exiting.\n", FILE_APPEND);
       exit();
     }
@@ -166,14 +158,12 @@
     
     // verify that the array is started before trying to run the script. if not, exit.
     if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
-      logger("Array is not started. Cannot run $user_fix_snapshots_file. Exiting.");
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Array is not started. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
       exit();
     }
 
     // verify that the array is not running a parity check or rebuild. if so, exit.
     if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
-      logger("Parity check or rebuild is in progress. Cannot run $user_fix_snapshots_file. Exiting.");
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
       exit();
     }
@@ -215,6 +205,9 @@
       unlink($log_file);
     }
 
+    // notify the user that an abort has been started.
+    exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "attempting abort" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Attempting to abort running scripts."');
+
     // start logging to tmp log file.
     file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Starting abort script.\n", FILE_APPEND);
     // log the process id of the current process running the script.
@@ -222,7 +215,7 @@
 
     // check to see if both pid files don't exist.
     if ((!is_file($tmp_user_script_pid)) && (!is_file($tmp_fix_snapshots_pid))) {
-      file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." No PID files found. Nothing to abort.", FILE_APPEND);
+      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." No PID files found. Nothing to abort.", FILE_APPEND);
     }
 
     // check for user script pid.
@@ -270,7 +263,7 @@
     }
 
     // end logging to tmp fix snapshots log file.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Finished abort script.", FILE_APPEND);
+    file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Finished abort script.", FILE_APPEND);
   }
 
 ?>
