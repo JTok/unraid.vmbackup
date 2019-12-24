@@ -287,6 +287,14 @@
     "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
   }
 
+  function abort_script() {
+    # create local variables.
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local argument1="abort_script"
+
+    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
+  }
+
 
 #### end script functions ####
 
@@ -304,6 +312,9 @@
       backup_now
       ;;
     'fix_snapshots')
+      fix_snapshots
+      ;;
+    'abort_script')
       fix_snapshots
       ;;
     *)
