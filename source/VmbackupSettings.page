@@ -190,9 +190,6 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     // remove whitespace and prepare comma separated lists.
     var vdisk_extensions_to_skip = document.getElementById('vdisk_extensions_to_skip');
     vdisk_extensions_to_skip.value = remove_list_whitespace(vdisk_extensions_to_skip.value);
-
-    // prevent enable fix snapshots drop down from getting saved to the user config file.
-    $("#enable_fix_snapshots").remove();
   }
 
   // function to run when backup now button is clicked.
@@ -328,25 +325,27 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
           $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
         });
     });
-    // add change event to fix snapshots drop-down.
-    $("#enable_fix_snapshots").change(function() {
-      if ($('#enable_fix_snapshots').val() == "0") {
-        change_prop("#fix_snapshots", "disabled", true);
-      } else if ($('#enable_fix_snapshots').val() == "1") {
-        change_prop("#fix_snapshots", "disabled", false);
-      }
-    });
     // add click event to fix snapshots button.
     $("#fix_snapshots").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the snapshot form.
-      $.post($("#fix_snapshots_form").attr("action"), $("#fix_snapshots_form").serialize());
-      // disable the fix snapshots button.
-      change_prop("#fix_snapshots", "disabled", true);
-      // set enable fix stuck snapshots to 'No'.
-      $('#enable_fix_snapshots').val("0");
+      // ask if user is certain they want to fix snapshots.
+      if (confirm('Are you sure you want to fix stuck snapshots? This could cause more issues than it fixes. Run with care!')) {
+        // submit the fix snapshots script form.
+        $.post($("#fix_snapshots_form").attr("action"), $("#fix_snapshots_form").serialize());
+      }
+    });
+    // add confirm dialog to abort script button.
+    $("#abort_script").click(function(e) {
+      // prevent normal form submission.
+      e.preventDefault();
+      e.stopPropagation();
+      // ask if user is certain they want to abort.
+      if (confirm('Are you sure you want to abort any running scripts? This could cause more issues than it prevents. Proceed with caution!')) {
+        // submit the abort script form.
+        $.post($("#abort_script_form").attr("action"), $("#abort_script_form").serialize());
+      }
     });
   }
 
@@ -365,8 +364,6 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
     backup_frequency();
     // set the label for vms_to_backup based on backup_all_vms.
     set_vms_to_backup_lbl();
-    // disable the fix snapshots button by default.
-    change_prop("#fix_snapshots", "disabled", true);
     // assign functions to element events.
     assign_functions();
   });
@@ -646,16 +643,15 @@ $vdisk_list_array = parse_ini_file($vdisk_list);
       <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; float:left">
+    <div markdown="1" style="width:50%; clear:both; float:left">
       <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
       : <input type="submit" id="apply" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>
-  <div markdown="1" style="clear:right; float:left">
-    <form id="backup_now_form" name="backup_now_form" method="POST" action="/update.php" target="progressFrame">
-      <input type="hidden" name="#file" value="vmbackup/user.cfg">
-      <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
-      <input type="hidden" name="#arg[1]" value="backup_now">
+  <div markdown="1" style="width:40%; clear:right; float:left">
+    <form id="backup_now_form" name="backup_now_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+      <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
+      <input type="hidden" name="#args[1]" value="backup_now">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
   </div>

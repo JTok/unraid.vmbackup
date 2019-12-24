@@ -250,35 +250,23 @@ Icon="clone"
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
-
-
-      Enable Fix Stuck Snapshots?
-      : <select id="enable_fix_snapshots" name="enable_fix_snapshots" size="1">
-        <option value="0" selected>No</option>
-        <option value="1">Yes</option>
-      </select>
-
-      <blockquote class="inline_help">
-        <p>Set to 'Yes' to enable the 'Fix Snapshots' button.</p>
-        <ul>
-          <li>WARNING: This button may make things worse if you are having issues.</li>
-          <li>This will run a script that can fix issues with stuck snapshots. Run with care!</li>
-          <li>This field will always reset to 'No'.</li>
-        </ul>
-      </blockquote>
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; float:left">
+    <div markdown="1" style="width:50%; clear:both; float:left">
      <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>
-  <div markdown="1" style="clear:right; float:left">
-    <form id="fix_snapshots_form" name="fix_snapshots_form" method="POST" action="/update.php" target="progressFrame">
-      <input type="hidden" name="#file" value="vmbackup/user.cfg">
-      <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
-      <input type="hidden" name="#arg[1]" value="fix_snapshots">
+  <div markdown="1" style="width:40%; clear:right; float:left">
+    <form id="fix_snapshots_form" name="fix_snapshots_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+      <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
+      <input type="hidden" name="#args[1]" value="fix_snapshots">
       <input type="button" id="fix_snapshots" name="#fix_snapshots" value="Fix Snapshots">
+    </form>
+    <form id="abort_script_form" name="abort_script_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+      <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
+      <input type="hidden" name="#args[1]" value="abort_script">
+      <input type="button" id="abort_script" name="#abort_script" value="Abort Script">
     </form>
   </div>
 </div>
