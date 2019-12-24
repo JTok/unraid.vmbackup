@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, create_vm_lists, backup_now
+# usage: update_user_script, create_vm_lists, backup_now, fix_snapshots
 
 
 #### start script functions ####
@@ -273,16 +273,18 @@
 
   function backup_now() {
     # create local variables.
-    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup"
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local argument1="run_backup"
 
-    "$runscript" | at NOW -M > /dev/null 2>&1
+    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
   }
 
   function fix_snapshots() {
     # create local variables.
-    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php fix_snapshots"
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local argument1="fix_snapshots"
 
-    "$runscript" | at NOW -M > /dev/null 2>&1
+    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
   }
 
 
@@ -305,7 +307,7 @@
       fix_snapshots
       ;;
     *)
-     echo "usage $0 update_user_script, create_vm_lists, backup_now"
+     echo "usage $0 update_user_script, create_vm_lists, backup_now, fix_snapshots"
      ;;
   esac
 
