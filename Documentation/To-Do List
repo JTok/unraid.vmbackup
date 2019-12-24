@@ -7,16 +7,13 @@
 #  - ability to do multiple script variations/schedules.
 #  - move some of the settings alerts to php form validation instead.
 #  - set up separate css stylesheets.
-#  - add file version checks.
 #  - ability to edit script run variables such as noParity.
 #  - update script to use xmlstarlet.
 #  - update readme to include more explanation, as well as field names.
-#  - verify that dry-run does not perform deletions on existing files.
 #  - add restore functionality.
 #  - create more advanced regex for custom cron.
 #  - fix vms to backup while running drop-down.
 #  - alter to use XHR (ajax), so as to make user experience more fluid.
-#  - add abort option to Danger Zone.
 #  - ability to view latest log/error log files.
 #  - option to skip running vms.
-#  - reduce initial load times.
+#  - reduce initial page load times.
