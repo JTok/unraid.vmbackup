@@ -21,10 +21,15 @@
   $tmp_log_file = $tmp_plugin_path . '/'. $current_datetime .'_user-script.log';
   $tmp_fix_snapshots_file = $tmp_plugin_path . '/user-fix-snapshots.sh';
   $tmp_fix_snapshots_log_file = $tmp_plugin_path . '/'. $current_datetime .'_fix-snapshots.log';
-  // parse arguments.
-  $arg = parse_str($argv[1]);
+  // get arguments.
+  $arg1 = $argv[1];
 
-  if ($arg == "run_backup") {
+  // if no arguments were passed, set arg1 to run_backup for backwards compatibility.
+  if (empty($arg1)) {
+    $arg1 = "run_backup";
+  }
+
+  if ($arg1 == "run_backup") {
     // start logging to tmp log file.
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup ".$tmp_user_script_file."\n", FILE_APPEND);
     // log the process id of the current process running the script.
@@ -101,10 +106,10 @@
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_user_script_file."\n", FILE_APPEND);
 
     // end logging to tmp log file.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Finished VM Backup user-script.sh."."\n\n", FILE_APPEND);
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Finished VM Backup user-script.sh.", FILE_APPEND);
   }
 
-  if ($arg == "fix_snapshots") {
+  if ($arg1 == "fix_snapshots") {
     // start logging to tmp log file.
     file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
     // log the process id of the current process running the script.
@@ -181,7 +186,7 @@
     file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
 
     // end logging to tmp log file.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Finished Fix Snapshots user-fix-snapshots.sh."."\n\n", FILE_APPEND);
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Finished Fix Snapshots user-fix-snapshots.sh.", FILE_APPEND);
   }
 
 ?>
