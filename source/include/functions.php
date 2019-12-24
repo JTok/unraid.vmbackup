@@ -158,7 +158,7 @@
 
 
   // check for post commands.
-  // if update_script_contents exists, then update the user script file.
+  // if update_script_contents argument exists, then update the user script file.
   if (isset($_POST['#update_script_contents'])) {
     $default_script_file = $_POST['#default_script_file'];
     $user_script_file = $_POST['#user_script_file'];
@@ -170,7 +170,20 @@
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
   }
-
+  // if script argument exists, then run script with any additional arguments.
+  if (isset($_POST['#script'])) {
+    // get the script to be run.
+    $script = $_POST['#script'];
+    // build the command to be executed.
+    $command = $script;
+    if (isset($_POST['#args'])) {
+      $args = $_POST['#args'];
+      $command = $command . " " .implode(" ", $args);
+    }
+    // run the command.
+    exec($command);
+  }
+  
 
   // check for arguments passed from bash.
   // if first argument is update_user_script, then update the user script file.

@@ -15,7 +15,7 @@ Icon="clone"
 	<p>The settings below can be dangerous or have unintended side effects if used improperly.
   <br>Many of them can result in corrupted backups, or no backups at all.
   <br>It is recommended not to change these settings.
-  <br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
+  <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
 <div style="width:90%; float:left">
@@ -121,7 +121,7 @@ Icon="clone"
       </select>
 
       <blockquote class="inline_help">
-        <p>Comma separated list of VM names to keep running during backup.</p>
+        <p>Check the names of VMs to keep running during backup.</p>
         <ul>
           <li>WARNING: Using this setting can result in an unusable backup. Not recommended.</li>
           <li>VMs already being backed up using a snapshot will not be shutdown.</li>
@@ -211,6 +211,7 @@ Icon="clone"
       <blockquote class="inline_help">
         <p>Set to 'No' if you would like to perform a dry-run backup.</p>
         <ul>
+          <li>WARNING: Performing a Dry-run backup of an existing VM will still honor the chosen retention policy, which could cause backups to be removed.</li>
           <li>Dry-run backups will still create empty files in your backup directory.</li>
           <li>This will only use rsync to perform the dry-run.</li>
           <li>Default is 'Yes'.</li>
@@ -249,12 +250,23 @@ Icon="clone"
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
-
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; float:left">
+    <div markdown="1" style="width:50%; clear:both; float:left">
      <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>
   </form>
+  <div markdown="1" style="width:40%; clear:right; float:left">
+    <form id="fix_snapshots_form" name="fix_snapshots_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+      <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
+      <input type="hidden" name="#args[1]" value="fix_snapshots">
+      <input type="button" id="fix_snapshots" name="#fix_snapshots" value="Fix Snapshots">
+    </form>
+    <form id="abort_script_form" name="abort_script_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+      <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
+      <input type="hidden" name="#args[1]" value="abort_script">
+      <input type="button" id="abort_script" name="#abort_script" value="Abort Script">
+    </form>
+  </div>
 </div>

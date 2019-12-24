@@ -15,7 +15,7 @@ Icon="clone"
 	<p>The settings below could have unintended side effects if used improperly.
   <br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
   <br>It is recommended not to change these settings.
-  <br>Be sure to read the tool tips and make certain you fully understand what you are doing before changing any of these settings.</p>
+  <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
 <div style="width:90%; float:left">
@@ -56,7 +56,7 @@ Icon="clone"
 
 
       Log file subfolder:
-      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/]([\w.-]*)+(\/[\w.-]*)*$">
+      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/ ](([\w.-]+)( [\w.-]+)*)*(\/(([\w.-]+)( [\w.-]+)*)*)*$">
 
       <blockquote class="inline_help">
         <p>Choose a folder name for storing logs.</p>
@@ -78,7 +78,6 @@ Icon="clone"
           <li>Default is '10'.</li>
         </ul>
       </blockquote>
-
     </div>
 
 
@@ -130,7 +129,6 @@ Icon="clone"
           <li>Default is 'No'.</li>
         </ul>
       </blockquote>
-
     </div>
 
 
@@ -218,10 +216,9 @@ Icon="clone"
           <li>Default is '30'.</li>
         </ul>
       </blockquote>
-
     </div>
 
-    <div markdown="1" style="width:90%; clear:both; float:left">
+    <div markdown="1" style="width:50%; clear:both; float:left">
      <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
       : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
     </div>

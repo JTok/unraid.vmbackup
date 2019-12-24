@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, create_vm_lists, backup_now
+# usage: update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script
 
 
 #### start script functions ####
@@ -32,6 +32,7 @@
   update_cron_job () {
     # create local variables.
     local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local runscript_argument="run_backup"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local cronjob_comment="# Job for VM Backup plugin:"
 
@@ -47,10 +48,10 @@
             value="${value#\"*}"     # remove closing string quotes.
             frequency="$value"
             ;;
-          "day")
+          "week")
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
-            day="$value"
+            week="$value"
             ;;
           "month")
             value="${value%\"*}"     # remove opening string quotes.
@@ -87,7 +88,7 @@
           cronjob="$minute $hour "'* * *'
           ;;
         "weekly")
-          cronjob="$minute $hour "'* * '"$day"
+          cronjob="$minute $hour "'* * '"$week"
           ;;
         "monthly")
           cronjob="$minute $hour $month "'* *'
@@ -102,7 +103,7 @@
       esac
 
       # append the user script path to the cronjob variable.
-      cronjob="$cronjob $runscript > /dev/null 2>&1"
+      cronjob="$cronjob $runscript $runscript_argument > /dev/null 2>&1"
 
       # prepend comment to cronjob variable.
       cronjob="$cronjob_comment"$'\n'"$cronjob"
@@ -120,7 +121,7 @@
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
-    local user_prefix="\/mnt\/user\/domains\/"
+    local user_prefix="/mnt/user/domains/"
     local cache_prefix="/mnt/cache/domains/"
     local disk_prefix="/mnt/disk*/domains/"
 
@@ -147,18 +148,21 @@
     # get a list of all vms by name.
     vm_list=$(virsh list --all --name)
 
+    # sort vm_list alphabetically.
+    vm_list=$(echo "$vm_list" | sort -f)
+
     # disable case matching.
     shopt -s nocasematch
 
     # parse user config to get extensions to skip, including snapshot extension.
     while IFS='=' read -r name value
     do
-      if [ "$name" == "vdisk_extensions_to_skip" ]; then
+      if [[ "$name" == "vdisk_extensions_to_skip" ]]; then
         value="${value%\"*}"     # remove opening string quotes.
         value="${value#\"*}"     # remove closing string quotes.
 
         IFS=',' read -r -a vdisk_extensions_to_skip <<< "$value"
-      elif [ "$name" == "snapshot_extension" ]; then
+      elif [[ "$name" == "snapshot_extension" ]]; then
         value="${value%\"*}"     # remove opening string quotes.
         value="${value#\"*}"     # remove closing string quotes.
         
@@ -166,7 +170,7 @@
         extension_exists=false
         for extension in "${vdisk_extensions_to_skip[@]}"
         do
-          if [ "$extension" == "$value" ]; then
+          if [[ "$extension" == "$value" ]]; then
             extension_exists=true
           fi
         done
@@ -208,7 +212,7 @@
         # make sure the vdisk extension should not be skipped and added it to the list array.
         for extension in "${extensions_to_skip[@]}"
         do
-          if [ "$extension" == "$disk_extension" ]; then
+          if [[ "$extension" == "$disk_extension" ]]; then
             skip_disk=true
           fi
         done
@@ -218,7 +222,7 @@
           vdisk_exists=false
           for vdisk in "${vdisk_list[@]}"
           do
-            if [ "$vdisk" == "$vdisk_path" ]; then
+            if [[ "$vdisk" == "$vdisk_path" ]]; then
               vdisk_exists=true
             fi
           done
@@ -270,9 +274,27 @@
   function backup_now() {
     # create local variables.
     local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local argument1="run_backup"
 
-    "$runscript" | at NOW -M > /dev/null 2>&1
+    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
   }
+
+  function fix_snapshots() {
+    # create local variables.
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local argument1="fix_snapshots"
+
+    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
+  }
+
+  function abort_script() {
+    # create local variables.
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local argument1="abort_script"
+
+    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
+  }
+
 
 #### end script functions ####
 
@@ -289,8 +311,14 @@
     'backup_now')
       backup_now
       ;;
+    'fix_snapshots')
+      fix_snapshots
+      ;;
+    'abort_script')
+      abort_script
+      ;;
     *)
-     echo "usage $0 update_user_script, create_vm_lists, backup_now"
+     echo "usage $0 update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script"
      ;;
   esac
 

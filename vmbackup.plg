@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.22">
-<!ENTITY tag        "v0.1.7">
+<!ENTITY version    "2019.12.24">
+<!ENTITY tag        "v0.1.8">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -27,6 +27,19 @@
 
 <CHANGES>
 ##&name;
+
+### v0.1.8 - 2019/12/24
+**Penny Wise and Pound Stupid**
+
+- fixed weekly cronjob.
+- fixed validation to allow spaces in paths.
+- fixed cronjob not being removed during uninstall.
+- fixed extension matching case sensitivity.
+- added fix for stuck snapshots.
+- added ability to abort running scripts.
+- changed default folder start location based on restrictive validation setting.
+- updated help.
+- updated lists to be sorted alphabetically.
 
 ### v0.1.7 - 2019/12/22
 **Ms. Frizzle**
@@ -121,7 +134,7 @@
     echo ""
     echo "-----------------------------------------------------------"
     echo " &name; has been installed."
-    echo " copyright 2019, &author;"
+    echo " copyright 2019-$(date +'%Y'), &author;"
     echo " version: &tag; - &version;"
     echo "-----------------------------------------------------------"
     echo ""
@@ -134,6 +147,10 @@
 -->
 <FILE Run="/bin/bash" Method="remove">
   <INLINE>
+    # remove cronjob.
+    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
+    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php" ) | crontab -
+
     # remove installed packages.
     find "&packages;/" -type f -iname "*.txz" -delete
     
@@ -158,7 +175,7 @@
     echo ""
     echo "-----------------------------------------------------------"
     echo " &name; has been uninstalled."
-    echo " copyright 2019, &author;"
+    echo " copyright 2019-$(date +'%Y'), &author;"
     echo " version: &tag; - &version;"
     echo "-----------------------------------------------------------"
     echo ""

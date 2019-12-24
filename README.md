@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.1.7 - 2019/12/22
+v0.1.8 - 2019/12/24
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
@@ -91,6 +91,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
   - When set to 'Yes' reconstruct write will be disabled after the backup finishes.
 
+- "Backup Now" button runs a backup using current settings. It will automatically apply changes before it starts.
+
 ### Other Settings
 
 #### Logging
@@ -174,6 +176,10 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Disable validation for the custom cron text box.
 
 - Disable restrictive validation for the other text fields.
+
+- "Abort Script" button will abort any running scripts. This may cause major issues. Use with caution!
+
+- "Fix Snapshots" button to fix stuck snapshots that weren't removed. This could cause more issues than it fixes. Use with caution!
 
 ##### Disclaimer
 
