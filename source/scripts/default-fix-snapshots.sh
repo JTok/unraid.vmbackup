@@ -60,7 +60,7 @@ do
 
     # check for the header in vdisks to see if there are any disks
     if [ ${#vdisks[@]} -eq 0 ]; then
-      logger "information: there are no vdisk(s) associated with $vm."
+      echo "information: there are no vdisk(s) associated with $vm."
     fi
 
     # get vdisk names to check on current backups
@@ -80,10 +80,10 @@ do
         # make sure disk has a snapshot extension
         if [ "$disk_extension" == "$snapshot_extension" ]; then
           skip_disk="0"
-          logger "information: $disk on $vm is a snapshot."
+          echo "information: $disk on $vm is a snapshot."
         else
           skip_disk="1"
-          logger "information: $disk on $vm is not a snapshot. skipping disk."
+          echo "information: $disk on $vm is not a snapshot. skipping disk."
         fi
 
         # re-enable case matching.
@@ -111,7 +111,7 @@ do
 
           # wait 5 seconds.
           sleep 5
-          logger "information: commited changes from snapshot for $disk on $vm."
+          echo "information: commited changes from snapshot for $disk on $vm."
           /usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup snapshot fix" -d "snapshot pivoted" -i "information" -m "$(date '+%Y-%m-%d %H:%M') information: commited changes from snapshot for $disk on $vm."
 
           # see if snapshot still exists.
@@ -119,7 +119,7 @@ do
 
             # if it does, forcibly remove it.
             rm -fv "$disk_directory/$snap_name"
-            logger "information: forcibly removed snapshot $disk_directory/$snap_name for $vm."
+            echo "information: forcibly removed snapshot $disk_directory/$snap_name for $vm."
             /usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup snapshot fix" -d "snapshot removed" -i "information" -m "$(date '+%Y-%m-%d %H:%M') information: forcibly removed snapshot $disk_directory/$snap_name for $vm."
           fi
         fi
@@ -129,8 +129,8 @@ do
   else
 
     # could not fix snapshot the vm was already running.
-    logger "failure: could not remove snapshot because $vm is $vm_state."
-    /usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup snapshot fix" -d "failed to fix" -i "alert" -m "$(date '+%Y-%m-%d %H:%M') failure: could not remove snapshot because $vm is $vm_state."
+    echo "failure: could not remove snapshot because $vm is $vm_state."
+    /usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup snapshot fix" -d "failed to fix $vm" -i "alert" -m "$(date '+%Y-%m-%d %H:%M') failure: could not remove snapshot because $vm is $vm_state."
 
   fi
 
