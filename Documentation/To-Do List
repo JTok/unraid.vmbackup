@@ -17,3 +17,4 @@
 #  - ability to view latest log/error log files.
 #  - option to skip running vms.
 #  - reduce initial page load times.
+#  - ability to perform different backup schemes, such as incremental.
