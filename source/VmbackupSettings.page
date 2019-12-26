@@ -31,9 +31,6 @@ $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
 $vm_list = $plugin_path . '/vm-list.txt';
 $vdisk_list = $plugin_path . '/vdisk-list.txt';
 
-// create text files containing a list of vms and a list of vdisks respectively.
-exec("$command_script_file create_vm_lists");
-
 // see if user config file already exists.
 if (!is_file($user_conf_file)) {
 
@@ -62,41 +59,22 @@ if (!is_file($user_conf_file)) {
   $conf_array = parse_ini_file($user_conf_file);
 }
 
-// see if user script already exists.
-if (!is_file($user_script_file)) {
+// create a variable with the default script contents and user config file merged.
+$script_contents = update_script_contents($default_script_file, $user_conf_file);
+
+// write script contents variable as the user script file.
+file_put_contents($user_script_file, $script_contents);
+
   
-  // if not, create a variable with the default script contents and user config file merged.
-  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+// create a variable with the default fix snapshots script contents and user config file merged.
+$snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
 
-  // write script contents variable as the user script file.
-  file_put_contents($user_script_file, $script_contents);
+// write script contents variable as the user fix snapshots script file.
+file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
 
-} else {
-  
-  // if not, create a variable with the default script contents and user config file merged.
-  $script_contents = update_script_contents($default_script_file, $user_conf_file);
 
-  // write script contents variable as the user script file.
-  file_put_contents($user_script_file, $script_contents);
-}
-
-// see if user fix snapshots script already exists.
-if (!is_file($user_fix_snapshots_file)) {
-  
-  // if not, create a variable with the default fix snapshots script contents and user config file merged.
-  $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
-
-  // write script contents variable as the user fix snapshots script file.
-  file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
-
-} else {
-  
-  // if not, create a variable with the default fix snapshots script contents and user config file merged.
-  $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
-
-  // write script contents variable as the user fix snapshots script file.
-  file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
-}
+// create text files containing a list of vms and a list of vdisks respectively.
+exec("$command_script_file create_vm_lists");
 
 // get vm and vdisk lists as arrays.
 $vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
