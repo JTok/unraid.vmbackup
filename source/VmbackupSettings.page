@@ -332,6 +332,14 @@ Icon="clone"
       $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_danger_zone", "disabled", true);
+      // refresh the form.
+      $.ajax({
+        url: "",
+        context: document.body,
+        success: function(s,x){
+          $(this).html(s);
+        }
+      });
     });
 
     // add click event to default buttons.
@@ -341,8 +349,6 @@ Icon="clone"
       e.stopPropagation();
       // submit the form with the clicked button appended.
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
-      // update the form data.
-      $("#vmbackup_settings_form").load(location.href + " #vmbackup_settings_form","");
       // refresh the form.
       $.ajax({
         url: "",
@@ -404,7 +410,7 @@ Icon="clone"
   });
 </script>
 
-<div id="test" style="width:90%; float:left">
+<div style="width:90%; float:left">
   <form id="vmbackup_settings_form" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
