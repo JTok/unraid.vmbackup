@@ -116,6 +116,17 @@
 
 
 <!--
+  create initial user files.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    /usr/local/emhttp/plugins/scripts/commands.sh update_user_conf_file
+    /usr/local/emhttp/plugins/scripts/commands.sh update_user_script
+    /usr/local/emhttp/plugins/scripts/commands.sh create_vm_lists
+  </INLINE>
+</FILE>
+
+<!--
   clean old files.
 -->
 <FILE Run="/bin/bash">
