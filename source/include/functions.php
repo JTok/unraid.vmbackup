@@ -7,7 +7,39 @@
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
   require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
-  
+  // function to create or update the user config file as necessary and return the results as a config array.
+  function update_user_conf_file($default_conf_file, $user_conf_file) {
+    // see if user config file already exists.
+    if (!is_file($user_conf_file)) {
+
+      // if not, create it from the default config file.
+      if (!copy($default_conf_file, $user_conf_file)) {
+        echo "failed to create user config file.\n";
+
+      } else {
+
+        // parse user config file.
+        $conf_array = parse_ini_file($user_conf_file);
+      }
+
+    } else {
+
+      // if so, get an array of the user config settings with any new default config settings added to it.
+      $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
+
+      if (!empty($user_conf_array)) {
+        // create user config file contents from new array.
+        $user_conf_contents = create_ini_file($user_conf_array);
+        
+        // write new config contents variable as the new user config.
+        file_put_contents($user_conf_file, $user_conf_contents);
+      }
+    }
+      // parse user config file.
+      $conf_array = parse_ini_file($user_conf_file);
+      return $conf_array;
+  }
+
   // function to add missing config options from first config to second config, without writing it to a file.
   function add_missing_config_options($first_conf_file, $second_conf_file) {
 
@@ -29,9 +61,10 @@
           $second_conf_array[$key] = $value;
         }
       }
+      return $second_conf_array;
+    } else {
+      return $conf_diff;
     }
-
-    return $second_conf_array;
   }
 
 
@@ -204,5 +237,14 @@
 
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
+  }
+  // if first argument is update_user_script, then update the user script file.
+  if ($argv[1] == "update_user_conf_file") {
+    // create variables for passed parameters.
+    $default_conf_file = $argv[2];
+    $user_conf_file = $argv[3];
+
+    // create or update the user config file as necessary.
+    update_user_conf_file($default_conf_file, $user_conf_file);
   }
 ?>
