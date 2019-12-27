@@ -3,9 +3,9 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.24">
-<!ENTITY tag        "v0.1.8">
-<!ENTITY branch     "master">
+<!ENTITY version    "2019.12.27">
+<!ENTITY tag        "v0.1.9">
+<!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
