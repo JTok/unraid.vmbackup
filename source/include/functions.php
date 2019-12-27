@@ -7,6 +7,31 @@
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
   require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
+  // function to compare versions of two files.
+  function same_file_version($default_file, $user_file, $is_config = false) {
+    // check to see if the user file exists.
+    if (!is_file($user_file)) {
+      return false;
+    }
+    if ($is_config) {
+      $default_conf_array = parse_ini_file("$default_file");
+      $user_conf_array = parse_ini_file("$user_file");
+      if ($default_conf_array["version"] === $user_conf_array["version"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      $default_file_array = get_special_variables($default_file);
+      $user_file_array = get_special_variables($user_file);
+      if ($default_file_array["version"] === $user_file_array["version"]) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   // function to create or update the user config file as necessary and return the results as a config array.
   function update_user_conf_file($default_conf_file, $user_conf_file) {
     // see if user config file already exists.
@@ -24,15 +49,18 @@
 
     } else {
 
-      // if so, get an array of the user config settings with any new default config settings added to it.
-      $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
+      // see if default config version is the same as user config version.
+      if (!same_file_version($default_conf_file, $user_conf_file, true)) {
+        // if not, get an array of the user config settings with any new default config settings added to it.
+        $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
 
-      if (!empty($user_conf_array)) {
-        // create user config file contents from new array.
-        $user_conf_contents = create_ini_file($user_conf_array);
-        
-        // write new config contents variable as the new user config.
-        file_put_contents($user_conf_file, $user_conf_contents);
+        if (!empty($user_conf_array)) {
+          // create user config file contents from new array.
+          $user_conf_contents = create_ini_file($user_conf_array);
+          
+          // write new config contents variable as the new user config.
+          file_put_contents($user_conf_file, $user_conf_contents);
+        }
       }
     }
       // parse user config file.
@@ -216,7 +244,6 @@
     // run the command.
     exec($command);
   }
-  
 
   // check for arguments passed from bash.
   // if first argument is update_user_script, then update the user script file.
@@ -238,7 +265,7 @@
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
   }
-  // if first argument is update_user_script, then update the user script file.
+  // if first argument is update_user_conf_file, then update the user config file.
   if ($argv[1] == "update_user_conf_file") {
     // create variables for passed parameters.
     $default_conf_file = $argv[2];
