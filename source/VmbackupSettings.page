@@ -8,78 +8,51 @@ Icon="clone"
   /* vmbackup plugin
     copyright 2019 JTok */
 
-require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
-require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
-require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
-// create local variables.
-// plugin name.
-$plugin = 'vmbackup';
-// default files.
-$plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
-$script_path = $plugin_source_path . '/scripts';
-$command_script_file = $script_path . '/commands.sh';
-$default_script_file = $script_path . '/default-script.sh';
-$default_conf_file = $plugin_source_path . '/default.cfg';
-$default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
-// user files.
-$plugin_path = '/boot/config/plugins/' . $plugin;
-$user_script_file = $plugin_path . '/user-script.sh';
-$user_conf_file = $plugin_path . '/user.cfg';
-$user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
-// generated files.
-$vm_list = $plugin_path . '/vm-list.txt';
-$vdisk_list = $plugin_path . '/vdisk-list.txt';
+  // create local variables.
+  // plugin name.
+  $plugin = 'vmbackup';
+  // default files.
+  $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
+  $script_path = $plugin_source_path . '/scripts';
+  $command_script_file = $script_path . '/commands.sh';
+  $default_script_file = $script_path . '/default-script.sh';
+  $default_conf_file = $plugin_source_path . '/default.cfg';
+  $default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
+  // user files.
+  $plugin_path = '/boot/config/plugins/' . $plugin;
+  $user_script_file = $plugin_path . '/user-script.sh';
+  $user_conf_file = $plugin_path . '/user.cfg';
+  $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
+  // generated files.
+  $vm_list = $plugin_path . '/vm-list.txt';
+  $vdisk_list = $plugin_path . '/vdisk-list.txt';
 
-// see if user config file already exists.
-if (!is_file($user_conf_file)) {
+  // create or update the user config file as necessary and return the results as a config array.
+  $conf_array=update_user_conf_file($default_conf_file, $user_conf_file);
 
-  // if not, create it from the default config file.
-  if (!copy($default_conf_file, $user_conf_file)) {
-    echo "failed to create user config file.\n";
+  // create a variable with the default script contents and user config file merged.
+  $script_contents = update_script_contents($default_script_file, $user_conf_file);
 
-  } else {
+  // write script contents variable as the user script file.
+  file_put_contents($user_script_file, $script_contents);
 
-    // parse user config file.
-    $conf_array = parse_ini_file($user_conf_file);
-  }
+  // create a variable with the default fix snapshots script contents and user config file merged.
+  $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
 
-} else {
-
-  // if so, get an array of the user config settings with any new default config settings added to it.
-  $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
-
-  // create user config file contents from new array.
-  $user_conf_contents = create_ini_file($user_conf_array);
-  
-  // write new config contents variable as the new user config.
-  file_put_contents($user_conf_file, $user_conf_contents);
-
-  // parse user config file.
-  $conf_array = parse_ini_file($user_conf_file);
-}
-
-// create a variable with the default script contents and user config file merged.
-$script_contents = update_script_contents($default_script_file, $user_conf_file);
-
-// write script contents variable as the user script file.
-file_put_contents($user_script_file, $script_contents);
-
-  
-// create a variable with the default fix snapshots script contents and user config file merged.
-$snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
-
-// write script contents variable as the user fix snapshots script file.
-file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+  // write script contents variable as the user fix snapshots script file.
+  file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
 
 
-// create text files containing a list of vms and a list of vdisks respectively.
-exec("$command_script_file create_vm_lists");
+  // create text files containing a list of vms and a list of vdisks respectively.
+  exec("$command_script_file create_vm_lists");
 
-// get vm and vdisk lists as arrays.
-$vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-$vdisk_list_array = parse_ini_file($vdisk_list);
-
+  // get vm and vdisk lists as arrays.
+  $vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+  $vdisk_list_array = parse_ini_file($vdisk_list);
 ?>
 
 <!-- import javascript sources -->
