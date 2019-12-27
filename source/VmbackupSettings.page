@@ -34,18 +34,23 @@ Icon="clone"
   // create or update the user config file as necessary and return the results as a config array.
   $conf_array=update_user_conf_file($default_conf_file, $user_conf_file);
 
-  // create a variable with the default script contents and user config file merged.
-  $script_contents = update_script_contents($default_script_file, $user_conf_file);
+  // see if default script version is the same as user script version.
+  if (!same_file_version($default_script_file, $user_script_file, false)) {
+    // create a variable with the default script contents and user config file merged.
+    $script_contents = update_script_contents($default_script_file, $user_conf_file);
 
-  // write script contents variable as the user script file.
-  file_put_contents($user_script_file, $script_contents);
+    // write script contents variable as the user script file.
+    file_put_contents($user_script_file, $script_contents);
+  }
 
-  // create a variable with the default fix snapshots script contents and user config file merged.
-  $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
+  // see if default fix snapshots script version is the same as user fix snapshots script version.
+  if (!same_file_version($default_fix_snapshots_file, $user_fix_snapshots_file, false)) {
+    // create a variable with the default fix snapshots script contents and user config file merged.
+    $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
 
-  // write script contents variable as the user fix snapshots script file.
-  file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
-
+    // write script contents variable as the user fix snapshots script file.
+    file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+  }
 
   // create text files containing a list of vms and a list of vdisks respectively.
   exec("$command_script_file create_vm_lists");
