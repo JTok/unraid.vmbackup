@@ -189,7 +189,7 @@
       }
     }
     // filter array to only contain valid special variables before returning it.
-    $valid_keys = ['arrayStarted', 'noParity'];
+    $valid_keys = ['arrayStarted', 'noParity', 'version'];
     $special_variables = array_filter($commented_variables, function($key) use ($valid_keys) {
       return in_array($key, $valid_keys);
     }, ARRAY_FILTER_USE_KEY);
