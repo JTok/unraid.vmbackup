@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script
+# usage: update_user_script, update_user_conf_file, create_vm_lists, backup_now, fix_snapshots, abort_script
 
 
 #### start script functions ####
@@ -39,6 +39,16 @@
 
       php "$php_functions_script" "update_user_script" "$default_fix_snapshots_script" "$user_fix_snapshots_script" "$user_config"
     fi
+  }
+
+  # function to update user config file.
+  update_user_conf_file () {
+    # create local variables.
+    local php_functions_script="/usr/local/emhttp/plugins/vmbackup/include/functions.php"
+    local default_config="/usr/local/emhttp/plugins/vmbackup/default.cfg"
+    local user_config="/boot/config/plugins/vmbackup/user.cfg"
+
+    php "$php_functions_script" "update_user_conf_file" "$default_config" "$user_config"
   }
 
   # function to update cronjob
@@ -398,6 +408,9 @@
     'update_user_script')
       update_user_script
       ;;
+    'update_user_conf_file')
+      update_user_conf_file
+      ;;
     'create_vm_lists')
       create_vm_lists
       ;;
@@ -411,7 +424,7 @@
       abort_script
       ;;
     *)
-     echo "usage $0 update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script"
+     echo "usage $0 update_user_script, update_user_conf_file, create_vm_lists, backup_now, fix_snapshots, abort_script"
      ;;
   esac
 
