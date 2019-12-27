@@ -2,6 +2,7 @@
 #backgroundOnly=true
 #arrayStarted=true
 #noParity=true
+#version=v1.2.3 - 2019/12/24
 
 # v1.2.3 - 2019/12/24
 

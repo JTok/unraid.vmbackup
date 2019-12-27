@@ -1,6 +1,9 @@
 #!/bin/bash
 #arrayStarted=true
 #noParity=true
+#version=v1.0.0 - 2019/12/26
+
+# v1.0.0 - 2019/12/26
 
 snapshot_extension="no_config"
 
