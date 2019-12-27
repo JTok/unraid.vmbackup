@@ -13,8 +13,8 @@
 #  - add restore functionality.
 #  - create more advanced regex for custom cron.
 #  - fix vms to backup while running drop-down.
-#  - alter to use XHR (ajax), so as to make user experience more fluid.
 #  - ability to view latest log/error log files.
 #  - option to skip running vms.
-#  - reduce initial page load times.
 #  - ability to perform different backup schemes, such as incremental.
+#  - re-add file versions to reduce number of writes to flash drive.
+#  - update default config comments and variable ordering to match default script.
