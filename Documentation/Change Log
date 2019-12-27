@@ -1,5 +1,12 @@
 ## Change Log ##
 
+# v0.1.9 - 2019/12/27
+# Flame Broiled
+#
+# - added file versions to reduce writes to thumb drive.
+# - updated buttons and pages to use XHR (ajax) for asynchronous loading.
+# - updated code to reduce page load times.
+
 # v0.1.8 - 2019/12/24
 # Penny Wise and Pound Stupid
 #
