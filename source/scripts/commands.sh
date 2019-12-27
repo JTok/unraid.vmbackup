@@ -12,6 +12,8 @@
     local default_script="/usr/local/emhttp/plugins/vmbackup/scripts/default-script.sh"
     local user_script="/boot/config/plugins/vmbackup/user-script.sh"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    local default_fix_snapshots_script="/usr/local/emhttp/plugins/vmbackup/scripts/default-fix-snapshots.sh"
+    local user_fix_snapshots_script="/boot/config/plugins/vmbackup/user-fix-snapshots.sh"
 
     # verify the default script and the user config files exist.
     if [[ -f "$default_script" ]] && [[ -f "$user_config" ]]; then
@@ -25,6 +27,17 @@
 
       # update cronjob.
       update_cron_job
+    fi
+
+    # verify the default fix snapshots script and the user config files exist.
+    if [[ -f "$default_fix_snapshots_script" ]] && [[ -f "$user_config" ]]; then
+
+      # if the a user fix snapshots script already exists, remove it.
+      if [[ -f "$user_fix_snapshots_script" ]]; then
+        rm -f "$user_fix_snapshots_script"
+      fi
+
+      php "$php_functions_script" "update_user_script" "$default_fix_snapshots_script" "$user_fix_snapshots_script" "$user_config"
     fi
   }
 
