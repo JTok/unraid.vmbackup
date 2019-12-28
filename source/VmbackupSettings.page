@@ -256,6 +256,10 @@ Icon="clone"
 
   // assign functions to element events.
   function assign_functions() {
+    // add changed event to restrictive regex drop-down.
+    $("#disable_restrictive_regex").change(function() {
+      refresh_danger_zone = true;
+    });
     // add click event to backup now button.
     $("#backup").click(function(e) {
       // prevent normal form submission.
@@ -332,14 +336,19 @@ Icon="clone"
       $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_danger_zone", "disabled", true);
-      // refresh the form.
-      $.ajax({
-        url: "",
-        context: document.body,
-        success: function(s,x){
-          $(this).html(s);
-        }
-      });
+      // check to see if the form should be refreshed.
+      if (refresh_danger_zone) {
+        // refresh the form.
+        $.ajax({
+          url: "",
+          context: document.body,
+          success: function(s,x){
+            $(this).html(s);
+          }
+        });
+        refresh_settings = true;
+        console.log("refresh settings: ", refresh_settings);
+      }
     });
 
     // add click event to default buttons.
@@ -392,6 +401,9 @@ Icon="clone"
 
   // document ready function.
   $(function() {
+    // set variables for page functions.
+    refresh_settings = false;
+    refresh_danger_zone = false;
     //configure dropdown checklists.
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
