@@ -438,7 +438,11 @@
       update_user_conf_file
       ;;
     'create_vm_lists')
-      create_vm_lists "$2"
+      if [[ -n "$2" ]]; then
+        create_vm_lists true
+      else
+        create_vm_lists false
+      fi
       ;;
     'backup_now')
       backup_now
