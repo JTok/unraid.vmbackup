@@ -288,6 +288,7 @@ Icon="clone"
     });
     // add changed event to vdisk extensions to skip.
     $("#vdisk_extensions_to_skip").on('input propertychange paste', function() {
+      vdisk_extensions_to_skip_changed = true;
       refresh_settings = true;
     });
     // add click event to backup now button.
@@ -300,12 +301,29 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById('vmbackup_settings_form');
       prepare_form(vmbackup_settings_form);
+      // check to see if vdisk extensions to skip has been changed.
+      if (vdisk_extensions_to_skip_changed) {
+        // append input to form submission to force text files to be re-created.
+        $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+      }
       // submit the vmbackup settings form like normal.
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize(),
         function() {
           // submit the second form to actually perform the backup.
           $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
         });
+      // check to see if the Settings tab should be refreshed.
+      if (refresh_settings) {
+        // refresh the form.
+        $.ajax({
+          url: "",
+          context: document.body,
+          success: function(s,x){
+            $(this).html(s);
+          }
+        });
+        refresh_settings = false;
+      }
     });
     // add click event to fix snapshots button.
     $("#fix_snapshots").click(function(e) {
@@ -338,10 +356,16 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById('vmbackup_settings_form');
       prepare_form(vmbackup_settings_form);
+      // check to see if vdisk extensions to skip has been changed.
+      if (vdisk_extensions_to_skip_changed) {
+        // append input to form submission to force text files to be re-created.
+        $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+      }
       // submit the form with the clicked button appended.
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_settings", "disabled", true);
+      // check to see if the Settings tab should be refreshed.
       if (refresh_settings) {
         // refresh the form.
         $.ajax({
@@ -396,6 +420,8 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
+      // append input to form submission to force text files to be re-created.
+      $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
       // submit the form with the clicked button appended.
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // refresh the form.
