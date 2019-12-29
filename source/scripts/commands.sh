@@ -433,12 +433,15 @@
   case "$1" in
     'update_user_script')
       update_user_script
+      if [[ "$2" == "rebuild_text_files" ]]; then
+        create_vm_lists true
+      fi
       ;;
     'update_user_conf_file')
       update_user_conf_file
       ;;
     'create_vm_lists')
-      if [[ -n "$2" ]]; then
+      if [[ "$2" == "rebuild_text_files" ]]; then
         create_vm_lists true
       else
         create_vm_lists false
