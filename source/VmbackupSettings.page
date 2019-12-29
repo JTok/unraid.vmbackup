@@ -256,9 +256,39 @@ Icon="clone"
 
   // assign functions to element events.
   function assign_functions() {
+    // add custom click function to Settings tab.
+    $("#tab1").on('click', function() {
+      // go to the tab like normal.
+      settab(this.id);
+      // refresh the form.
+      $.ajax({
+        url: "",
+        context: document.body,
+        success: function(s,x){
+          $(this).html(s);
+        }
+      });
+    });
+    // add custom click function to Danger Zone tab.
+    $("#tab3").on('click', function() {
+      // go to the tab like normal.
+      settab(this.id);
+      // refresh the form.
+      $.ajax({
+        url: "",
+        context: document.body,
+        success: function(s,x){
+          $(this).html(s);
+        }
+      });
+    });
     // add changed event to restrictive regex drop-down.
     $("#disable_restrictive_regex").change(function() {
       refresh_danger_zone = true;
+    });
+    // add changed event to vdisk extensions to skip.
+    $("#vdisk_extensions_to_skip").on('input propertychange paste', function() {
+      refresh_settings = true;
     });
     // add click event to backup now button.
     $("#backup").click(function(e) {
@@ -312,6 +342,17 @@ Icon="clone"
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_settings", "disabled", true);
+      if (refresh_settings) {
+        // refresh the form.
+        $.ajax({
+          url: "",
+          context: document.body,
+          success: function(s,x){
+            $(this).html(s);
+          }
+        });
+        refresh_settings = false;
+      }
     });
     $("#apply_vmbackup_other_settings").click(function(e) {
       // prevent normal form submission.
@@ -346,8 +387,7 @@ Icon="clone"
             $(this).html(s);
           }
         });
-        refresh_settings = true;
-        console.log("refresh settings: ", refresh_settings);
+        refresh_danger_zone = false;
       }
     });
 
@@ -401,9 +441,6 @@ Icon="clone"
 
   // document ready function.
   $(function() {
-    // set variables for page functions.
-    refresh_settings = false;
-    refresh_danger_zone = false;
     //configure dropdown checklists.
     $('#vdisks_to_skip').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
     $('#vms_to_backup').dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
