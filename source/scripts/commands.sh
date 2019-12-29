@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, update_user_conf_file, create_vm_lists, backup_now, fix_snapshots, abort_script
+# usage: update_user_script, update_user_conf_file, create_vm_lists true/false, backup_now, fix_snapshots, abort_script
 
 
 #### start script functions ####
@@ -155,6 +155,7 @@
     local user_prefix="/mnt/user/domains/"
     local cache_prefix="/mnt/cache/domains/"
     local disk_prefix="/mnt/disk*/domains/"
+    local rebuild_text_files="$1"
 
     SAVEIFS=$IFS   # save current IFS.
 
@@ -166,8 +167,8 @@
     # sort vm_list alphabetically.
     vm_list=$(echo "$vm_list" | sort -f)
 
-    # check to see if the list text files exist.
-    if [[ -f "$vm_list_file" ]] && [[ -f "$vdisk_list_file" ]] && [[ -f "$vdisk_path_list_file" ]]; then
+    # check to see if the list text files exist and rebuild_text_files is false.
+    if [[ -f "$vm_list_file" ]] && [[ -f "$vdisk_list_file" ]] && [[ -f "$vdisk_path_list_file" ]] && [ "$rebuild_text_files" = false ]; then
 
       # read vm_list_file into a variable for comparing it to the vms on the system.
       vm_list_var="$(<$vm_list_file)"
@@ -398,6 +399,31 @@
     "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
   }
 
+  # function to merge two arrays without duplicates.
+  function merge_arrays() {
+    # create local variables.
+    local -n array_one="$1"
+    local -n array_two="$2"
+
+    # unset array.
+    unset merged_array
+    # declare empty array.
+    merged_array=()
+
+    # create associative array to use while merging.
+    unset tmp_assoc_array
+    declare -A tmp_assoc_array
+    # get the values of each array and place them into a different array as a key.
+    for value in "${array_one[@]}" "${array_two[@]}"
+    do
+      # placing array values into another array as the key will deduplicate them since keys must be unique.
+      tmp_assoc_array["$value"]=1;
+    done
+    # place the keys back into the array as the values.
+    # shellcheck disable=SC2034 # array is referenced by calling code.
+    merged_array=("${!tmp_assoc_array[@]}")
+  }
+
 
 #### end script functions ####
 
@@ -412,7 +438,7 @@
       update_user_conf_file
       ;;
     'create_vm_lists')
-      create_vm_lists
+      create_vm_lists "$2"
       ;;
     'backup_now')
       backup_now
@@ -424,7 +450,7 @@
       abort_script
       ;;
     *)
-     echo "usage $0 update_user_script, update_user_conf_file, create_vm_lists, backup_now, fix_snapshots, abort_script"
+     echo "usage $0 update_user_script, update_user_conf_file, create_vm_lists true/false, backup_now, fix_snapshots, abort_script"
      ;;
   esac
 
