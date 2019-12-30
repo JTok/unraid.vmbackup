@@ -4,16 +4,16 @@
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings.
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
-#  - ability to do multiple script variations/schedules.
 #  - move some of the settings alerts to php form validation instead.
 #  - set up separate css stylesheets.
-#  - ability to edit script run variables such as noParity.
 #  - update script to use xmlstarlet.
-#  - update readme to include more explanation, as well as field names.
-#  - add restore functionality.
-#  - create more advanced regex for custom cron.
 #  - re-add vms_to_backup_running to danger zone.
-#  - ability to view latest log/error log files.
+#  - create more advanced regex for custom cron.
 #  - option to skip running vms.
+#  - ability to do multiple script variations/schedules.
 #  - ability to perform different backup schemes, such as incremental.
+#  - add restore functionality.
+#  - update readme to include more explanation, as well as field names.
 #  - update default config comments and variable ordering to match default script.
+#  - ability to view latest log/error log files.
+#  - ability to edit script run variables such as noParity.
