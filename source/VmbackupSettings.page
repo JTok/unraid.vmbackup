@@ -450,6 +450,7 @@ Icon="clone"
             }
           });
         });
+        refresh_settings = true;
     });
     $("#default_vmbackup_danger_zone").click(function(e) {
       // prevent normal form submission.
@@ -467,6 +468,7 @@ Icon="clone"
             }
           });
         });
+        refresh_settings = true;
     });
   }
 
