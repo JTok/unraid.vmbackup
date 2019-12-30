@@ -12,9 +12,8 @@
 #  - update readme to include more explanation, as well as field names.
 #  - add restore functionality.
 #  - create more advanced regex for custom cron.
-#  - fix vms to backup while running drop-down.
+#  - re-add vms_to_backup_running to danger zone.
 #  - ability to view latest log/error log files.
 #  - option to skip running vms.
 #  - ability to perform different backup schemes, such as incremental.
-#  - re-add file versions to reduce number of writes to flash drive.
 #  - update default config comments and variable ordering to match default script.
