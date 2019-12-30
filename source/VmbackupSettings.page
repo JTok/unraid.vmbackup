@@ -276,19 +276,6 @@ Icon="clone"
         refresh_settings = false;
       }
     });
-    // add custom click function to Danger Zone tab.
-    $("#tab3").on('click', function() {
-      // go to the tab like normal.
-      settab(this.id);
-      // refresh the form.
-      $.ajax({
-        url: "",
-        context: document.body,
-        success: function(s,x){
-          $(this).html(s);
-        }
-      });
-    });
     // add changed event to restrictive regex drop-down.
     $("#disable_restrictive_regex").change(function() {
       refresh_settings = true;
