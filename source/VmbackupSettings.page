@@ -100,6 +100,52 @@ Icon="clone"
   var rebuild_text_files = false;
   var refresh_settings = false;
 
+  // function to set a cookie.
+  function set_cookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      var expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + value + expires;
+  }
+  // function to get a cookie by name.
+  function get_cookie(name) {
+    var name_equals = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i=0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1,c.length);
+      }
+      if (c.indexOf(name_equals) == 0) {
+        return c.substring(name_equals.length, c.length);
+      }
+    }
+    return "";
+  }
+  // function to delete a cookie by name.
+  function delete_cookie(name) {
+    document.cookie = name + "=; Max-Age=0;";
+  }
+  // function to check the default cookies, and set them if they don't exist.
+  function check_cookie(name) {
+    var cookie = get_cookie(name);
+    if (cookie == "") {
+      if (name) {
+        set_cookie(name, false);
+      }
+    }
+  }
+
+  // function to change a global variable and set its cookie.
+  function set_variable_cookie(name, new_value = false) {
+    window[name] = new_value;
+    set_cookie(name, new_value);
+  }
+
+
   // function to prepare form for submission.
   function prepare_form(form) {
   // make vdisks to skip a comma separated list for user config.
@@ -273,22 +319,22 @@ Icon="clone"
             $(this).html(s);
           }
         });
-        refresh_settings = false;
+        set_variable_cookie("refresh_settings", false);
       }
     });
     // add changed event to restrictive regex drop-down.
     $("#disable_restrictive_regex").change(function() {
-      refresh_settings = true;
+      set_variable_cookie("refresh_settings", true);
     });
     // add changed event to vdisk extensions to skip.
     $("#vdisk_extensions_to_skip").on('input propertychange paste', function() {
-      rebuild_text_files = true;
-      refresh_settings = true;
+      set_variable_cookie("rebuild_text_files", true);
+      set_variable_cookie("refresh_settings", true);
     });
     // add changed event to snapshot extension.
     $("#snapshot_extension").on('input propertychange paste', function() {
-      rebuild_text_files = true;
-      refresh_settings = true;
+      set_variable_cookie("rebuild_text_files", true);
+      set_variable_cookie("refresh_settings", true);
     });
     // add click event to backup now button.
     $("#backup").click(function(e) {
@@ -296,7 +342,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // check to see if the form is invalid.
-      if (!$("#vmbackup_settings_form").checkValidity()) {
+      if (!$("#vmbackup_settings_form")[0].checkValidity()) {
         return false;
       }
       // disable the apply button before form submission to prevent it from being submitted twice.
@@ -308,7 +354,7 @@ Icon="clone"
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
         $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
-        rebuild_text_files = false;
+        set_variable_cookie("rebuild_text_files", false);
       }
       // submit the vmbackup settings form like normal.
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize(),
@@ -326,7 +372,7 @@ Icon="clone"
                     $(this).html(s);
                   }
                 });
-                refresh_settings = false;
+                set_variable_cookie("refresh_settings", false);
               }
             });
         });
@@ -360,7 +406,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // check to see if the form is invalid.
-      if (!$("#vmbackup_settings_form").checkValidity()) {
+      if (!$("#vmbackup_settings_form")[0].checkValidity()) {
         return false;
       }
       // grab the settings from the form and prepare it.
@@ -370,7 +416,7 @@ Icon="clone"
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
         $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
-        rebuild_text_files = false;
+        set_variable_cookie("rebuild_text_files", false);
       }
       // disable the apply button.
       change_prop("#apply_vmbackup_settings", "disabled", true);
@@ -387,7 +433,7 @@ Icon="clone"
                 $(this).html(s);
               }
             });
-            refresh_settings = false;
+            set_variable_cookie("refresh_settings", false);
           }
         });
     });
@@ -396,7 +442,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // check to see if the form is invalid.
-      if (!$("#vmbackup_settings_form").checkValidity()) {
+      if (!$("#vmbackup_other_settings_form")[0].checkValidity()) {
         return false;
       }
       // grab the settings from the form and prepare it.
@@ -412,7 +458,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // check to see if the form is invalid.
-      if (!$("#vmbackup_settings_form").checkValidity()) {
+      if (!$("#vmbackup_danger_zone_form")[0].checkValidity()) {
         return false;
       }
       // grab the settings from the form and prepare it.
@@ -422,7 +468,7 @@ Icon="clone"
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
         $('#apply_vmbackup_danger_zone').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
-        rebuild_text_files = false;
+        set_variable_cookie("rebuild_text_files", false);
       }
       // disable the apply button.
       change_prop("#apply_vmbackup_danger_zone", "disabled", true);
@@ -466,7 +512,7 @@ Icon="clone"
             }
           });
         });
-        refresh_settings = true;
+        set_variable_cookie("refresh_settings", true);
     });
     $("#default_vmbackup_danger_zone").click(function(e) {
       // prevent normal form submission.
@@ -484,7 +530,7 @@ Icon="clone"
             }
           });
         });
-        refresh_settings = true;
+        set_variable_cookie("refresh_settings", true);
     });
   }
 
@@ -505,6 +551,12 @@ Icon="clone"
     set_vms_to_backup_lbl();
     // assign functions to element events.
     assign_functions();
+    // set default cookies.
+    check_cookie("rebuild_text_files");
+    check_cookie("refresh_settings");
+    // update global variables based on cookies.
+    rebuild_text_files = (get_cookie("rebuild_text_files") === "true");
+    refresh_settings = (get_cookie("refresh_settings") === "true");
   });
 </script>
 
