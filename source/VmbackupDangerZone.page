@@ -71,7 +71,7 @@ Icon="clone"
 
 
       Snapshot extension:
-      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^[^., ]?([\w.-])+[^,. ]?$" required>
+      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^[^., ]+([\w.-])+[^,. ]+$" required>
 
       <blockquote class="inline_help">
         <p>Change the extension used when creating snapshots.</p>
