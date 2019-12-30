@@ -96,6 +96,10 @@ Icon="clone"
 
 <!-- run jquery/javascript -->
 <script type="text/javascript">
+  // declare global variables.
+  var vdisk_extensions_to_skip_changed = false;
+  var refresh_settings = false;
+
   // function to prepare form for submission.
   function prepare_form(form) {
   // make vdisks to skip a comma separated list for user config.
@@ -261,13 +265,16 @@ Icon="clone"
       // go to the tab like normal.
       settab(this.id);
       // refresh the form.
-      $.ajax({
-        url: "",
-        context: document.body,
-        success: function(s,x){
-          $(this).html(s);
-        }
-      });
+      if (refresh_settings) {
+        $.ajax({
+          url: "",
+          context: document.body,
+          success: function(s,x){
+            $(this).html(s);
+          }
+        });
+        refresh_settings = false;
+      }
     });
     // add custom click function to Danger Zone tab.
     $("#tab3").on('click', function() {
@@ -284,7 +291,7 @@ Icon="clone"
     });
     // add changed event to restrictive regex drop-down.
     $("#disable_restrictive_regex").change(function() {
-      refresh_danger_zone = true;
+      refresh_settings = true;
     });
     // add changed event to vdisk extensions to skip.
     $("#vdisk_extensions_to_skip").on('input propertychange paste', function() {
@@ -305,25 +312,28 @@ Icon="clone"
       if (vdisk_extensions_to_skip_changed) {
         // append input to form submission to force text files to be re-created.
         $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+        vdisk_extensions_to_skip_changed = false;
       }
       // submit the vmbackup settings form like normal.
       $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize(),
         function() {
           // submit the second form to actually perform the backup.
-          $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
+          $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize(),
+            function () {
+              // check to see if the Settings tab should be refreshed.
+              if (refresh_settings) {
+                // refresh the form.
+                $.ajax({
+                  url: "",
+                  context: document.body,
+                  success: function(s,x){
+                    $(this).html(s);
+                  }
+                });
+                refresh_settings = false;
+              }
+            });
         });
-      // check to see if the Settings tab should be refreshed.
-      if (refresh_settings) {
-        // refresh the form.
-        $.ajax({
-          url: "",
-          context: document.body,
-          success: function(s,x){
-            $(this).html(s);
-          }
-        });
-        refresh_settings = false;
-      }
     });
     // add click event to fix snapshots button.
     $("#fix_snapshots").click(function(e) {
@@ -360,23 +370,26 @@ Icon="clone"
       if (vdisk_extensions_to_skip_changed) {
         // append input to form submission to force text files to be re-created.
         $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+        vdisk_extensions_to_skip_changed = false;
       }
-      // submit the form with the clicked button appended.
-      $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_settings", "disabled", true);
-      // check to see if the Settings tab should be refreshed.
-      if (refresh_settings) {
-        // refresh the form.
-        $.ajax({
-          url: "",
-          context: document.body,
-          success: function(s,x){
-            $(this).html(s);
+      // submit the form with the clicked button appended.
+      $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+        function() {
+          // check to see if the Settings tab should be refreshed.
+          if (refresh_settings) {
+            // refresh the form.
+            $.ajax({
+              url: "",
+              context: document.body,
+              success: function(s,x){
+                $(this).html(s);
+              }
+            });
+            refresh_settings = false;
           }
         });
-        refresh_settings = false;
-      }
     });
     $("#apply_vmbackup_other_settings").click(function(e) {
       // prevent normal form submission.
@@ -385,10 +398,10 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_other_settings_form = document.getElementById('vmbackup_other_settings_form');
       prepare_form(vmbackup_other_settings_form);
-      // submit the form with the clicked button appended.
-      $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_other_settings", "disabled", true);
+      // submit the form with the clicked button appended.
+      $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
     });
     $("#apply_vmbackup_danger_zone").click(function(e) {
       // prevent normal form submission.
@@ -397,22 +410,10 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_danger_zone_form = document.getElementById('vmbackup_danger_zone_form');
       prepare_form(vmbackup_danger_zone_form);
-      // submit the form with the clicked button appended.
-      $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
       // disable the apply button.
       change_prop("#apply_vmbackup_danger_zone", "disabled", true);
-      // check to see if the form should be refreshed.
-      if (refresh_danger_zone) {
-        // refresh the form.
-        $.ajax({
-          url: "",
-          context: document.body,
-          success: function(s,x){
-            $(this).html(s);
-          }
-        });
-        refresh_danger_zone = false;
-      }
+      // submit the form with the clicked button appended.
+      $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
     });
 
     // add click event to default buttons.
@@ -423,45 +424,51 @@ Icon="clone"
       // append input to form submission to force text files to be re-created.
       $('#vmbackup_settings_form').append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
       // submit the form with the clicked button appended.
-      $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
-      // refresh the form.
-      $.ajax({
-        url: "",
-        context: document.body,
-        success: function(s,x){
-          $(this).html(s);
-        }
-      });
+      $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+        function(){
+          // refresh the form.
+          $.ajax({
+            url: "",
+            context: document.body,
+            success: function(s,x){
+              $(this).html(s);
+            }
+          });
+        });
     });
     $("#default_vmbackup_other_settings").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
       // submit the form with the clicked button appended.
-      $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
-      // refresh the form.
-      $.ajax({
-        url: "",
-        context: document.body,
-        success: function(s,x){
-          $(this).html(s);
-        }
-      });
+      $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+        function() {
+          // refresh the form.
+          $.ajax({
+            url: "",
+            context: document.body,
+            success: function(s,x){
+              $(this).html(s);
+            }
+          });
+        });
     });
     $("#default_vmbackup_danger_zone").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
       // submit the form with the clicked button appended.
-      $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
-      // refresh the form.
-      $.ajax({
-        url: "",
-        context: document.body,
-        success: function(s,x){
-          $(this).html(s);
-        }
-      });
+      $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+        function() {
+          // refresh the form.
+          $.ajax({
+            url: "",
+            context: document.body,
+            success: function(s,x){
+              $(this).html(s);
+            }
+          });
+        });
     });
   }
 
