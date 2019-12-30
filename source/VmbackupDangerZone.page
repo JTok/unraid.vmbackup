@@ -113,23 +113,6 @@ Icon="clone"
       </blockquote>
 
 
-      List VMs to backup while running:
-      : <select id="vms_to_backup_running" name="vms_to_backup_running" size="1" multiple="multiple" style="display:none">
-        <?foreach ($vm_list_array as $vm):?>
-          <?=mk_option_check($conf_array['vms_to_backup_running'], $vm, $vm)?>
-        <?endforeach;?>
-      </select>
-
-      <blockquote class="inline_help">
-        <p>Check the names of VMs to keep running during backup.</p>
-        <ul>
-          <li>WARNING: Using this setting can result in an unusable backup. Not recommended.</li>
-          <li>VMs already being backed up using a snapshot will not be shutdown.</li>
-          <li>These must also be selected as part of the VMs that are going to be backed up.</li>
-        </ul>
-      </blockquote>
-
-
       Backup configs?
       : <select id="backup_xml" name="backup_xml" size="1">
         <?=mk_option($conf_array['backup_xml'], "0", "No");?>
