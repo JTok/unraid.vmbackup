@@ -237,7 +237,7 @@ Icon="clone"
 
     <div markdown="1" style="width:50%; clear:both; float:left">
      <input type="button" id="default_vmbackup_danger_zone" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="button" id="apply_vmbackup_danger_zone" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+      : <input type="button" id="apply_vmbackup_danger_zone" name="#apply" value="Apply"><input type="button" id="done_vmbackup_danger_zone" value="Done">
     </div>
   </form>
   <div markdown="1" style="width:40%; clear:right; float:left">

@@ -56,7 +56,7 @@ Icon="clone"
 
 
       Log file subfolder:
-      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="50" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/ ](([\w.-]+)( [\w.-]+)*)*(\/(([\w.-]+)( [\w.-]+)*)*)*$">
+      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="100" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/ ](([\w.-]+)( [\w.-]+)*)*(\/(([\w.-]+)( [\w.-]+)*)*)*$">
 
       <blockquote class="inline_help">
         <p>Choose a folder name for storing logs.</p>
@@ -220,7 +220,7 @@ Icon="clone"
 
     <div markdown="1" style="width:50%; clear:both; float:left">
      <input type="button" id="default_vmbackup_other_settings" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="button" id="apply_vmbackup_other_settings" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+      : <input type="button" id="apply_vmbackup_other_settings" name="#apply" value="Apply"><input type="button" id="done_vmbackup_other_settings" value="Done">
     </div>
   </form>
 </div>
