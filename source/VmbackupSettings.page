@@ -295,6 +295,10 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
+      // check to see if the form is invalid.
+      if (!$("#vmbackup_settings_form").checkValidity()) {
+        return false;
+      }
       // disable the apply button before form submission to prevent it from being submitted twice.
       change_prop("#apply_vmbackup_settings", "disabled", true);
       // grab the settings from the form and prepare it.
@@ -355,6 +359,10 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
+      // check to see if the form is invalid.
+      if (!$("#vmbackup_settings_form").checkValidity()) {
+        return false;
+      }
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById('vmbackup_settings_form');
       prepare_form(vmbackup_settings_form);
@@ -387,6 +395,10 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
+      // check to see if the form is invalid.
+      if (!$("#vmbackup_settings_form").checkValidity()) {
+        return false;
+      }
       // grab the settings from the form and prepare it.
       var vmbackup_other_settings_form = document.getElementById('vmbackup_other_settings_form');
       prepare_form(vmbackup_other_settings_form);
@@ -399,6 +411,10 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
+      // check to see if the form is invalid.
+      if (!$("#vmbackup_settings_form").checkValidity()) {
+        return false;
+      }
       // grab the settings from the form and prepare it.
       var vmbackup_danger_zone_form = document.getElementById('vmbackup_danger_zone_form');
       prepare_form(vmbackup_danger_zone_form);
