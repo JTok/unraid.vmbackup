@@ -39,19 +39,6 @@
     // make directory in tmp to run script from.
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
-    // remove any old logs from the tmp path.
-    $old_logs = glob($tmp_plugin_path . "/*_user-script.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
-    }
-
-    // start logging to tmp log file.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup ".$tmp_user_script_file."\n", FILE_APPEND);
-    // log the process id of the current process running the script.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
-    // create text file for the process id of the current process running the script.
-    file_put_contents($tmp_user_script_pid, getmypid());
-
     // check to see if a backup is already running.
     if (is_file($tmp_user_script_file)) {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
@@ -70,6 +57,19 @@
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." User script file does not exist. Exiting.\n", FILE_APPEND);
       exit();
     }
+
+    // remove any old logs from the tmp path.
+    $old_logs = glob($tmp_plugin_path . "/*_user-script.log");
+    foreach ($old_logs as $log_file) {
+      unlink($log_file);
+    }
+
+    // start logging to tmp log file.
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup ".$tmp_user_script_file."\n", FILE_APPEND);
+    // log the process id of the current process running the script.
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
+    // create text file for the process id of the current process running the script.
+    file_put_contents($tmp_user_script_pid, getmypid());
 
     // get user script config variables.
     $conf_array = get_special_variables($user_script_file);
@@ -119,19 +119,6 @@
     // make directory in tmp to run script from.
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
-    // remove any old logs from the tmp path.
-    $old_logs = glob($tmp_plugin_path . "/*_fix-snapshots.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
-    }
-
-    // start logging to tmp log file.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
-    // log the process id of the current process running the script.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
-    // create text file for the process id of the current process running the script.
-    file_put_contents($tmp_fix_snapshots_pid, getmypid());
-
     // check to see if a backup is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
@@ -150,6 +137,19 @@
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Fix Snapshots script file does not exist. Exiting.\n", FILE_APPEND);
       exit();
     }
+
+    // remove any old logs from the tmp path.
+    $old_logs = glob($tmp_plugin_path . "/*_fix-snapshots.log");
+    foreach ($old_logs as $log_file) {
+      unlink($log_file);
+    }
+
+    // start logging to tmp log file.
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
+    // log the process id of the current process running the script.
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
+    // create text file for the process id of the current process running the script.
+    file_put_contents($tmp_fix_snapshots_pid, getmypid());
 
     // get user script config variables.
     $conf_array = get_special_variables($user_fix_snapshots_file);
