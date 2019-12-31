@@ -202,6 +202,22 @@ Icon="clone"
       </blockquote>
 
 
+      Prevent backups during parity?
+      : <select id="noParity" name="noParity" size="1">
+        <?=mk_option($conf_array['noParity'], "false", "No");?>
+        <?=mk_option($conf_array['noParity'], "true", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'No' if you would like the script to run even if a parity check is in progress.</p>
+        <ul>
+          <li>Running during a parity check could cause significant slow-downs.</li>
+          <li>It is highly recommended to leave this set to 'Yes', and just schedule backups when a parity check is not scheduled.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
+
+
       Disable custom cron validation?
       : <select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex();">
         <?=mk_option($conf_array['disable_cron_regex'], "0", "No");?>
