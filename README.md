@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.1.8 - 2019/12/24
+v0.1.9 - 2019/12/31
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
@@ -155,10 +155,6 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to pause VMs instead of shutting them down during standard backups. Could result in unusable backups.
 
-- List specific VMs to keep running during backup. Not recommended.
-
-  - VMs already being backed up using a snapshot will not be shutdown.
-
 - Option to skip backing up xml configuration.
 
 - Option to skip backing up nvram.
@@ -172,6 +168,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Option to perform a dry-run backup.
 
   - Dry-run backups will still create empty files in your backup directory.
+
+- Option to allow backups to run during a parity check. This could cause significant slowdowns.
 
 - Disable validation for the custom cron text box.
 

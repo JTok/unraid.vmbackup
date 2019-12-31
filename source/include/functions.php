@@ -7,7 +7,75 @@
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
   require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
-  
+  // function to compare versions of two files.
+  function same_file_version($default_file, $user_file, $is_config = false) {
+    // check to see if the user file exists.
+    if (!is_file($user_file)) {
+      return false;
+    }
+    if ($is_config) {
+      $default_conf_array = parse_ini_file("$default_file");
+      $user_conf_array = parse_ini_file("$user_file");
+      if ($default_conf_array["version"] === $user_conf_array["version"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      $default_file_array = get_special_variables($default_file);
+      $user_file_array = get_special_variables($user_file);
+      if ($default_file_array["version"] === $user_file_array["version"]) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  // function to create or update the user config file as necessary and return the results as a config array.
+  function update_user_conf_file($default_conf_file, $user_conf_file) {
+    // see if user config file already exists.
+    if (!is_file($user_conf_file)) {
+
+      // if not, create it from the default config file.
+      if (!copy($default_conf_file, $user_conf_file)) {
+        echo "failed to create user config file.\n";
+      } else {
+        // parse user config file.
+        $conf_array = parse_ini_file($user_conf_file);
+      }
+    } else {
+      // see if default config version is the same as user config version.
+      if (!same_file_version($default_conf_file, $user_conf_file, true)) {
+        // if not, get an array of the user config settings with any new default config settings added to it, or an empty array if no changes were found.
+        $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
+
+        if (empty($user_conf_array)) {
+          // if array is empty, create user config array from file.
+          $user_conf_array = parse_ini_file($user_conf_file);
+        }
+
+        // update the user config array to have the new version number from the default config file.
+        $default_conf_array = parse_ini_file("$default_conf_file");
+        $user_conf_array["version"] = $default_conf_array["version"];
+
+        // create user config file contents from updated user config array.
+        $user_conf_contents = create_ini_file($user_conf_array);
+
+        // write new config contents variable as the new user config.
+        file_put_contents($user_conf_file, $user_conf_contents);
+
+        // clone updated user config array to conf_array.
+        $conf_array = $user_conf_array;
+      } else {
+        // if file version is the same, create user config array from file.
+        $conf_array = parse_ini_file($user_conf_file);
+      }
+    }
+    // return updated config array.
+    return $conf_array;
+  }
+
   // function to add missing config options from first config to second config, without writing it to a file.
   function add_missing_config_options($first_conf_file, $second_conf_file) {
 
@@ -29,9 +97,10 @@
           $second_conf_array[$key] = $value;
         }
       }
+      return $second_conf_array;
+    } else {
+      return $conf_diff;
     }
-
-    return $second_conf_array;
   }
 
 
@@ -60,15 +129,25 @@
 
     // for each key pair in the config array, replace the corresponding value in the script contents.
     foreach ($conf as $key => $value) {
+      // check if key is noParity.
+      if ($key == "noParity") {
+        if ($value == "false") {
+          // set noParity to false.
+          $script_contents = str_replace("#noParity=no_config", "#noParity=false", $script_contents);
+        } else {
+          // set noParity to true.
+          $script_contents = str_replace("#noParity=no_config", "#noParity=true", $script_contents);
+        }
+      } else {
+        // remove whitespace from between comma separated values for script variable.
+        $value = remove_list_whitespace($value);
 
-      // remove whitespace from between comma separated values for script variable.
-      $value = remove_list_whitespace($value);
+        // replace commas with new lines for script variable.
+        $value = replace_comma_newline($value);
 
-      // replace commas with new lines for script variable.
-      $value = replace_comma_newline($value);
-
-      // replace a corresponding value in the script variable with value from config file.
-      $script_contents = str_ireplace("$key=\"no_config\"", "$key=\"$value\"", $script_contents);
+        // replace a corresponding value in the script variable with value from config file.
+        $script_contents = str_ireplace("$key=\"no_config\"", "$key=\"$value\"", $script_contents);
+      }
     }
 
     return $script_contents;
@@ -128,7 +207,7 @@
       }
     }
     // filter array to only contain valid special variables before returning it.
-    $valid_keys = ['arrayStarted', 'noParity'];
+    $valid_keys = ['arrayStarted', 'noParity', 'version'];
     $special_variables = array_filter($commented_variables, function($key) use ($valid_keys) {
       return in_array($key, $valid_keys);
     }, ARRAY_FILTER_USE_KEY);
@@ -183,7 +262,6 @@
     // run the command.
     exec($command);
   }
-  
 
   // check for arguments passed from bash.
   // if first argument is update_user_script, then update the user script file.
@@ -204,5 +282,14 @@
 
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
+  }
+  // if first argument is update_user_conf_file, then update the user config file.
+  if ($argv[1] == "update_user_conf_file") {
+    // create variables for passed parameters.
+    $default_conf_file = $argv[2];
+    $user_conf_file = $argv[3];
+
+    // create or update the user config file as necessary.
+    update_user_conf_file($default_conf_file, $user_conf_file);
   }
 ?>

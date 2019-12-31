@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script
+# usage: update_user_script, update_user_conf_file, create_vm_lists true/false, backup_now, fix_snapshots, abort_script
 
 
 #### start script functions ####
@@ -12,6 +12,8 @@
     local default_script="/usr/local/emhttp/plugins/vmbackup/scripts/default-script.sh"
     local user_script="/boot/config/plugins/vmbackup/user-script.sh"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    local default_fix_snapshots_script="/usr/local/emhttp/plugins/vmbackup/scripts/default-fix-snapshots.sh"
+    local user_fix_snapshots_script="/boot/config/plugins/vmbackup/user-fix-snapshots.sh"
 
     # verify the default script and the user config files exist.
     if [[ -f "$default_script" ]] && [[ -f "$user_config" ]]; then
@@ -26,6 +28,27 @@
       # update cronjob.
       update_cron_job
     fi
+
+    # verify the default fix snapshots script and the user config files exist.
+    if [[ -f "$default_fix_snapshots_script" ]] && [[ -f "$user_config" ]]; then
+
+      # if the a user fix snapshots script already exists, remove it.
+      if [[ -f "$user_fix_snapshots_script" ]]; then
+        rm -f "$user_fix_snapshots_script"
+      fi
+
+      php "$php_functions_script" "update_user_script" "$default_fix_snapshots_script" "$user_fix_snapshots_script" "$user_config"
+    fi
+  }
+
+  # function to update user config file.
+  update_user_conf_file () {
+    # create local variables.
+    local php_functions_script="/usr/local/emhttp/plugins/vmbackup/include/functions.php"
+    local default_config="/usr/local/emhttp/plugins/vmbackup/default.cfg"
+    local user_config="/boot/config/plugins/vmbackup/user.cfg"
+
+    php "$php_functions_script" "update_user_conf_file" "$default_config" "$user_config"
   }
 
   # function to update cronjob
@@ -40,41 +63,49 @@
     if [[ -f "$user_config" ]]; then
       # read cron settings from user config file.
       # parse user config to get cron variables and remove any double quotes.
-      while IFS='=' read -r name value
+      readarray -t user_config_array < "$user_config"
+      for option in "${user_config_array[@]}"
       do
-        case "$name" in
+        key=${option%%=*}
+        case "$key" in
           "frequency")
+            value=${option#*=}
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
             frequency="$value"
             ;;
           "week")
+            value=${option#*=}
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
             week="$value"
             ;;
           "month")
+            value=${option#*=}
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
             month="$value"
             ;;
           "hour")
+            value=${option#*=}
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
             hour="$value"
             ;;
           "minute")
+            value=${option#*=}
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
             minute="$value"
             ;;
           "custom")
+            value=${option#*=}
             value="${value%\"*}"     # remove opening string quotes.
             value="${value#\"*}"     # remove closing string quotes.
             custom="$value"
             ;;
         esac
-      done < $user_config
+      done
 
       # check value of frequency and build a cronjob from that.
       case "$frequency" in
@@ -117,33 +148,18 @@
   # function to create text file lists of vms and their vdisks.
   create_vm_lists() {
     # create local variables.
-    local vm_temp_xml="/boot/config/plugins/vmbackup/vm.xml"
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
     local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
+    local vdisk_path_list_file="/boot/config/plugins/vmbackup/vdisk-path-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local user_prefix="/mnt/user/domains/"
     local cache_prefix="/mnt/cache/domains/"
     local disk_prefix="/mnt/disk*/domains/"
-
-    # remove previous temporary working files if they still exist.
-    if [[ -f "$vm_temp_xml" ]]; then
-      rm -f "$vm_temp_xml"
-    fi
-    if [[ -f "$vm_list_file" ]]; then
-      rm -f "$vm_list_file"
-    fi
-    if [[ -f "$vdisk_list_file" ]]; then
-      rm -f "$vdisk_list_file"
-    fi
-
-    # check to see if a user config file has been created yet.
-    if [[ ! -f "$user_config" ]]; then
-      # if not, give the extensions to skip their default values.
-      vdisk_extensions_to_skip+=("iso")
-      snapshot_extension+=("snap")
-    fi
+    local rebuild_text_files="$1"
 
     SAVEIFS=$IFS   # save current IFS.
+
+    IFS=$'\n'      # change IFS to new line.
 
     # get a list of all vms by name.
     vm_list=$(virsh list --all --name)
@@ -151,40 +167,112 @@
     # sort vm_list alphabetically.
     vm_list=$(echo "$vm_list" | sort -f)
 
+    # check to see if the list text files exist and rebuild_text_files is false.
+    if [[ -f "$vm_list_file" ]] && [[ -f "$vdisk_list_file" ]] && [[ -f "$vdisk_path_list_file" ]] && [ "$rebuild_text_files" = false ]; then
+
+      # read vm_list_file into a variable for comparing it to the vms on the system.
+      vm_list_var="$(<$vm_list_file)"
+
+      # read vdisk_path_list_file into a variable for comparing it to the vms on the system.
+      readarray -t vdisk_path_list_array < "$vdisk_path_list_file"
+
+      # create an empty array for sorting the vdisk list array.
+      tmp_vdisk_list=()
+
+      for vmname in $vm_list
+      do
+        # create working xml file.
+        tmp_xml=$(virsh dumpxml "$vmname")
+
+        # workaround to replace xmlns value with absolute URI to avoid namespace warning.
+        tmp_xml=${tmp_xml/"vmtemplate xmlns=\"unraid\""/"vmtemplate xmlns=\"http://unraid.net/xmlns\""}
+
+        # get the vdisk path from the xml file.
+        for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n <(echo "$tmp_xml"))
+        do
+          # verify it is not already in the vdisk list.
+          vdisk_exists=false
+          for vdisk in "${tmp_vdisk_list[@]}"
+          do
+            if [[ "$vdisk" == "$vdisk_path" ]]; then
+              vdisk_exists=true
+            fi
+          done
+
+          # if the vdisk is not already in the tmp vdisk list, add it.
+          if [ "$vdisk_exists" = false ]; then
+            if [ "${#tmp_vdisk_list[@]}" -eq 0 ]; then
+              tmp_vdisk_list=("$vdisk_path")
+            else
+              tmp_vdisk_list+=("$vdisk_path")
+            fi
+          fi
+        done
+      done
+
+      # if the vms and vdisks have not changed, then exit the function.
+      if [ "$vm_list_var" == "$vm_list" ] && [ "${vdisk_path_list_array[*]}" == "${tmp_vdisk_list[*]}" ]; then
+        IFS=$SAVEIFS   # restore original IFS.
+        return 0
+      fi
+    fi
+
+    # remove previous temporary working files if they still exist.
+    if [[ -f "$vm_list_file" ]]; then
+      rm -f "$vm_list_file"
+    fi
+    if [[ -f "$vdisk_list_file" ]]; then
+      rm -f "$vdisk_list_file"
+    fi
+    if [[ -f "$vdisk_path_list_file" ]]; then
+      rm -f "$vdisk_path_list_file"
+    fi
+
     # disable case matching.
     shopt -s nocasematch
 
-    # parse user config to get extensions to skip, including snapshot extension.
-    while IFS='=' read -r name value
-    do
-      if [[ "$name" == "vdisk_extensions_to_skip" ]]; then
-        value="${value%\"*}"     # remove opening string quotes.
-        value="${value#\"*}"     # remove closing string quotes.
+    # check to see if a user config file has been created yet.
+    if [[ ! -f "$user_config" ]]; then
+      # if not, give the extensions to skip their default values.
+      vdisk_extensions_to_skip+=("iso")
+      snapshot_extension+=("snap")
+    else
+      # parse user config to get extensions to skip, including snapshot extension.
+      readarray -t user_config_array < "$user_config"
+      for line in "${user_config_array[@]}"
+      do
+        key=${line%%=*}
+        case "$key" in
+          "vdisk_extensions_to_skip")
+            value=${line#*=}
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
+            IFS=',' read -r -a vdisk_extensions_to_skip <<< "$value"
+            ;;
+          "snapshot_extension")
+            value=${line#*=}
+            value="${value%\"*}"     # remove opening string quotes.
+            value="${value#\"*}"     # remove closing string quotes.
 
-        IFS=',' read -r -a vdisk_extensions_to_skip <<< "$value"
-      elif [[ "$name" == "snapshot_extension" ]]; then
-        value="${value%\"*}"     # remove opening string quotes.
-        value="${value#\"*}"     # remove closing string quotes.
-        
-        # verify extension is not already in the extensions to skip array.
-        extension_exists=false
-        for extension in "${vdisk_extensions_to_skip[@]}"
-        do
-          if [[ "$extension" == "$value" ]]; then
-            extension_exists=true
-          fi
-        done
+            # verify extension is not already in the extensions to skip array.
+            extension_exists=false
+            for extension in "${vdisk_extensions_to_skip[@]}"
+            do
+              if [[ "$extension" == "$value" ]]; then
+                extension_exists=true
+              fi
+            done
 
-        # add extension to extensions to skip array.
-        if [ "$extension_exists" = false ]; then
-          snapshot_extension+=("$value")
-        fi
-      fi
-    done < $user_config
+            # add extension to extensions to skip array.
+            if [ "$extension_exists" = false ]; then
+              snapshot_extension+=("$value")
+            fi
+            ;;
+        esac
+      done
+    fi
 
     extensions_to_skip=("${vdisk_extensions_to_skip[@]}" "${snapshot_extension[@]}")
-
-    IFS=$'\n'      # change IFS to new line.
 
     # create empty vdisk_list array.
     declare -A vdisk_list
@@ -195,13 +283,13 @@
     for vmname in $vm_list
     do
       # create working xml file.
-      virsh dumpxml "$vmname" > "$vm_temp_xml"
+      tmp_xml=$(virsh dumpxml "$vmname")
 
       # workaround to replace xmlns value with absolute URI to avoid namespace warning.
-      sed -i 's|vmtemplate xmlns="unraid"|vmtemplate xmlns="http://unraid.net/xmlns"|g' "$vm_temp_xml"
+      tmp_xml=${tmp_xml/"vmtemplate xmlns=\"unraid\""/"vmtemplate xmlns=\"http://unraid.net/xmlns\""}
 
       # get the vdisk path from the xml file.
-      for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n "$vm_temp_xml")
+      for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n <(echo "$tmp_xml"))
       do
         # get the extension of the disk.
         disk_extension="${vdisk_path##*.}"
@@ -248,6 +336,24 @@
             esac
           fi
         fi
+
+        # verify path is not already in the tmp vdisk list.
+        tmp_vdisk_exists=false
+        for vdisk in "${tmp_vdisk_list[@]}"
+        do
+          if [[ "$vdisk" == "$vdisk_path" ]]; then
+            tmp_vdisk_exists=true
+          fi
+        done
+
+        # if the vdisk is not already in the tmp vdisk list, add it.
+        if [ "$tmp_vdisk_exists" = false ]; then
+          if [ "${#tmp_vdisk_list[@]}" -eq 0 ]; then
+            tmp_vdisk_list=("$vdisk_path")
+          else
+            tmp_vdisk_list+=("$vdisk_path")
+          fi
+        fi
       done
     done
 
@@ -255,11 +361,6 @@
 
     # enable case matching.
     shopt -u nocasematch
-
-    # remove working xml file.
-    if [ -f "$vm_temp_xml" ]; then
-      rm -fv "$vm_temp_xml"
-    fi
 
     # create vm list text file.
     printf "%s\n" "${vm_list[@]}" > "$vm_list_file"
@@ -269,6 +370,9 @@
     do 
       printf "%s\n" "$key=\"${vdisk_list[$key]}\"" >> "$vdisk_list_file"
     done
+
+    # create vdisk paths list text file.
+    printf "%s\n" "${tmp_vdisk_list[@]}" > "$vdisk_path_list_file"
   }
 
   function backup_now() {
@@ -295,6 +399,31 @@
     "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
   }
 
+  # function to merge two arrays without duplicates.
+  function merge_arrays() {
+    # create local variables.
+    local -n array_one="$1"
+    local -n array_two="$2"
+
+    # unset array.
+    unset merged_array
+    # declare empty array.
+    merged_array=()
+
+    # create associative array to use while merging.
+    unset tmp_assoc_array
+    declare -A tmp_assoc_array
+    # get the values of each array and place them into a different array as a key.
+    for value in "${array_one[@]}" "${array_two[@]}"
+    do
+      # placing array values into another array as the key will deduplicate them since keys must be unique.
+      tmp_assoc_array["$value"]=1;
+    done
+    # place the keys back into the array as the values.
+    # shellcheck disable=SC2034 # array is referenced by calling code.
+    merged_array=("${!tmp_assoc_array[@]}")
+  }
+
 
 #### end script functions ####
 
@@ -304,9 +433,19 @@
   case "$1" in
     'update_user_script')
       update_user_script
+      if [[ "$2" == "rebuild_text_files" ]]; then
+        create_vm_lists true
+      fi
+      ;;
+    'update_user_conf_file')
+      update_user_conf_file
       ;;
     'create_vm_lists')
-      create_vm_lists
+      if [[ "$2" == "rebuild_text_files" ]]; then
+        create_vm_lists true
+      else
+        create_vm_lists false
+      fi
       ;;
     'backup_now')
       backup_now
@@ -318,7 +457,7 @@
       abort_script
       ;;
     *)
-     echo "usage $0 update_user_script, create_vm_lists, backup_now, fix_snapshots, abort_script"
+     echo "usage $0 update_user_script, update_user_conf_file, create_vm_lists true/false, backup_now, fix_snapshots, abort_script"
      ;;
   esac
 

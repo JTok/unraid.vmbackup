@@ -19,7 +19,7 @@ Icon="clone"
 </div>
 
 <div style="width:90%; float:left">
-  <form name="vmbackup_danger_zone" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
+  <form id="vmbackup_danger_zone_form" name="vmbackup_danger_zone" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
@@ -71,7 +71,7 @@ Icon="clone"
 
 
       Snapshot extension:
-      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^[^.](([^,][\w.-])+)[^.]$" required>
+      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^[^., ]+([\w.-])+[^,. ]+$" required>
 
       <blockquote class="inline_help">
         <p>Change the extension used when creating snapshots.</p>
@@ -109,23 +109,6 @@ Icon="clone"
         <ul>
           <li>WARNING: This could result in unusable backups, but I have not thoroughly tested.</li>
           <li>Default is 'No'.</li>
-        </ul>
-      </blockquote>
-
-
-      List VMs to backup while running:
-      : <select id="vms_to_backup_running" name="vms_to_backup_running" size="1" multiple="multiple" style="display:none">
-        <?foreach ($vm_list_array as $vm):?>
-          <?=mk_option_check($conf_array['vms_to_backup_running'], $vm, $vm)?>
-        <?endforeach;?>
-      </select>
-
-      <blockquote class="inline_help">
-        <p>Check the names of VMs to keep running during backup.</p>
-        <ul>
-          <li>WARNING: Using this setting can result in an unusable backup. Not recommended.</li>
-          <li>VMs already being backed up using a snapshot will not be shutdown.</li>
-          <li>These must also be selected as part of the VMs that are going to be backed up.</li>
         </ul>
       </blockquote>
 
@@ -219,6 +202,22 @@ Icon="clone"
       </blockquote>
 
 
+      Prevent backups during parity?
+      : <select id="noParity" name="noParity" size="1">
+        <?=mk_option($conf_array['noParity'], "false", "No");?>
+        <?=mk_option($conf_array['noParity'], "true", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'No' if you would like the script to run even if a parity check is in progress.</p>
+        <ul>
+          <li>Running during a parity check could cause significant slow-downs.</li>
+          <li>It is highly recommended to leave this set to 'Yes', and just schedule backups when a parity check is not scheduled.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
+
+
       Disable custom cron validation?
       : <select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex();">
         <?=mk_option($conf_array['disable_cron_regex'], "0", "No");?>
@@ -253,8 +252,8 @@ Icon="clone"
     </div>
 
     <div markdown="1" style="width:50%; clear:both; float:left">
-     <input type="submit" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()">
+     <input type="button" id="default_vmbackup_danger_zone" name="#default" value="Default" title="Load defaults." formnovalidate>
+      : <input type="button" id="apply_vmbackup_danger_zone" name="#apply" value="Apply"><input type="button" id="done_vmbackup_danger_zone" value="Done">
     </div>
   </form>
   <div markdown="1" style="width:40%; clear:right; float:left">

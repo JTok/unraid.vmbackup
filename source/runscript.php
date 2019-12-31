@@ -39,19 +39,6 @@
     // make directory in tmp to run script from.
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
-    // remove any old logs from the tmp path.
-    $old_logs = glob($tmp_plugin_path . "/*_user-script.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
-    }
-
-    // start logging to tmp log file.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup ".$tmp_user_script_file."\n", FILE_APPEND);
-    // log the process id of the current process running the script.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
-    // create text file for the process id of the current process running the script.
-    file_put_contents($tmp_user_script_pid, getmypid());
-
     // check to see if a backup is already running.
     if (is_file($tmp_user_script_file)) {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
@@ -71,6 +58,19 @@
       exit();
     }
 
+    // remove any old logs from the tmp path.
+    $old_logs = glob($tmp_plugin_path . "/*_user-script.log");
+    foreach ($old_logs as $log_file) {
+      unlink($log_file);
+    }
+
+    // start logging to tmp log file.
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup ".$tmp_user_script_file."\n", FILE_APPEND);
+    // log the process id of the current process running the script.
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
+    // create text file for the process id of the current process running the script.
+    file_put_contents($tmp_user_script_pid, getmypid());
+
     // get user script config variables.
     $conf_array = get_special_variables($user_script_file);
     // get unraid config variables.
@@ -82,10 +82,20 @@
       exit();
     }
 
-    // verify that the array is not running a parity check or rebuild. if so, exit.
-    if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
-      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
-      exit();
+    // check if script should run during parity or rebuild.
+    if ($conf_array['noParity'] == "true") {
+      // find out if parity check is in progress.
+      if (array_key_exists('mdResyncPos', $unraid_conf) && !empty($unraid_conf['mdResyncPos'])) {
+        $parityRunning = true;
+      } else {
+        $parityRunning = false;
+      }
+
+      // verify that the array is not running a parity check or rebuild. if so, exit.
+      if ($parityRunning == true) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
+        exit();
+      }
     }
 
     // get the contents of the user script file.
@@ -119,19 +129,6 @@
     // make directory in tmp to run script from.
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
-    // remove any old logs from the tmp path.
-    $old_logs = glob($tmp_plugin_path . "/*_fix-snapshots.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
-    }
-
-    // start logging to tmp log file.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
-    // log the process id of the current process running the script.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
-    // create text file for the process id of the current process running the script.
-    file_put_contents($tmp_fix_snapshots_pid, getmypid());
-
     // check to see if a backup is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
@@ -151,6 +148,19 @@
       exit();
     }
 
+    // remove any old logs from the tmp path.
+    $old_logs = glob($tmp_plugin_path . "/*_fix-snapshots.log");
+    foreach ($old_logs as $log_file) {
+      unlink($log_file);
+    }
+
+    // start logging to tmp log file.
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
+    // log the process id of the current process running the script.
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
+    // create text file for the process id of the current process running the script.
+    file_put_contents($tmp_fix_snapshots_pid, getmypid());
+
     // get user script config variables.
     $conf_array = get_special_variables($user_fix_snapshots_file);
     // get unraid config variables.
@@ -162,10 +172,20 @@
       exit();
     }
 
-    // verify that the array is not running a parity check or rebuild. if so, exit.
-    if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
-      file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
-      exit();
+    // check if script should run during parity or rebuild.
+    if ($conf_array['noParity'] == "true") {
+      // find out if parity check is in progress.
+      if (array_key_exists('mdResyncPos', $unraid_conf) && !empty($unraid_conf['mdResyncPos'])) {
+        $parityRunning = true;
+      } else {
+        $parityRunning = false;
+      }
+
+      // verify that the array is not running a parity check or rebuild. if so, exit.
+      if ($parityRunning == true) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
+        exit();
+      }
     }
 
     // get the contents of the fix snapshots script file.
@@ -264,6 +284,28 @@
 
     // end logging to tmp fix snapshots log file.
     file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Finished abort script.", FILE_APPEND);
+  }
+
+  if ($arg1 == "show_log") {
+    if (file_exists($tmp_plugin_path)) {
+      $files = scandir($tmp_plugin_path, SCANDIR_SORT_DESCENDING);
+      for ($i = 0; $i < count($files); $i++) {
+        if (preg_match('/.*_user-script.log/', $files[$i])) {
+          $newest_file = $files[$i];
+          break;
+        }
+      }
+      $newest_log_file = $tmp_plugin_path . '/' . $newest_file;
+      if (is_file($newest_log_file)) {
+        $tail_log = popen('/usr/bin/tail -n 80 -f ' . escapeshellarg($tmp_plugin_path . '/' . $newest_file) . ' 2>&1' , 'r');
+        while (!feof($tail_log)) {
+          $line = fgets($tail_log);
+          echo $line;
+          flush();
+        }
+        pclose($tail_log);
+      }
+    }
   }
 
 ?>

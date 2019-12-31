@@ -1,8 +1,10 @@
 #!/bin/bash
 #backgroundOnly=true
 #arrayStarted=true
-#noParity=true
+#noParity=no_config
+#version=v1.2.4 - 2019/12/30
 
+# based on unraid-vmbackup script version:
 # v1.2.3 - 2019/12/24
 
 #### DISCLAIMER ####

@@ -3,17 +3,18 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.24">
-<!ENTITY tag        "v0.1.8">
+<!ENTITY version    "2019.12.31">
+<!ENTITY tag        "v0.1.9">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL  "&gitURL;/&name;.plg">
-<!ENTITY supportURL	"https://forums.unraid.net/topic/86303-vm-backup-plugin/">
-<!ENTITY packages 	"/boot/config/plugins/&name;/packages">
-<!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
-<!ENTITY MD5	    	"BLANK">
+<!ENTITY supportURL "https://forums.unraid.net/topic/86303-vm-backup-plugin/">
+<!ENTITY packages   "/boot/config/plugins/&name;/packages">
+<!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
+<!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
+<!ENTITY MD5        "96683cf8f13efb24969118f5a5ffb634">
 ]>
 
 <PLUGIN name="&name;"
@@ -27,6 +28,19 @@
 
 <CHANGES>
 ##&name;
+
+### v0.1.9 - 2019/12/31
+**Flame Broiled**
+
+- fixed snapshot extension form validation.
+- added file versions to reduce writes to thumb drive.
+- added option to run backup even during parity check.
+- added alert if enable backups is set to 'No' when apply button is hit.
+- added ability to view latest log file.
+- updated buttons and pages to use XHR (ajax) for asynchronous loading to reduce page refreshes.
+- updated code to reduce page load times.
+- implemented md5 hash checks for package files during install.
+- removed "vms to backup while running" option due to difficulties with the menu item.
 
 ### v0.1.8 - 2019/12/24
 **Penny Wise and Pound Stupid**
@@ -79,7 +93,6 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-
     # remove plugin files from emhttp.
     rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
 
@@ -94,6 +107,7 @@
 -->
 <FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
   <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
+  <MD5>&XMLMD5;</MD5>
 </FILE>
 
 
@@ -102,6 +116,7 @@
 -->
 <FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz" Run="upgradepkg --install-new">
   <URL>&gitURL;/&name;-&tag;.txz</URL>
+  <MD5>&MD5;</MD5>
 </FILE>
 
 
@@ -114,6 +129,17 @@
   </INLINE>
 </FILE>
 
+
+<!--
+  create initial user files.
+-->
+<FILE Run="/bin/bash">
+  <INLINE>
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh create_vm_lists
+  </INLINE>
+</FILE>
 
 <!--
   clean old files.
