@@ -82,10 +82,20 @@
       exit();
     }
 
-    // verify that the array is not running a parity check or rebuild. if so, exit.
-    if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
-      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
-      exit();
+    // check if script should run during parity or rebuild.
+    if ($conf_array['noParity'] == "true") {
+      // find out if parity check is in progress.
+      if (array_key_exists('mdResyncPos', $unraid_conf) && !empty($unraid_conf['mdResyncPos'])) {
+        $parityRunning = true;
+      } else {
+        $parityRunning = false;
+      }
+
+      // verify that the array is not running a parity check or rebuild. if so, exit.
+      if ($parityRunning == true) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
+        exit();
+      }
     }
 
     // get the contents of the user script file.
@@ -162,10 +172,20 @@
       exit();
     }
 
-    // verify that the array is not running a parity check or rebuild. if so, exit.
-    if ($conf_array['noParity'] == "true" && $unraid_conf['mdResyncPos']) {
-      file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
-      exit();
+    // check if script should run during parity or rebuild.
+    if ($conf_array['noParity'] == "true") {
+      // find out if parity check is in progress.
+      if (array_key_exists('mdResyncPos', $unraid_conf) && !empty($unraid_conf['mdResyncPos'])) {
+        $parityRunning = true;
+      } else {
+        $parityRunning = false;
+      }
+
+      // verify that the array is not running a parity check or rebuild. if so, exit.
+      if ($parityRunning == true) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
+        exit();
+      }
     }
 
     // get the contents of the fix snapshots script file.
