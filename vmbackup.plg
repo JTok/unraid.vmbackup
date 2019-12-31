@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.27">
+<!ENTITY version    "2019.12.30">
 <!ENTITY tag        "v0.1.9">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
