@@ -155,10 +155,6 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to pause VMs instead of shutting them down during standard backups. Could result in unusable backups.
 
-- List specific VMs to keep running during backup. Not recommended.
-
-  - VMs already being backed up using a snapshot will not be shutdown.
-
 - Option to skip backing up xml configuration.
 
 - Option to skip backing up nvram.
