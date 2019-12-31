@@ -169,6 +169,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
   - Dry-run backups will still create empty files in your backup directory.
 
+- Option to allow backups to run during a parity check. This could cause significant slowdowns.
+
 - Disable validation for the custom cron text box.
 
 - Disable restrictive validation for the other text fields.
