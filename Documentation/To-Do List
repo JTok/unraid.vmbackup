@@ -17,4 +17,3 @@
 #  - update readme to include more explanation, as well as field names.
 #  - update default config comments and variable ordering to match default script.
 #  - ability to view latest log/error log files.
-#  - add popup if enable script is disabled when apply button is hit.

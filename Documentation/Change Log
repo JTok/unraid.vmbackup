@@ -6,6 +6,7 @@
 # - fixed snapshot extension form validation.
 # - added file versions to reduce writes to thumb drive.
 # - added option to run backup even during parity check.
+# - added alert if enable backups is set to 'No' when apply button is hit.
 # - updated buttons and pages to use XHR (ajax) for asynchronous loading to reduce page refreshes.
 # - updated code to reduce page load times.
 # - removed "vms to backup while running" option due to difficulties with the menu item.

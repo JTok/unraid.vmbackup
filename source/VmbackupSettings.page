@@ -474,6 +474,10 @@ Icon="clone"
       if (!$("#vmbackup_settings_form")[0].checkValidity()) {
         return false;
       }
+      // let user know the script is not enabled.
+      if ($("#enabled").val() == "0") {
+        if (alert('Backups have not been enabled. Set "Enable backups" to "Yes" (and set a schedule), or backups will not run.'));
+      }
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
       prepare_form(vmbackup_settings_form);
