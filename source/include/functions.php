@@ -40,15 +40,11 @@
       // if not, create it from the default config file.
       if (!copy($default_conf_file, $user_conf_file)) {
         echo "failed to create user config file.\n";
-
       } else {
-
         // parse user config file.
         $conf_array = parse_ini_file($user_conf_file);
       }
-
     } else {
-
       // see if default config version is the same as user config version.
       if (!same_file_version($default_conf_file, $user_conf_file, true)) {
         // if not, get an array of the user config settings with any new default config settings added to it, or an empty array if no changes were found.
@@ -68,10 +64,16 @@
 
         // write new config contents variable as the new user config.
         file_put_contents($user_conf_file, $user_conf_contents);
+
+        // clone updated user config array to conf_array.
+        $conf_array = $user_conf_array;
+      } else {
+        // if file version is the same, create user config array from file.
+        $conf_array = parse_ini_file($user_conf_file);
       }
     }
-      // return updated user config array.
-      return $user_conf_array;
+    // return updated config array.
+    return $conf_array;
   }
 
   // function to add missing config options from first config to second config, without writing it to a file.
