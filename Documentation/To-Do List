@@ -13,6 +13,6 @@
 #  - ability to do multiple script variations/schedules.
 #  - ability to perform different backup schemes, such as incremental.
 #  - add restore functionality.
-#  - disable backup now and fix snapshots buttons while their scripts are running.
+#  - disable backup now and fix snapshots buttons while their scripts are running?
 #  - update readme to include more explanation, as well as field names.
 #  - update default config comments and variable ordering to match default script.
