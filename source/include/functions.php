@@ -121,15 +121,25 @@
 
     // for each key pair in the config array, replace the corresponding value in the script contents.
     foreach ($conf as $key => $value) {
+      // check if key is noParity.
+      if ($key == "noParity") {
+        if ($value == "false") {
+          // set noParity to false.
+          $script_contents = str_replace("#noParity=no_config", "#noParity=false", $script_contents);
+        } else {
+          // set noParity to true.
+          $script_contents = str_replace("#noParity=no_config", "#noParity=true", $script_contents);
+        }
+      } else {
+        // remove whitespace from between comma separated values for script variable.
+        $value = remove_list_whitespace($value);
 
-      // remove whitespace from between comma separated values for script variable.
-      $value = remove_list_whitespace($value);
+        // replace commas with new lines for script variable.
+        $value = replace_comma_newline($value);
 
-      // replace commas with new lines for script variable.
-      $value = replace_comma_newline($value);
-
-      // replace a corresponding value in the script variable with value from config file.
-      $script_contents = str_ireplace("$key=\"no_config\"", "$key=\"$value\"", $script_contents);
+        // replace a corresponding value in the script variable with value from config file.
+        $script_contents = str_ireplace("$key=\"no_config\"", "$key=\"$value\"", $script_contents);
+      }
     }
 
     return $script_contents;
