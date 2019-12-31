@@ -266,4 +266,24 @@
     file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Finished abort script.", FILE_APPEND);
   }
 
+  if ($arg1 == "show_log") {
+    $files = scandir($tmp_plugin_path, SCANDIR_SORT_DESCENDING);
+    for ($i = 0; $i < count($files); $i++) {
+      if (preg_match('/.*_user-script.log/', $files[$i])) {
+        $newest_file = $files[$i];
+        break;
+      }
+    }
+    $newest_log_file = $tmp_plugin_path . '/' . $newest_file;
+    if (is_file($newest_log_file)) {
+      $tail_log = popen('/usr/bin/tail -n 80 -f ' . escapeshellarg($tmp_plugin_path . '/' . $newest_file) . ' 2>&1' , 'r');
+      while (!feof($tail_log)) {
+        $line = fgets($tail_log);
+        echo $line;
+        flush();
+      }
+      pclose($tail_log);
+      }
+    }
+
 ?>

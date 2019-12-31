@@ -387,6 +387,7 @@ Icon="clone"
         set_variable_cookie("refresh_settings", false);
       }
     });
+
     // add changed event to restrictive regex drop-down.
     $("#disable_restrictive_regex").change(function() {
       set_variable_cookie("refresh_settings", true);
@@ -400,6 +401,15 @@ Icon="clone"
     $("#snapshot_extension").on('input propertychange paste', function() {
       set_variable_cookie("rebuild_text_files", true);
       set_variable_cookie("refresh_settings", true);
+    });
+
+    // add click event to show log button.
+    $("#show_log").click(function(e) {
+      // prevent normal button actions.
+      e.preventDefault();
+      e.stopPropagation();
+      // open the log in a new window.
+      openWindow('/usr/local/emhttp/plugins/vmbackup/runscript.php&arg1=show_log','Backup Log',800,1200);
     });
     // add click event to backup now button.
     $("#backup").click(function(e) {
@@ -972,6 +982,7 @@ Icon="clone"
     <form id="backup_now_form" name="backup_now_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
       <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
       <input type="hidden" name="#args[1]" value="backup_now">
+      <input type="button" id="show_log" name="#show_log" value="Show Log">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
   </div>
