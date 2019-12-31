@@ -16,6 +16,5 @@
 #  - disable backup now and fix snapshots buttons while their scripts are running?
 #  - update readme to include more explanation, as well as field names.
 #  - update default config comments and variable ordering to match default script.
-#  - implement md5 file hash checking.
 #  - option to run custom pre-script and post-script.
 #  - ability to have a detailed summary emailed.

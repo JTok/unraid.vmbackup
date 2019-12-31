@@ -3,17 +3,18 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.30">
+<!ENTITY version    "2019.12.31">
 <!ENTITY tag        "v0.1.9">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
 <!ENTITY pluginURL  "&gitURL;/&name;.plg">
-<!ENTITY supportURL	"https://forums.unraid.net/topic/86303-vm-backup-plugin/">
-<!ENTITY packages 	"/boot/config/plugins/&name;/packages">
-<!ENTITY xmlstarlet	"xmlstarlet-1.6.1-x86_64-1_slonly">
-<!ENTITY MD5	    	"BLANK">
+<!ENTITY supportURL "https://forums.unraid.net/topic/86303-vm-backup-plugin/">
+<!ENTITY packages   "/boot/config/plugins/&name;/packages">
+<!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
+<!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
+<!ENTITY MD5        "9b24cef7a2b4cc4ae811a6e0c641b68e">
 ]>
 
 <PLUGIN name="&name;"
@@ -28,7 +29,7 @@
 <CHANGES>
 ##&name;
 
-### v0.1.9 - 2019/12/30
+### v0.1.9 - 2019/12/31
 **Flame Broiled**
 
 - fixed snapshot extension form validation.
@@ -38,6 +39,7 @@
 - added ability to view latest log file.
 - updated buttons and pages to use XHR (ajax) for asynchronous loading to reduce page refreshes.
 - updated code to reduce page load times.
+- implemented md5 hash checks for package files during install.
 - removed "vms to backup while running" option due to difficulties with the menu item.
 
 ### v0.1.8 - 2019/12/24
@@ -106,6 +108,7 @@
 -->
 <FILE Name="&packages;/&xmlstarlet;.txz" Run="upgradepkg --install-new">
   <URL>"&gitURL;/packages/&xmlstarlet;.txz"</URL>
+  <MD5>&XMLMD5;</MD5>
 </FILE>
 
 
@@ -114,6 +117,7 @@
 -->
 <FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz" Run="upgradepkg --install-new">
   <URL>&gitURL;/&name;-&tag;.txz</URL>
+  <MD5>&MD5;</MD5>
 </FILE>
 
 
