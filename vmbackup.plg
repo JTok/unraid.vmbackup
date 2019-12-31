@@ -93,7 +93,6 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-
     # remove plugin files from emhttp.
     rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
 
