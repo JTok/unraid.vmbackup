@@ -18,3 +18,4 @@
 #  - update default config comments and variable ordering to match default script.
 #  - option to run custom pre-script and post-script.
 #  - ability to have a detailed summary emailed.
+#  - alert when choosing options that may require additional configuration (like enabling snapshots)?
