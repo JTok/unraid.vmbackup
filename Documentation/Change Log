@@ -3,9 +3,11 @@
 # v0.1.9 - 2019/12/27
 # Flame Broiled
 #
+# - fixed snapshot extension form validation.
 # - added file versions to reduce writes to thumb drive.
+# - added option to run backup even during parity check.
 # - updated buttons and pages to use XHR (ajax) for asynchronous loading to reduce page refreshes.
-# - updated code to noticeably reduce page load times.
+# - updated code to reduce page load times.
 # - removed "vms to backup while running" option due to difficulties with the menu item.
 
 # v0.1.8 - 2019/12/24
