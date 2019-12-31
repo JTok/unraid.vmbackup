@@ -51,21 +51,27 @@
 
       // see if default config version is the same as user config version.
       if (!same_file_version($default_conf_file, $user_conf_file, true)) {
-        // if not, get an array of the user config settings with any new default config settings added to it.
+        // if not, get an array of the user config settings with any new default config settings added to it, or an empty array if no changes were found.
         $user_conf_array = add_missing_config_options($default_conf_file, $user_conf_file);
 
-        if (!empty($user_conf_array)) {
-          // create user config file contents from new array.
-          $user_conf_contents = create_ini_file($user_conf_array);
-          
-          // write new config contents variable as the new user config.
-          file_put_contents($user_conf_file, $user_conf_contents);
+        if (empty($user_conf_array)) {
+          // if array is empty, create user config array from file.
+          $user_conf_array = parse_ini_file($user_conf_file);
         }
+
+        // update the user config array to have the new version number from the default config file.
+        $default_conf_array = parse_ini_file("$default_conf_file");
+        $user_conf_array["version"] = $default_conf_array["version"];
+
+        // create user config file contents from updated user config array.
+        $user_conf_contents = create_ini_file($user_conf_array);
+
+        // write new config contents variable as the new user config.
+        file_put_contents($user_conf_file, $user_conf_contents);
       }
     }
-      // parse user config file.
-      $conf_array = parse_ini_file($user_conf_file);
-      return $conf_array;
+      // return updated user config array.
+      return $user_conf_array;
   }
 
   // function to add missing config options from first config to second config, without writing it to a file.
