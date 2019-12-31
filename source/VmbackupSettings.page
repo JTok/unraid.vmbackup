@@ -982,7 +982,7 @@ Icon="clone"
     <form id="backup_now_form" name="backup_now_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
       <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
       <input type="hidden" name="#args[1]" value="backup_now">
-      <input type="button" id="show_log" name="#show_log" value="Show Log">
+      <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
   </div>
