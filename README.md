@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.1.9 - 2019/12/30
+v0.1.9 - 2019/12/31
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
