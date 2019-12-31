@@ -728,7 +728,8 @@ Icon="clone"
         <ul>
           <li>This should be an unassigned device, or a share you have already created.</li>
           <li>Each VM will have a subfolder made for it in this location.</li>
-          <li>To choose a folder in /mnt/ instead of /mnt/users/, disable restrictive validation.</li>
+          <li>To change the dropdown menu from /mnt/users/ to /mnt/, disable restrictive validation.</li>
+          <li>Any typed path in /mnt/ will validate. If a different path is needed, disable restrictive validation.</li>
         </ul>
       </blockquote>
 
