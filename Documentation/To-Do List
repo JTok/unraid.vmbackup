@@ -10,12 +10,12 @@
 #  - re-add vms_to_backup_running to danger zone.
 #  - create more advanced regex for custom cron.
 #  - option to skip running vms.
-#  - ability to do multiple script variations/schedules (should be multiple full configs).
-#  - ability to perform different backup schemes, such as incremental.
-#  - add restore functionality.
 #  - disable backup now and fix snapshots buttons while their scripts are running?
 #  - update readme to include more explanation, as well as field names.
 #  - update default config comments and variable ordering to match default script.
-#  - option to run custom pre-script and post-script.
 #  - ability to have a detailed summary emailed.
 #  - alert when choosing options that may require additional configuration (like enabling snapshots)?
+#  - ability to perform different backup schemes, such as incremental.
+#  - ability to do multiple script variations/schedules (should be multiple full configs).
+#  - add restore functionality.
+#  - option to run custom pre-script and post-script.
