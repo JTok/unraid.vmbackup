@@ -885,6 +885,9 @@ Icon="clone"
 
       <blockquote class="inline_help">
         <p>Set a custom Cron schedule.</p>
+        <ul>
+          <li>By default this field will only take asterisks, numbered ranges, and extensions (such as @weekly).</li>
+        </ul>
       </blockquote>
     </div>
 
