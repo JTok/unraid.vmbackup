@@ -31,6 +31,7 @@
   $tmp_fix_snapshots_pid = $tmp_plugin_path . '/user-fix-snapshots.pid';
   // abort script tmp files.
   $tmp_abort_script_log_file = $tmp_plugin_path . '/'. $current_datetime .'_abort-script.log';
+  $tmp_abort_now_file = $tmp_plugin_path . '/'. 'abort-now.txt';
   // get arguments.
   $arg1 = $argv[1];
 
@@ -129,28 +130,40 @@
     }
 
     if (is_file($tmp_pre_script_file)) {
-      // build command to run pre-script with logging.
+      // build command to run pre script with logging.
       $pre_run_cmd = $tmp_pre_script_file." >> $tmp_log_file 2>&1";
 
-      // execute the command to run the script.
-      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$pre_run_cmd."\n", FILE_APPEND);
-      exec($pre_run_cmd);
+      // execute the command to run the pre script.
+      if (file_exists($tmp_abort_now_file)) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Abort file exists. Not running command: ".$pre_run_cmd."\n", FILE_APPEND);
+      } else {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$pre_run_cmd."\n", FILE_APPEND);
+        exec($pre_run_cmd);
+      }
     }
 
-    // build command to run script with logging.
+    // build command to run user script with logging.
     $run_cmd = $tmp_user_script_file." >> $tmp_log_file 2>&1";
 
-    // execute the command to run the script.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$run_cmd."\n", FILE_APPEND);
-    exec($run_cmd);
+    // execute the command to run the user script.
+    if (file_exists($tmp_abort_now_file)) {
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Abort file exists. Not running command: ".$run_cmd."\n", FILE_APPEND);
+    } else {
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$run_cmd."\n", FILE_APPEND);
+      exec($run_cmd);
+    }
 
     if (is_file($tmp_post_script_file)) {
-      // build command to run post-script with logging.
+      // build command to run post script with logging.
       $post_run_cmd = $tmp_post_script_file." >> $tmp_log_file 2>&1";
 
-      // execute the command to run the script.
-      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$post_run_cmd."\n", FILE_APPEND);
-      exec($post_run_cmd);
+      // execute the command to run the post script.
+      if (file_exists($tmp_abort_now_file)) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Abort file exists. Not running command: ".$post_run_cmd."\n", FILE_APPEND);
+      } else {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$post_run_cmd."\n", FILE_APPEND);
+        exec($post_run_cmd);
+      }
     }
 
     // remove tmp pre script file.
@@ -252,8 +265,12 @@
     $run_cmd = $tmp_fix_snapshots_file." >> $tmp_fix_snapshots_log_file 2>&1";
 
     // execute the command to run the fix snapshots script.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Running command: ".$run_cmd."\n", FILE_APPEND);
-    exec($run_cmd);
+    if (file_exists($tmp_abort_now_file)) {
+      file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Abort file exists. Not running command: ".$run_cmd."\n", FILE_APPEND);
+    } else {
+      file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Running command: ".$run_cmd."\n", FILE_APPEND);
+      exec($run_cmd);
+    }
 
     // remove tmp fix snapshots script file.
     unlink($tmp_fix_snapshots_file);
@@ -286,6 +303,10 @@
     // log the process id of the current process running the script.
     file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
 
+    // create abort now file.
+    file_put_contents($tmp_abort_now_file, "abort");
+    file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Created ".$tmp_abort_now_file.".\n", FILE_APPEND);
+
     // check to see if both pid files don't exist.
     if ((!is_file($tmp_user_script_pid)) && (!is_file($tmp_fix_snapshots_pid))) {
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." No PID files found. Nothing to abort.", FILE_APPEND);
@@ -313,9 +334,21 @@
       exec("killall -SIGKILL post-script.sh");
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $user_script_pid.\n", FILE_APPEND);
 
+      // remove tmp pre script file.
+      if (is_file($tmp_pre_script_file)) {
+        unlink($tmp_pre_script_file);
+        file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_pre_script_file."\n", FILE_APPEND);
+      }
+
       // remove tmp user script file.
       unlink($tmp_user_script_file);
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_user_script_file."\n", FILE_APPEND);
+
+      // remove tmp post script file.
+      if (is_file($tmp_post_script_file)) {
+        unlink($tmp_post_script_file);
+        file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_post_script_file."\n", FILE_APPEND);
+      }
 
       // remove tmp user pid file.
       unlink($tmp_user_script_pid);
@@ -342,6 +375,11 @@
       // remove tmp user pid file.
       unlink($tmp_fix_snapshots_pid);
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_fix_snapshots_pid."\n", FILE_APPEND);
+    }
+
+    // remove abort-now file.
+    if (is_file($tmp_abort_now_file)) {
+      unlink($tmp_abort_now_file);
     }
 
     // end logging to tmp fix snapshots log file.
