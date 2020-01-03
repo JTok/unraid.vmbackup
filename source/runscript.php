@@ -124,7 +124,7 @@
       $post_script_contents = file_get_contents($post_script_file);
       // create a copy of the post-script file in the tmp folder and make it executable.
       file_put_contents($tmp_post_script_file, $post_script_contents);
-      exec("chmod +x ".escapeshellarg($tmp_pre_script_file));
+      exec("chmod +x ".escapeshellarg($tmp_post_script_file));
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Post-script copied to ".$tmp_post_script_file."\n", FILE_APPEND);
     }
 
