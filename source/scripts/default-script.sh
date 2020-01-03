@@ -1,6 +1,6 @@
 #!/bin/bash
 #backgroundOnly=true
-#arrayStarted=true
+#arrayStarted=no_config
 #noParity=no_config
 #version=v1.1.0 - 2020/01/03
 
