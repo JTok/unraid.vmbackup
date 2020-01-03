@@ -19,3 +19,7 @@
 #  - ability to do multiple script variations/schedules (should be multiple full configs).
 #  - add restore functionality.
 #  - option to run custom pre-script and post-script.
+#  - use sweet alert for alerts.
+#  - test using form attribute with elements to allow placing them outside of forms.
+#  - add autofocus to elements.
+#  - allow arrayStarted to be changed.
