@@ -16,12 +16,8 @@
 #  - ability to have a detailed summary emailed.
 #  - alert when choosing options that may require additional configuration (like enabling snapshots)?
 #  - ability to perform different backup schemes, such as incremental.
-#  - ability to do multiple script variations/schedules (should be multiple full configs).
-#  - when allowing multiple script variations/schedules have setting to allow/disallow running simultaneously.
-#  - add restore functionality.
-#  - option to run custom pre-script and post-script.
-#  - use sweet alert for alerts.
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
-#  - allow arrayStarted to be changed.
-#  - add confirmation dialog to remove script buttons.
+#  - add restore functionality.
+#  - ability to do multiple script variations/schedules (should be multiple full configs).
+#  - when allowing multiple script variations/schedules have setting to allow/disallow running simultaneously.
