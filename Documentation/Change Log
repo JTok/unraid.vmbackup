@@ -3,6 +3,7 @@
 # v1.0.1 - Development
 # The Resistance
 #
+# - added ability to run pre and post scripts.
 # - updated help for custom cron.
 
 # v0.1.9 - 2019/12/31
