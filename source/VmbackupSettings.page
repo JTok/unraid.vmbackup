@@ -27,6 +27,8 @@ Icon="clone"
   $user_script_file = $plugin_path . '/user-script.sh';
   $user_conf_file = $plugin_path . '/user.cfg';
   $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
+  $pre_script_file = $plugin_path . '/pre-script.sh';
+  $post_script_file = $plugin_path . '/post-script.sh';
   // generated files.
   $vm_list = $plugin_path . '/vm-list.txt';
   $vdisk_list = $plugin_path . '/vdisk-list.txt';
@@ -250,17 +252,17 @@ Icon="clone"
   // function to enable and set validation for page elements.
   function set_validation() {
     // set validation message for each page element, as well as a custom error message.
-    add_validation_events('backup_location','Path must be located in /mnt/, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('number_of_days_to_keep_backups','Please input a zero, a number from 7-180, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('number_of_backups_to_keep','Please input a zero, a number from 2-40, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('custom','Please enter a valid cron statement, or disable cron validation. Cannot be blank.')
-    add_validation_events('vdisk_extensions_to_skip','This should be blank, or a comma separated list.')
-    add_validation_events('number_of_log_files_to_keep','Please input a zero, a number from 1-40, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('log_file_subfolder','Path must be relative (no leading slash). Cannot be blank.')
-    add_validation_events('number_of_error_log_files_to_keep','Please input a zero, a number from 2-40, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('clean_shutdown_checks','Please input a number from 5-50, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('seconds_to_wait','Please input a number from 30-600, or disable restrictive validation. Cannot be blank.')
-    add_validation_events('snapshot_extension','Please enter a valid extension. Cannot be blank.')
+    add_validation_events('backup_location','Path must be located in /mnt/, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('number_of_days_to_keep_backups','Please input a zero, a number from 7-180, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('number_of_backups_to_keep','Please input a zero, a number from 2-40, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('custom','Please enter a valid cron statement, or disable cron validation. Cannot be blank.');
+    add_validation_events('vdisk_extensions_to_skip','This should be blank, or a comma separated list.');
+    add_validation_events('number_of_log_files_to_keep','Please input a zero, a number from 1-40, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('log_file_subfolder','Path must be relative (no leading slash). Cannot be blank.');
+    add_validation_events('number_of_error_log_files_to_keep','Please input a zero, a number from 2-40, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('clean_shutdown_checks','Please input a number from 5-50, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('seconds_to_wait','Please input a number from 30-600, or disable restrictive validation. Cannot be blank.');
+    add_validation_events('snapshot_extension','Please enter a valid extension. Cannot be blank.');
   }
 
   // function executed when frequency control is set.
@@ -452,6 +454,51 @@ Icon="clone"
             });
         });
     });
+
+    // add click event to script buttons.
+    $("#submit_pre_script").click(function(e) {
+      // prevent normal form submission.
+      e.preventDefault();
+      e.stopPropagation();
+      // submit the form with the clicked button appended.
+      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+        function () {
+          // refresh the div containing the text area.
+          $("#pre_script_div").load(location.href + " #pre_script_div");
+        });
+    });
+    $("#remove_pre_script").click(function(e) {
+      // prevent normal form submission.
+      e.preventDefault();
+      e.stopPropagation();
+      // submit the form with the clicked button appended.
+      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
+      // clear textarea.
+      $("#pre_script_textarea").html("");
+      $("#pre_script_textarea").val("");
+    });
+    $("#submit_post_script").click(function(e) {
+      // prevent normal form submission.
+      e.preventDefault();
+      e.stopPropagation();
+      // submit the form with the clicked button appended.
+      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+        function () {
+          // refresh the div containing the text area.
+          $("#post_script_div").load(location.href + " #post_script_div");
+        });
+    });
+    $("#remove_post_script").click(function(e) {
+      // prevent normal form submission.
+      e.preventDefault();
+      e.stopPropagation();
+      // submit the form with the clicked button appended.
+      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
+      // clear textarea.
+      $("#post_script_textarea").html("");
+      $("#post_script_textarea").val("");
+    });
+
     // add click event to fix snapshots button.
     $("#fix_snapshots").click(function(e) {
       // prevent normal form submission.
