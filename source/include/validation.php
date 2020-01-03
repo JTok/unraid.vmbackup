@@ -43,30 +43,28 @@
     $special_conf_array = get_special_variables($script_contents, 10, false);
     // if the file does not contain any special variables, add them.
     if (empty($special_conf_array)) {
-      $prepend .= "#arrayStarted=" . $conf["arrayStarted"];
-      $prepend .= "#noParity=" . $conf["noParity"];
+      $prepend .= "#arrayStarted=" . $conf["arrayStarted"] . "\n";
+      $prepend .= "#noParity=" . $conf["noParity"] . "\n";
     } else {
       if (!empty($special_conf_array["arrayStarted"])) {
         $script_contents = replace_line("arrayStarted", "", $script_contents, false);
-        $prepend .= "#arrayStarted=" . $conf["arrayStarted"];
+        $prepend .= "#arrayStarted=" . $conf["arrayStarted"] . "\n";
       } else {
-        $prepend .= "#arrayStarted=" . $conf["arrayStarted"];
+        $prepend .= "#arrayStarted=" . $conf["arrayStarted"] . "\n";
       }
       if (!empty($special_conf_array["noParity"])) {
         $script_contents = replace_line("noParity", "", $script_contents, false);
-        $prepend .= "#noParity=" . $conf["noParity"];
+        $prepend .= "#noParity=" . $conf["noParity"] . "\n";
       } else {
-        $prepend .= "#noParity=" . $conf["noParity"];
+        $prepend .= "#noParity=" . $conf["noParity"] . "\n";
       }
     }
     // prepend the string to the script.
-    $prepend = rtrim($prepend);
     if ($shebang_exists == false) {
-      $prepend .= "\n";
       $script_contents = prepend_string($prepend, $script_contents, false);
     } elseif ($shebang_exists == true ) {
       $script_contents = replace_line("#!/bin/bash", "", $script_contents, false);
-      $prepend = "#!/bin/bash\n" . $prepend;
+      $prepend = rtrim($prepend);
       $script_contents = prepend_string($prepend, $script_contents, false);
     }
     return $script_contents;
