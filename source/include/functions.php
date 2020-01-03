@@ -37,7 +37,7 @@
     if (!is_file($user_conf_file)) {
       // if not, create it from the default config file.
       if (!copy($default_conf_file, $user_conf_file)) {
-        echo "failed to create user config file.\n";
+        syslog(LOG_ALERT, "failed to create user config file.\n");
       } else {
         // parse user config file.
         $conf_array = parse_ini_file($user_conf_file);
@@ -129,21 +129,11 @@
     foreach ($conf as $key => $value) {
       // check if key is arrayStarted or noParity.
       if ($key == "arrayStarted") {
-        if ($value == "false") {
-          // set arrayStarted to false.
-          $script_contents = str_replace("#arrayStarted=no_config", "#arrayStarted=false", $script_contents);
-        } else {
-          // set arrayStarted to true.
-          $script_contents = str_replace("#arrayStarted=no_config", "#arrayStarted=true", $script_contents);
-        }
+        // set arrayStarted value.
+        $script_contents = str_replace("#arrayStarted=no_config", "#arrayStarted=" . $value, $script_contents);
       } elseif ($key == "noParity") {
-        if ($value == "false") {
-          // set noParity to false.
-          $script_contents = str_replace("#noParity=no_config", "#noParity=false", $script_contents);
-        } else {
-          // set noParity to true.
-          $script_contents = str_replace("#noParity=no_config", "#noParity=true", $script_contents);
-        }
+        // set noParity to value.
+        $script_contents = str_replace("#noParity=no_config", "#noParity=" . $value, $script_contents);
       } else {
         // remove whitespace from between comma separated values for script variable.
         $value = remove_list_whitespace($value);
