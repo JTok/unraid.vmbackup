@@ -37,7 +37,7 @@
     if (!is_file($user_conf_file)) {
       // if not, create it from the default config file.
       if (!copy($default_conf_file, $user_conf_file)) {
-        syslog(LOG_ALERT, "failed to create user config file.\n");
+        syslog(LOG_ALERT, "failed to create user config file.");
       } else {
         // parse user config file.
         $conf_array = parse_ini_file($user_conf_file);
