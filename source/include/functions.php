@@ -252,6 +252,26 @@
     }
   }
 
+  // verify directory exists and is writeable.
+  function verify_dir($path) {
+    // see if directory or file already exists with a given path.
+    if (!file_exists($path)) {
+      mkdir($path, 0755, true);
+    }
+    // verify that the path is a directory.
+    if (!is_dir($path)) {
+      syslog(LOG_ALERT, "$path is not a directory.");
+      return false;
+    }
+    // verify that the directory is writable.
+    if (!is_writeable($path)) {
+      syslog(LOG_ALERT, "Could not write to $path.");
+      return false;
+    }
+    // if we have made it to the end without an error, return true.
+    return true;
+  }
+
 
   // function to send a post command to another php page.
   function send_post($url, $data) {
