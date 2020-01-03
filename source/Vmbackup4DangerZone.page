@@ -202,6 +202,21 @@ Icon="clone"
       </blockquote>
 
 
+      Require array to be started?
+      : <select id="arrayStarted" name="arrayStarted" size="1">
+        <?=mk_option($conf_array['arrayStarted'], "false", "No");?>
+        <?=mk_option($conf_array['arrayStarted'], "true", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'No' if you would like the script to run even if the array is not started.</p>
+        <ul>
+          <li>Unless you are using unassigned devices to run your VMs and as your backup destination, this should be left as 'Yes'.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </blockquote>
+
+
       Prevent backups during parity?
       : <select id="noParity" name="noParity" size="1">
         <?=mk_option($conf_array['noParity'], "false", "No");?>

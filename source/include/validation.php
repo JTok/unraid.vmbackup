@@ -43,18 +43,14 @@
     $special_conf_array = get_special_variables($script_contents, 10, false);
     // if the file does not contain any special variables, add them.
     if (empty($special_conf_array)) {
-      $prepend .= "#arrayStarted=true\n";
-      if ($conf["noParity"] == "false") {
-        $prepend .= "#noParity=false\n";
-      } else {
-        $prepend .= "#noParity=true\n";
-      }
+      $prepend .= "#arrayStarted=" . $conf["arrayStarted"];
+      $prepend .= "#noParity=" . $conf["noParity"];
     } else {
       if (!empty($special_conf_array["arrayStarted"])) {
         $script_contents = replace_line("arrayStarted", "", $script_contents, false);
-        $prepend .= "#arrayStarted=true\n";
+        $prepend .= "#arrayStarted=" . $conf["arrayStarted"];
       } else {
-        $prepend .= "#arrayStarted=true\n";
+        $prepend .= "#arrayStarted=" . $conf["arrayStarted"];
       }
       if (!empty($special_conf_array["noParity"])) {
         $script_contents = replace_line("noParity", "", $script_contents, false);
