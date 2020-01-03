@@ -418,41 +418,56 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // check to see if the form is invalid.
-      if (!$("#vmbackup_settings_form")[0].checkValidity()) {
-        return false;
-      }
-      // disable the apply button before form submission to prevent it from being submitted twice.
-      change_prop("#apply_vmbackup_settings", "disabled", true);
-      // grab the settings from the form and prepare it.
-      var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
-      prepare_form(vmbackup_settings_form);
-      // check to see if text files should be rebuilt.
-      if (rebuild_text_files) {
-        // append input to form submission to force text files to be re-created.
-        $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
-        set_variable_cookie("rebuild_text_files", false);
-      }
-      // submit the vmbackup settings form like normal.
-      $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize(),
-        function() {
-          // submit the second form to actually perform the backup.
-          $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize(),
-            function () {
-              // check to see if the Settings tab should be refreshed.
-              if (refresh_settings) {
-                // refresh the form.
-                $.ajax({
-                  url: "",
-                  context: document.body,
-                  success: function(s,x){
-                    $(this).html(s);
+      // ask if user is certain they want to backup now.
+      swal({
+        title: 'Backup now?',
+        text: 'Are you sure you want to backup now?',
+        type: "info",
+        showCancelButton: true,
+        confirmButtonText: "Yes, backup now",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // check to see if the form is invalid.
+          if (!$("#vmbackup_settings_form")[0].checkValidity()) {
+            return false;
+          }
+          // disable the apply button before form submission to prevent it from being submitted twice.
+          change_prop("#apply_vmbackup_settings", "disabled", true);
+          // grab the settings from the form and prepare it.
+          var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
+          prepare_form(vmbackup_settings_form);
+          // check to see if text files should be rebuilt.
+          if (rebuild_text_files) {
+            // append input to form submission to force text files to be re-created.
+            $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+            set_variable_cookie("rebuild_text_files", false);
+          }
+          // submit the vmbackup settings form like normal.
+          $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize(),
+            function() {
+              // submit the second form to actually perform the backup.
+              $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize(),
+                function () {
+                  // check to see if the Settings tab should be refreshed.
+                  if (refresh_settings) {
+                    // refresh the form.
+                    $.ajax({
+                      url: "",
+                      context: document.body,
+                      success: function(s,x){
+                        $(this).html(s);
+                      }
+                    });
+                    set_variable_cookie("refresh_settings", false);
                   }
                 });
-                set_variable_cookie("refresh_settings", false);
-              }
             });
-        });
+        }
+      });
     });
 
     // add click event to script buttons.
@@ -460,43 +475,123 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the form with the clicked button appended.
-      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
-        function () {
-          // refresh the div containing the text area.
-          $("#pre_script_div").load(location.href + " #pre_script_div");
-        });
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to Submit the pre-script.
+      swal({
+        title: 'Submit pre-script?',
+        text: 'Are you sure you want to submit this pre-script?',
+        type: "info",
+        showCancelButton: true,
+        confirmButtonText: "Yes, submit pre-script",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: false,
+        closeOnCancel: true,
+        showLoaderOnConfirm: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the form with the clicked button appended.
+          $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + clicked_button,
+            function () {
+              // refresh the div containing the text area.
+              $("#pre_script_div").load(location.href + " #pre_script_div",
+                function() {
+                  swal("Pre-script submitted");
+                });
+            });
+        }
+      });
     });
     $("#remove_pre_script").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the form with the clicked button appended.
-      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
-      // clear textarea.
-      $("#pre_script_textarea").html("");
-      $("#pre_script_textarea").val("");
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to remove the script.
+      swal({
+        title: 'Remove pre-script?',
+        text: 'Are you sure you want to remove the pre-script?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, remove pre-script",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the form with the clicked button appended.
+          $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + clicked_button,
+            function() {
+              // clear textarea.
+              $("#pre_script_textarea").html("");
+              $("#pre_script_textarea").val("");
+            });
+        }
+      });
     });
     $("#submit_post_script").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the form with the clicked button appended.
-      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
-        function () {
-          // refresh the div containing the text area.
-          $("#post_script_div").load(location.href + " #post_script_div");
-        });
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to Submit the post-script.
+      swal({
+        title: 'Submit post-script?',
+        text: 'Are you sure you want to submit this post-script?',
+        type: "info",
+        showCancelButton: true,
+        confirmButtonText: "Yes, submit post-script",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: false,
+        closeOnCancel: true,
+        showLoaderOnConfirm: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the form with the clicked button appended.
+          $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + clicked_button,
+            function () {
+              // refresh the div containing the text area.
+              $("#post_script_div").load(location.href + " #post_script_div",
+                function() {
+                  swal("Post-script submitted");
+                });
+            });
+        }
+      });
     });
     $("#remove_post_script").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the form with the clicked button appended.
-      $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val());
-      // clear textarea.
-      $("#post_script_textarea").html("");
-      $("#post_script_textarea").val("");
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to remove the script.
+      swal({
+        title: 'Remove post-script?',
+        text: 'Are you sure you want to remove the post-script?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, remove post-script",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the form with the clicked button appended.
+          $.post($("#upload_form").attr("action"), $("#upload_form").serialize() + "&" + clicked_button,
+            function() {
+              // clear textarea.
+              $("#post_script_textarea").html("");
+              $("#post_script_textarea").val("");
+            });
+        }
+      });
     });
 
     // add click event to fix snapshots button.
@@ -505,21 +600,45 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // ask if user is certain they want to fix snapshots.
-      if (confirm('Are you sure you want to fix stuck snapshots? This could cause more issues than it fixes. Run with care!')) {
-        // submit the fix snapshots script form.
-        $.post($("#fix_snapshots_form").attr("action"), $("#fix_snapshots_form").serialize());
-      }
+      swal({
+        title: 'Fix stuck snapshots?',
+        text: 'Are you sure you want to fix stuck snapshots? This could cause more issues than it fixes. Run with care!',
+        type: "error",
+        showCancelButton: true,
+        confirmButtonText: "Yes, fix snapshots",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the fix snapshots script form.
+          $.post($("#fix_snapshots_form").attr("action"), $("#fix_snapshots_form").serialize());
+        }
+      });
     });
     // add confirm dialog to abort script button.
     $("#abort_script").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // ask if user is certain they want to abort.
-      if (confirm('Are you sure you want to abort any running scripts? This could cause more issues than it prevents. Proceed with caution!')) {
-        // submit the abort script form.
-        $.post($("#abort_script_form").attr("action"), $("#abort_script_form").serialize());
-      }
+      // ask if user is certain they want to abort scripts.
+      swal({
+        title: 'Abort all running VM Backup scripts?',
+        text: 'Are you sure you want to abort any running scripts? This could cause more issues than it prevents. Proceed with caution!',
+        type: "error",
+        showCancelButton: true,
+        confirmButtonText: "Yes, abort scripts",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the abort script form.
+          $.post($("#abort_script_form").attr("action"), $("#abort_script_form").serialize());
+        }
+      });
     });
 
     // add click event to apply buttons.
@@ -533,7 +652,13 @@ Icon="clone"
       }
       // let user know the script is not enabled.
       if ($("#enabled").val() == "0") {
-        if (alert('Backups have not been enabled. Set "Enable backups" to "Yes" (and set a schedule), or backups will not run.'));
+        swal({
+          title: 'Backups have not been enabled',
+          text: 'Set "Enable backups" to "Yes" (and set a schedule), or backups will not run.',
+          type: "warning",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
       }
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
@@ -607,56 +732,107 @@ Icon="clone"
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // append input to form submission to force text files to be re-created.
-      $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
-      // submit the form with the clicked button appended.
-      $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
-        function(){
-          // refresh the form.
-          $.ajax({
-            url: "",
-            context: document.body,
-            success: function(s,x){
-              $(this).html(s);
-            }
-          });
-        });
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to abort scripts.
+      swal({
+        title: 'Reset to defaults?',
+        text: 'Are you sure you want to reset to defaults?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, reset to defaults",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // append input to form submission to force text files to be re-created.
+          $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+          // submit the form with the clicked button appended.
+          $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + clicked_button,
+            function(){
+              // refresh the form.
+              $.ajax({
+                url: "",
+                context: document.body,
+                success: function(s,x){
+                  $(this).html(s);
+                }
+              });
+            });
+        }
+      });
     });
     $("#default_vmbackup_other_settings").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the form with the clicked button appended.
-      $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
-        function() {
-          // refresh the form.
-          $.ajax({
-            url: "",
-            context: document.body,
-            success: function(s,x){
-              $(this).html(s);
-            }
-          });
-        });
-        set_variable_cookie("refresh_settings", true);
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to abort scripts.
+      swal({
+        title: 'Reset to defaults?',
+        text: 'Are you sure you want to reset to defaults?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, reset to defaults",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the form with the clicked button appended.
+          $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + clicked_button,
+            function() {
+              // refresh the form.
+              $.ajax({
+                url: "",
+                context: document.body,
+                success: function(s,x){
+                  $(this).html(s);
+                }
+              });
+            });
+            set_variable_cookie("refresh_settings", true);
+        }
+      });
     });
     $("#default_vmbackup_danger_zone").click(function(e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // submit the form with the clicked button appended.
-      $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
-        function() {
-          // refresh the form.
-          $.ajax({
-            url: "",
-            context: document.body,
-            success: function(s,x){
-              $(this).html(s);
-            }
-          });
-        });
-        set_variable_cookie("refresh_settings", true);
+      // get button that was clicked so it can be passed with the form later.
+      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      // ask if user is certain they want to abort scripts.
+      swal({
+        title: 'Reset to defaults?',
+        text: 'Are you sure you want to reset to defaults?',
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, reset to defaults",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        if (isConfirm) {
+          // submit the form with the clicked button appended.
+          $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + clicked_button,
+            function() {
+              // refresh the form.
+              $.ajax({
+                url: "",
+                context: document.body,
+                success: function(s,x){
+                  $(this).html(s);
+                }
+              });
+            });
+            set_variable_cookie("refresh_settings", true);
+        }
+      });
     });
 
     // add click event to done buttons.
