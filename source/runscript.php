@@ -14,6 +14,8 @@
   $plugin_path = '/boot/config/plugins/' . $plugin;
   $user_script_file = $plugin_path . '/user-script.sh';
   $user_fix_snapshots_file = $plugin_path . '/user-fix-snapshots.sh';
+  $pre_script_file = $plugin_path . '/pre-script.sh';
+  $post_script_file = $plugin_path . '/post-script.sh';
   // tmp files.
   $current_datetime = date('Ymd_His');
   $tmp_plugin_path = '/tmp/vmbackup/scripts';
@@ -21,6 +23,8 @@
   $tmp_user_script_file = $tmp_plugin_path . '/user-script.sh';
   $tmp_log_file = $tmp_plugin_path . '/'. $current_datetime .'_user-script.log';
   $tmp_user_script_pid = $tmp_plugin_path . '/user-script.pid';
+  $tmp_pre_script_file = $tmp_plugin_path . '/pre-script.sh';
+  $tmp_post_script_file = $tmp_plugin_path . '/post-script.sh';
   // fix snapshots tmp files.
   $tmp_fix_snapshots_file = $tmp_plugin_path . '/user-fix-snapshots.sh';
   $tmp_fix_snapshots_log_file = $tmp_plugin_path . '/'. $current_datetime .'_fix-snapshots.log';
@@ -40,7 +44,7 @@
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
     // check to see if a backup is already running.
-    if (is_file($tmp_user_script_file)) {
+    if (is_file($tmp_user_script_file) || is_file($tmp_pre_script_file) || is_file($tmp_post_script_file)) {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
       exit();
     }
@@ -65,7 +69,7 @@
     }
 
     // start logging to tmp log file.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup ".$tmp_user_script_file."\n", FILE_APPEND);
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Starting VM Backup.\n", FILE_APPEND);
     // log the process id of the current process running the script.
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
     // create text file for the process id of the current process running the script.
@@ -98,12 +102,40 @@
       }
     }
 
+    // copy user scripts to tmp directory.
+    if (is_file($pre_script_file)) {
+      // get the contents of the pre-script file.
+      $pre_script_contents = file_get_contents($pre_script_file);
+      // create a copy of the pre-script file in the tmp folder and make it executable.
+      file_put_contents($tmp_pre_script_file, $pre_script_contents);
+      exec("chmod +x ".escapeshellarg($tmp_pre_script_file));
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Pre-script copied to ".$tmp_pre_script_file."\n", FILE_APPEND);
+    }
+
     // get the contents of the user script file.
     $user_script_contents = file_get_contents($user_script_file);
-    
     // create a copy of the user script file in the tmp folder and make it executable.
     file_put_contents($tmp_user_script_file, $user_script_contents);
     exec("chmod +x ".escapeshellarg($tmp_user_script_file));
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." User script copied to ".$tmp_user_script_file."\n", FILE_APPEND);
+
+    if (is_file($post_script_file)) {
+      // get the contents of the post-script file.
+      $post_script_contents = file_get_contents($post_script_file);
+      // create a copy of the post-script file in the tmp folder and make it executable.
+      file_put_contents($tmp_post_script_file, $post_script_contents);
+      exec("chmod +x ".escapeshellarg($tmp_pre_script_file));
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Post-script copied to ".$tmp_post_script_file."\n", FILE_APPEND);
+    }
+
+    if (is_file($tmp_pre_script_file)) {
+      // build command to run pre-script with logging.
+      $pre_run_cmd = $tmp_pre_script_file." >> $tmp_log_file 2>&1";
+
+      // execute the command to run the script.
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$pre_run_cmd."\n", FILE_APPEND);
+      exec($pre_run_cmd);
+    }
 
     // build command to run script with logging.
     $run_cmd = $tmp_user_script_file." >> $tmp_log_file 2>&1";
@@ -112,16 +144,37 @@
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$run_cmd."\n", FILE_APPEND);
     exec($run_cmd);
 
+    if (is_file($tmp_post_script_file)) {
+      // build command to run post-script with logging.
+      $post_run_cmd = $tmp_post_script_file." >> $tmp_log_file 2>&1";
+
+      // execute the command to run the script.
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Running command: ".$post_run_cmd."\n", FILE_APPEND);
+      exec($post_run_cmd);
+    }
+
+    // remove tmp pre script file.
+    if (is_file($tmp_pre_script_file)) {
+      unlink($tmp_pre_script_file);
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_pre_script_file."\n", FILE_APPEND);
+    }
+
     // remove tmp user script file.
     unlink($tmp_user_script_file);
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_user_script_file."\n", FILE_APPEND);
+
+    // remove tmp post script file.
+    if (is_file($tmp_post_script_file)) {
+      unlink($tmp_post_script_file);
+      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_post_script_file."\n", FILE_APPEND);
+    }
 
     // remove tmp user pid file.
     unlink($tmp_user_script_pid);
     file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_user_script_pid."\n", FILE_APPEND);
 
     // end logging to tmp log file.
-    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Finished VM Backup user-script.sh.", FILE_APPEND);
+    file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Finished VM Backup.", FILE_APPEND);
   }
 
 
@@ -130,7 +183,7 @@
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
     // check to see if a backup is already running.
-    if (is_file($tmp_fix_snapshots_file)) {
+    if (is_file($tmp_user_script_file) || is_file($tmp_pre_script_file) || is_file($tmp_post_script_file)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." A backup is already running. Exiting.\n", FILE_APPEND);
       exit();
     }
@@ -155,7 +208,7 @@
     }
 
     // start logging to tmp log file.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Starting Fix Snapshots.\n", FILE_APPEND);
     // log the process id of the current process running the script.
     file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." PID: ".getmypid()."\n", FILE_APPEND);
     // create text file for the process id of the current process running the script.
@@ -190,10 +243,10 @@
 
     // get the contents of the fix snapshots script file.
     $fix_snapshots_contents = file_get_contents($user_fix_snapshots_file);
-    
     // create a copy of the fix snapshots script file in the tmp folder and make it executable.
     file_put_contents($tmp_fix_snapshots_file, $fix_snapshots_contents);
     exec("chmod +x ".escapeshellarg($tmp_fix_snapshots_file));
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Fix snapshots script copied to ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
 
     // build command to run fix snapshots script with logging.
     $run_cmd = $tmp_fix_snapshots_file." >> $tmp_fix_snapshots_log_file 2>&1";
@@ -211,7 +264,7 @@
     file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_fix_snapshots_pid."\n", FILE_APPEND);
 
     // end logging to tmp fix snapshots log file.
-    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Finished Fix Snapshots user-fix-snapshots.sh.", FILE_APPEND);
+    file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Finished Fix Snapshots.", FILE_APPEND);
   }
 
 
@@ -244,11 +297,20 @@
       // attempt to kill user script process.
       $user_script_pid = file_get_contents("$tmp_user_script_pid");
       // try sigterm for orderly shutdown.
+      exec("pkill -SIGTERM -P " . $user_script_pid);
+      exec("killall -SIGTERM pre-script.sh");
       exec("killall -SIGTERM user-script.sh");
+      exec("killall -SIGTERM post-script.sh");
       // try keyboard interrupt.
+      exec("pkill -SIGINT -P " . $user_script_pid);
+      exec("killall -SIGINT pre-script.sh");
       exec("killall -SIGINT user-script.sh");
+      exec("killall -SIGINT post-script.sh");
       // force kill in case those didn't work.
+      exec("pkill -SIGKILL -P " . $user_script_pid);
+      exec("killall -SIGKILL pre-script.sh");
       exec("killall -SIGKILL user-script.sh");
+      exec("killall -SIGKILL post-script.sh");
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $user_script_pid.\n", FILE_APPEND);
 
       // remove tmp user script file.
