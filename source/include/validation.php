@@ -68,6 +68,7 @@
     // prepend the string to the file.
     $prepend = rtrim($prepend);
     if (!empty($prepend) && $shebang_exists == false) {
+      $prepend .= "\n";
       $script_contents = prepend_string($prepend, $script_contents, false);
     } elseif (!empty($prepend) && $shebang_exists == true ) {
       $script_contents = replace_line("#!/bin/bash", "", $script_contents, false);
