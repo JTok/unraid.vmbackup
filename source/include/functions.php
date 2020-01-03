@@ -5,7 +5,6 @@
 
 
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
-  require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
   // function to compare versions of two files.
   function same_file_version($default_file, $user_file, $is_config = false) {
@@ -180,9 +179,22 @@
   }
 
   // function to get special commented variables from the top of a file.
-  function get_special_variables($file, $num_lines = 10) {
-    // read the file into an array.
-    $file_contents_array = file($file);
+  function get_special_variables($contents, $num_lines = 10, $is_file = true) {
+    // check to see if the passed contents are a file.
+    if ($is_file == true) {
+      // if so, read the file into an array.
+      $file_contents_array = file($contents);
+    } elseif ($is_file == false) {
+      // check to see if the variable is a string or an array.
+      if (gettype($contents) == "array") {
+        // if it is an array, copy it to file_contents_array.
+        $file_contents_array = $contents;
+      } elseif (gettype($contents) == "string") {
+        // if it is a string, explode it into an array using newline.
+        $file_contents_array = explode("\n", $contents);
+      }
+    }
+
     // determine the number of lines to read from the top of the file.
     if (count($file_contents_array) >= $num_lines) {
       $num_lines = $num_lines;
@@ -214,6 +226,35 @@
     // return the filtered array.
     return $special_variables;
   }
+
+  // function to prepend string to a file.
+  function prepend_string($string, $contents, $is_file = true) {
+    if ($is_file == true) {
+      $file = $contents;
+      $context = stream_context_create();
+      $open_file = fopen($file, 'r', 1, $context);
+
+      $temp_filename = tempnam(sys_get_temp_dir(), 'php_prepend_');
+      file_put_contents($temp_filename, $string);
+      file_put_contents($temp_filename, $open_file, FILE_APPEND);
+
+      fclose($open_file);
+      unlink($file);
+      rename($temp_filename, $file);
+    } elseif ($is_file == false) {
+      // check to see if the variable is a string or an array.
+      if (gettype($contents) == "array") {
+        // if it is an array, copy it to contents_array.
+        $array_unshift($contents, $string);
+        return $contents;
+      } elseif (gettype($contents) == "string") {
+        // if it is a string, explode it into an array using newline.
+        $contents = $string . "\n" . $contents;
+        return $contents;
+      }
+    }
+  }
+
 
   // function to send a post command to another php page.
   function send_post($url, $data) {
