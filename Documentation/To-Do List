@@ -24,4 +24,3 @@
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
 #  - allow arrayStarted to be changed.
-#  - test killing script and making sure post-script does not run.
