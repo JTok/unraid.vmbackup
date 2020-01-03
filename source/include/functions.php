@@ -35,7 +35,6 @@
   function update_user_conf_file($default_conf_file, $user_conf_file) {
     // see if user config file already exists.
     if (!is_file($user_conf_file)) {
-
       // if not, create it from the default config file.
       if (!copy($default_conf_file, $user_conf_file)) {
         echo "failed to create user config file.\n";
@@ -83,7 +82,7 @@
     $second_conf_array = parse_ini_file($second_conf_file);
 
     // get an array of the differences between the two configs.
-    $conf_diff = array_diff($first_conf_array, $second_conf_array);
+    $conf_diff = array_diff_assoc($first_conf_array, $second_conf_array);
 
     // if differences were found, continue.
     if (!empty($conf_diff)) {
@@ -128,8 +127,16 @@
 
     // for each key pair in the config array, replace the corresponding value in the script contents.
     foreach ($conf as $key => $value) {
-      // check if key is noParity.
-      if ($key == "noParity") {
+      // check if key is arrayStarted or noParity.
+      if ($key == "arrayStarted") {
+        if ($value == "false") {
+          // set arrayStarted to false.
+          $script_contents = str_replace("#arrayStarted=no_config", "#arrayStarted=false", $script_contents);
+        } else {
+          // set arrayStarted to true.
+          $script_contents = str_replace("#arrayStarted=no_config", "#arrayStarted=true", $script_contents);
+        }
+      } elseif ($key == "noParity") {
         if ($value == "false") {
           // set noParity to false.
           $script_contents = str_replace("#noParity=no_config", "#noParity=false", $script_contents);
