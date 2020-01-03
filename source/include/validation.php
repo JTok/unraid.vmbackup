@@ -30,16 +30,14 @@
     // parse config file.
     $conf = parse_ini_file($conf_file);
 
-    // create empty string for pre-pending.
-    $preprend = "";
-    // read the first line of the script.
+    // read the first line of the script to find out if the shebang already exists.
     $line = rtrim(strtok($script_contents, "\n"));
     if (!strcmp($line, "#!/bin/bash") == 0) {
-      // if shebang is missing, add it to string to be pre-pended.
       $shebang_exists = false;
       $prepend = "#!/bin/bash\n";
     } else {
       $shebang_exists = true;
+      $prepend = "#!/bin/bash\n";
     }
     // see if the file contains any special variables.
     $special_conf_array = get_special_variables($script_contents, 10, false);
@@ -65,12 +63,12 @@
         $prepend .= "#noParity=" . $conf["noParity"];
       }
     }
-    // prepend the string to the file.
+    // prepend the string to the script.
     $prepend = rtrim($prepend);
-    if (!empty($prepend) && $shebang_exists == false) {
+    if ($shebang_exists == false) {
       $prepend .= "\n";
       $script_contents = prepend_string($prepend, $script_contents, false);
-    } elseif (!empty($prepend) && $shebang_exists == true ) {
+    } elseif ($shebang_exists == true ) {
       $script_contents = replace_line("#!/bin/bash", "", $script_contents, false);
       $prepend = "#!/bin/bash\n" . $prepend;
       $script_contents = prepend_string($prepend, $script_contents, false);
