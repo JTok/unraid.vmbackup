@@ -14,8 +14,8 @@ Icon="clone"
 <div style="width:90%; float:left">
   <form id="upload_form" name="upload_form" method="POST" action="/plugins/vmbackup/include/upload.php" target="progressFrame">
 
-    <!-- pre-script -->
     <div markdown="1" style="width:90%; float:left">
+      <!-- pre-script -->
       <div id="title" class="nocontrol">Pre-Script</div>
 
       <label>Paste a pre-script:</label>
@@ -24,6 +24,7 @@ Icon="clone"
       </div>
       <input type="button" id="submit_pre_script" name="#submit_pre_script" value="Submit Pre-Script"><input type="button" id="remove_pre_script" name="#remove_pre_script" value="Remove Pre-Script">
 
+      <!-- post-script -->
       <div id="title" class="nocontrol">Post-Script</div>
 
       <label>Paste a post-script:</label>
