@@ -21,3 +21,8 @@
 #  - add restore functionality.
 #  - ability to do multiple script variations/schedules (should be multiple full configs).
 #  - when allowing multiple script variations/schedules have setting to allow/disallow running simultaneously.
+#  - reorganize code for manageability.
+#  - option to duplicate existing config?
+#  - make sure cronjobs get updated when manipulating additional config.
+#  - make sure runscript.php can handle new configs.
+#  - adjust div loads to re-execute only relevant script blocks.
