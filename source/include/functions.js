@@ -36,6 +36,15 @@ function remove_list_whitespace(string) {
   return string;
 }
 
+// function to create serialized data for form post.
+function serialize_string(name, value, append = true) {
+  if (append) {
+    serialized_string = "&";
+  }
+  serialized_string += encodeURIComponent(name) + "=" + encodeURIComponent(value);
+  return serialized_string;
+}
+
 // function to return basic regular expression to validate a cron statement.
 function basic_cron_regex() {
   return '(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\\d+(ns|us|µs|ms|s|m|h))+)|((((\\d+,)+\\d+|(\\d+(\\/|-)\\d+)|\\d+|\\*) ?){5,7})';
