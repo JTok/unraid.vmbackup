@@ -476,7 +476,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to Submit the pre-script.
       swal({
         title: 'Submit pre-script?',
@@ -508,7 +508,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to remove the script.
       swal({
         title: 'Remove pre-script?',
@@ -537,7 +537,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to Submit the post-script.
       swal({
         title: 'Submit post-script?',
@@ -569,7 +569,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to remove the script.
       swal({
         title: 'Remove post-script?',
@@ -733,7 +733,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to abort scripts.
       swal({
         title: 'Reset to defaults?',
@@ -769,7 +769,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to abort scripts.
       swal({
         title: 'Reset to defaults?',
@@ -804,7 +804,7 @@ Icon="clone"
       e.preventDefault();
       e.stopPropagation();
       // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val()
+      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to abort scripts.
       swal({
         title: 'Reset to defaults?',
@@ -894,6 +894,331 @@ Icon="clone"
         done();
       }
     });
+    // add click events for config management buttons.
+    $("#add_config_button").click(function(e) {
+      // prevent normal button actions.
+      e.preventDefault();
+      e.stopPropagation();
+      // check to see if the form is invalid.
+      if (!$("#manage_configs_form")[0].checkValidity()) {
+        return false;
+      }
+      // get list of configs.
+      $configs = $("#select_configs_div input");
+      // get the configs as an array.
+      var configs_array = $configs.map(function() {
+          return $(this).parent().find('a:first').html();
+        }).get();
+      // create config_exists variable and assume the new config does not exist already.
+      var config_exists = false;
+      // make sure that the new config does not already exist.
+      configs_array.forEach(config => {
+        if ($("#add_config").val().toUpperCase() == config.toUpperCase()) {
+          config_exists = true;
+        }
+      });
+      // if new config was found in existing configs, then abort.
+      if (config_exists) {
+        swal({
+          title: 'Config already exists',
+          text: 'This config already exits. Please choose a different name and try again.',
+          type: "warning",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+        return false;
+      }
+      // verify that the text field isn't blank before submitting the form.
+      if (!$("#add_config").val() == "") {
+        // submit the form with the clicked button appended.
+        $.post($("#manage_configs_form").attr("action"), $("#manage_configs_form").serialize() + "&" + $(this).attr("name") + "=" + $(this).val(),
+          function() {
+            // clear textbox.
+            $("#add_config").val("");
+            // refresh the div containing the text area.
+            $("#select_configs_div").load(location.href + " #select_configs_div",
+              function() {
+                // re-build config selection after refresh.
+                $("#select_configs_div").fileTree({
+                  root: "/boot/config/plugins/vmbackup/configs/",
+                  multiSelect: true,
+                  filter: "HIDE_FILES_FILTER",
+                  folderEvent: "nothing"
+                });
+              });
+          });
+      } else {
+        swal({
+          title: 'Config name is blank',
+          text: 'The config name cannot be blank. Please choose a name and try again.',
+          type: "warning",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+      }
+    });
+    $("#rename_config_button").click(function(e) {
+      // prevent normal button actions.
+      e.preventDefault();
+      e.stopPropagation();
+      // get info for the button that was clicked so it can be passed with the form later.
+      var clicked_button_name = $(this).attr("name");
+      var clicked_button_value = $(this).val();
+      // make sure that only one config has been selected and if so, rename it.
+      $selected_configs = $("#select_configs_div input:checked");
+      if ($selected_configs.length === 0) {
+        swal({
+          title: 'No config selected',
+          text: 'Please select exactly one config to rename.',
+          type: "info",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+      } else if ($selected_configs.length === 1) {
+        // get the selected config as an array.
+        var selected_configs_array = $selected_configs.map(function() {
+            // use this to get the full path instead: $(this).parent().find('a:first').attr("rel");
+            // return config name.
+            return $(this).parent().find('a:first').html();
+          }).get();
+        // ask the user what they would like the new config name to be.
+        swal({
+          title: 'Choose new name',
+          text: 'Please choose a new name for ' + selected_configs_array[0] + '.',
+          type: "input",
+          showCancelButton: true,
+          closeOnConfirm: false,
+          inputValue: selected_configs_array[0]
+        },
+          function(inputValue) {
+            if (inputValue === false) {
+              return false;
+            } else if (inputValue.trim() === "") {
+              swal.showInputError("The new name cannot be blank.");
+              return false;
+            }
+            // get list of configs.
+            $configs = $("#select_configs_div input");
+            // get the configs as an array.
+            var configs_array = $configs.map(function() {
+                return $(this).parent().find('a:first').html();
+              }).get();
+            // create config_exists variable and assume the new config does not exist already.
+            var config_exists = false;
+            // make sure that the new config does not already exist.
+            configs_array.forEach(config => {
+              if (String(inputValue).trim().toUpperCase() == config.toUpperCase()) {
+                config_exists = true;
+              }
+            });
+            // if new config was found in existing configs, then abort.
+            if (config_exists) {
+              swal.showInputError("The config name already exists.");
+              return false;
+            }
+            // create a regular expression variable to use for validation.
+            var name_regex = /^[^\/\. ](([\w.-]+)( [\w.-]+)*)+$/
+            if (name_regex.test(inputValue.trim())) {
+              var new_config_name = inputValue.trim();
+              // get the serialized form data.
+              var config_form_data = $("#manage_configs_form").serialize();
+              // append the new config name to the form data.
+              config_form_data += serialize_string("new_config_name", new_config_name);
+              // append the array of selected configs to the form data.
+              config_form_data += serialize_string("selected_configs", JSON.stringify(selected_configs_array));
+              // append the clicked button the the form data.
+              config_form_data += serialize_string(clicked_button_name, clicked_button_value);
+              // submit the form data.
+              $.post($("#manage_configs_form").attr("action"), config_form_data,
+                function() {
+                  // refresh the div containing the text area.
+                  $("#select_configs_div").load(location.href + " #select_configs_div",
+                    function() {
+                      // re-build config selection after refresh.
+                      $("#select_configs_div").fileTree({
+                        root: "/boot/config/plugins/vmbackup/configs/",
+                        multiSelect: true,
+                        filter: "HIDE_FILES_FILTER",
+                        folderEvent: "nothing"
+                      });
+                      swal.close();
+                    });
+                });
+            } else {
+              swal.showInputError("Please type a valid name.");
+              return false;
+            }
+          });
+      } else {
+        swal({
+          title: 'Too many configs selected',
+          text: 'Please select exactly one config to rename.',
+          type: "info",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+      }
+    });
+    $("#copy_config_button").click(function(e) {
+      // prevent normal button actions.
+      e.preventDefault();
+      e.stopPropagation();
+      // get info for the button that was clicked so it can be passed with the form later.
+      var clicked_button_name = $(this).attr("name");
+      var clicked_button_value = $(this).val();
+      // make sure that only one config has been selected and if so, copy it.
+      $selected_configs = $("#select_configs_div input:checked");
+      if ($selected_configs.length === 0) {
+        swal({
+          title: 'No config selected',
+          text: 'Please select exactly one config to copy.',
+          type: "info",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+      } else if ($selected_configs.length === 1) {
+        var selected_configs_array = $selected_configs.map(function() {
+            // return config name.
+            return $(this).parent().find('a:first').html();
+          }).get();
+        // ask the user what they would like the new config name to be.
+        swal({
+          title: 'Choose name for copy',
+          text: 'Please choose a new name for the copy of ' + selected_configs_array[0] + '.',
+          type: "input",
+          showCancelButton: true,
+          closeOnConfirm: false,
+          inputValue: selected_configs_array[0]
+        },
+          function(inputValue) {
+            if (inputValue === false) {
+              return false;
+            } else if (inputValue.trim() === "") {
+              swal.showInputError("The new name cannot be blank.");
+              return false;
+            }
+            // get list of configs.
+            $configs = $("#select_configs_div input");
+            // get the configs as an array.
+            var configs_array = $configs.map(function() {
+                return $(this).parent().find('a:first').html();
+              }).get();
+            // create config_exists variable and assume the new config does not exist already.
+            var config_exists = false;
+            // make sure that the new config does not already exist.
+            configs_array.forEach(config => {
+              if (String(inputValue).trim().toUpperCase() == config.toUpperCase()) {
+                config_exists = true;
+              }
+            });
+            // if new config was found in existing configs, then abort.
+            if (config_exists) {
+              swal.showInputError("The config name already exists.");
+              return false;
+            }
+            // create a regular expression variable to use for validation.
+            var name_regex = /^[^\/\. ](([\w.-]+)( [\w.-]+)*)+$/
+            if (name_regex.test(inputValue.trim())) {
+              var copy_config_name = inputValue.trim();
+              // get the serialized form data.
+              var config_form_data = $("#manage_configs_form").serialize();
+              // append the new config name to the form data.
+              config_form_data += serialize_string("copy_config_name", copy_config_name);
+              // append the array of selected configs to the form data.
+              config_form_data += serialize_string("selected_configs", JSON.stringify(selected_configs_array));
+              // append the clicked button to the form data.
+              config_form_data += serialize_string(clicked_button_name, clicked_button_value);
+              // submit the form data.
+              $.post($("#manage_configs_form").attr("action"), config_form_data,
+                function() {
+                  // refresh the div containing the text area.
+                  $("#select_configs_div").load(location.href + " #select_configs_div",
+                    function() {
+                      // re-build config selection after refresh.
+                      $("#select_configs_div").fileTree({
+                        root: "/boot/config/plugins/vmbackup/configs/",
+                        multiSelect: true,
+                        filter: "HIDE_FILES_FILTER",
+                        folderEvent: "nothing"
+                      });
+                      swal.close();
+                    });
+                });
+            } else {
+              swal.showInputError("Please type a valid name.");
+              return false;
+            }
+          });
+      } else {
+        swal({
+          title: 'Too many configs selected',
+          text: 'Please select exactly one config to copy.',
+          type: "info",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+      }
+    });
+    $("#remove_configs_button").click(function(e) {
+      // prevent normal button actions.
+      e.preventDefault();
+      e.stopPropagation();
+      // get info for the button that was clicked so it can be passed with the form later.
+      var clicked_button_name = $(this).attr("name");
+      var clicked_button_value = $(this).val();
+      // make sure that at least one config has been selected.
+      $selected_configs = $("#select_configs_div input:checked");
+      if ($selected_configs.length === 0) {
+        swal({
+          title: 'No config selected',
+          text: 'Please select at least one config to remove.',
+          type: "info",
+          showCancelButton: false,
+          closeOnConfirm: true
+        });
+      } else {
+        // ask if user is certain they want to remove the script.
+        swal({
+          title: 'Remove the configs?',
+          text: 'Are you sure you want to remove the selected configs?',
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, remove configs",
+          cancelButtonText: "Cancel",
+          closeOnConfirm: true,
+          closeOnCancel: true
+        },
+        function(isConfirm) {
+          if (isConfirm) {
+            var selected_configs_array = $selected_configs.map(function() {
+                // return config name.
+                return $(this).parent().find('a:first').html();
+              }).get();
+            // get the serialized form data.
+            var config_form_data = $("#manage_configs_form").serialize();
+            // append the array of selected configs to the form data.
+            config_form_data += serialize_string("selected_configs", JSON.stringify(selected_configs_array));
+            // append the clicked button to the form data.
+            config_form_data += serialize_string(clicked_button_name, clicked_button_value);
+            // submit the form data.
+            $.post($("#manage_configs_form").attr("action"), config_form_data,
+              function() {
+                // refresh the div containing the text area.
+                $("#select_configs_div").load(location.href + " #select_configs_div",
+                  function() {
+                    // re-build config selection after refresh.
+                    $("#select_configs_div").fileTree({
+                      root: "/boot/config/plugins/vmbackup/configs/",
+                      multiSelect: true,
+                      filter: "HIDE_FILES_FILTER",
+                      folderEvent: "nothing"
+                    });
+                  });
+              });
+          }
+        });
+      }
+    });
   }
 
   // document ready function.
@@ -905,6 +1230,13 @@ Icon="clone"
     // set the regex pattern each element should use.
     toggle_cron_regex();
     toggle_restrictive_regex();
+    // build config selection.
+    $("#select_configs_div").fileTree({
+      root: "/boot/config/plugins/vmbackup/configs/",
+      multiSelect: true,
+      filter: "HIDE_FILES_FILTER",
+      folderEvent: "nothing"
+    });
     // set the validation for each element.
     set_validation();
     // set the initial attributes for cron controls.
