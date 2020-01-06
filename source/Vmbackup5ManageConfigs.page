@@ -1,0 +1,38 @@
+Menu="Vmbackup:5"
+Title="Manage Configs"
+Icon="clone"
+---
+
+<?php
+
+  /* vmbackup plugin
+    copyright 2019 JTok */
+
+?>
+
+
+<div style="width:90%; float:left">
+  <form id="manage_configs_form" name="manage_configs_form" method="POST" action="/plugins/vmbackup/include/configs.php" target="progressFrame">
+
+    <div markdown="1" style="width:90%; float:left">
+      <!-- add config -->
+      <div id="title" class="nocontrol">Add Config</div>
+
+      <label>Choose a config name:</label>
+      <div id="add_config_div" name="add_config_div" style="clear:both">
+        <input type="text" class="narrow" id="add_config" name="add_config" maxlength="100" pattern="^[^\/\. ](([\w.-]+)( [\w.-]+)*)+$">
+      </div>
+      <input type="button" id="add_config_button" name="#add_config_button" value="Add Config">
+
+      <!-- rename/delete configs -->
+      <div id="title" class="nocontrol">Rename/Delete Configs</div>
+      <label>Select a config:</label>
+      <div id="manage_configs_div" name="manage_configs_div" style="clear:both">
+        <div id="select_configs_div" name="select_configs_div" style="clear:both; width:25%; max-height:400px; overflow-y:scroll; overflow-x:hidden; z-index:100"></div>
+      </div>
+      <div id="button_div" name="button_div" style="clear:both">
+        <input type="button" id="rename_config_button" name="#rename_config_button" value="Rename Config"><input type="button" id="copy_config_button" name="#copy_config_button" value="Copy Config"><input type="button" id="remove_configs_button" name="#remove_configs_button" value="Remove Configs">
+      </div>
+    </div>
+  </form>
+</div>
