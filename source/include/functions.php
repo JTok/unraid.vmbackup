@@ -252,7 +252,7 @@
     }
   }
 
-  // verify directory exists and is writeable.
+  // function to verify directory exists and is writeable.
   function verify_dir($path) {
     // see if directory or file already exists with a given path.
     if (!file_exists($path)) {
@@ -260,18 +260,63 @@
     }
     // verify that the path is a directory.
     if (!is_dir($path)) {
-      syslog(LOG_ALERT, "$path is not a directory.");
+      syslog(LOG_INFO, "$path is not a directory.");
       return false;
     }
     // verify that the directory is writable.
     if (!is_writeable($path)) {
-      syslog(LOG_ALERT, "Could not write to $path.");
+      syslog(LOG_INFO, "Could not write to $path.");
       return false;
     }
     // if we have made it to the end without an error, return true.
     return true;
   }
 
+  // function to verify directory is empty.
+  function is_empty_dir($path) {
+    // make the path is a directory.
+    if(is_dir($path)){
+      // use scandir to get the contents of the directory and array_diff to filter out . and ..
+      $list = array_diff(scandir($path), array('..', '.'));
+      // check to see if anything was found.
+      if(empty($list)){
+        return true;
+      } else{
+        return false;
+      }
+    } else {
+      syslog(LOG_INFO, "$path is not a directory.");
+      return false;
+    }
+  }
+
+  // function to remove all contents from directory and, optionally, remove the directory.
+  function remove_dir($path, $keep_folder = false) {
+    // verify path is valid.
+    if (empty($path) || !file_exists($path)) {
+      // the path does not exist.  
+      return true;
+    } elseif (is_file($path) || is_link($path)) {
+      // delete the file or directory. 
+      return @unlink($path);
+    }
+
+    // use recursive iterators to delete all children.
+    $files = new \RecursiveIteratorIterator(
+      new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+      \RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($files as $fileinfo) {
+      $action = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+      if (!@$action($fileinfo->getRealPath())) {
+        return false;
+      }
+    }
+
+    // check if the folder should be removed, and if so, remove it. return true/false based on result.
+    return (!$keep_folder ? @rmdir($path) : true);
+  }
 
   // function to send a post command to another php page.
   function send_post($url, $data) {
