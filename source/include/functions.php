@@ -150,31 +150,15 @@
     return $script_contents;
   }
 
-  // function to update just special variables.
-  function update_special_variables($script_file, $conf_file, $write_file = true) {
-    // parse config file.
-    $conf = parse_ini_file($conf_file);
+  // function to update just special variables in a script without writing the file.
+  function update_special_variables($script_file, $conf_file) {
+    // get the script contents.
+    $script_contents = file_get_contents($script_file);
+    // validate the script contents and update any config variables.
+    $script_contents = validate_script($script_contents, $conf_file);
 
-    // get special variables from script file.
-    $special_variables = get_special_variables($script_file);
-
-    // see if the file should be written or not.
-    if ($write_file) {
-      // replace the special variables in the script with the ones from the user config. This will write the file back to the drive.
-      foreach ($special_variables as $key => $value) {
-        replace_line("#$key=\"$value\"", "#$key=\"$conf[$key]\"", $script_file);
-      }
-      return true;
-    } else {
-      // replace the special variables in the script with the ones from the user config. Get the updated file contents in return.
-      // get the file contents as a string.
-      $script_contents = file_get_contents($script_file);
-      foreach ($special_variables as $key => $value) {
-        $script_contents = replace_line("#$key=\"$value\"", "#$key=\"$conf[$key]\"", $script_contents, false);
-      }
-      // return the updated script contents.
-      return $script_contents;
-    }
+    // return the updated contents.
+    return $script_contents;
   }
 
   // function to create an array of padded numbers as the key with un-padded values.
@@ -429,7 +413,7 @@
     $conf_file = $argv[3];
 
     // get a string containing the script contents merged with the config file.
-    $script_contents = update_special_variables($script_file, $conf_file, false);
+    $script_contents = update_special_variables($script_file, $conf_file);
 
     // write user script contents variable as the user script file.
     file_put_contents($script_file, $script_contents);
