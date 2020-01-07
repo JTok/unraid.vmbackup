@@ -22,3 +22,4 @@
 #  - when allowing multiple script variations/schedules have setting to allow/disallow running simultaneously.
 #  - reorganize code for manageability.
 #  - adjust div loads to re-execute only relevant script blocks.
+#  - remove final confirmation of submission on pre and post scripts.
