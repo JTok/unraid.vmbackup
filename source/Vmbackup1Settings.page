@@ -101,6 +101,7 @@ Icon="clone"
   // declare global variables.
   var rebuild_text_files = false;
   var refresh_settings = false;
+  var current_config = "default";
 
   // function to set a cookie.
   function set_cookie(name, value, days) {
@@ -132,11 +133,11 @@ Icon="clone"
     document.cookie = name + "=; Max-Age=0;";
   }
   // function to check the default cookies, and set them if they don't exist.
-  function check_cookie(name) {
+  function check_cookie(name, value = false) {
     var cookie = get_cookie(name);
     if (cookie == "") {
       if (name) {
-        set_cookie(name, false);
+        set_cookie(name, value);
       }
     }
   }
@@ -304,6 +305,20 @@ Icon="clone"
       change_attr("#minute", "disabled", false);
       change_attr("#custom", "disabled", true);
     }
+  }
+
+  // function to set the current config.
+  function config_changed() {
+    var $current_config = $("#choose_config").children("option:selected").val();
+    set_variable_cookie("current_config", $current_config);
+    // reset the form.
+    $.ajax({
+      url: "",
+      context: document.body,
+      success: function(s,x){
+        $(this).html(s);
+      }
+    });
   }
 
 
@@ -663,6 +678,8 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
       prepare_form(vmbackup_settings_form);
+      // remove choose_config from form before submission.
+      $("#choose_config").remove();
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
@@ -747,6 +764,8 @@ Icon="clone"
       },
       function(isConfirm) {
         if (isConfirm) {
+          // remove choose_config from form before submission.
+          $("#choose_config").remove();
           // append input to form submission to force text files to be re-created.
           $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
           // submit the form with the clicked button appended.
@@ -1248,9 +1267,13 @@ Icon="clone"
     // set default cookies.
     check_cookie("rebuild_text_files");
     check_cookie("refresh_settings");
+    check_cookie("current_config", "default");
     // update global variables based on cookies.
     rebuild_text_files = (get_cookie("rebuild_text_files") === "true");
     refresh_settings = (get_cookie("refresh_settings") === "true");
+    current_config = get_cookie("current_config");
+    // set the current config based on the cookie.
+    $("#choose_config").val(current_config);
   });
 </script>
 
@@ -1530,6 +1553,18 @@ Icon="clone"
     <div style="width: 45%; clear:right; float:left">
       <p>When configuring Advanced Settings, be sure to review the help.
       <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
+    </div>
+    <div markdown="1" style="width:45%; clear:right; float:left">
+      Choose config:
+      : <select id="choose_config" name="choose_config" size="1" onchange="config_changed()">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config) { ?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select>
     </div>
 
     <div markdown="1" style="width:50%; clear:both; float:left">
