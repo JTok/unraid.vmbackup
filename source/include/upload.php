@@ -21,7 +21,7 @@
   if (isset($_POST['#submit_pre_script']) && (isset($_POST['pre_script_textarea']))) {
     // check that the root folder we want to write to exists and is writeable.
     if (!verify_dir($plugin_path)) {
-      syslog(LOG_INFO, "Could not verify $plugin_path. Cannot create new config.");
+      syslog(LOG_INFO, "Could not verify $plugin_path. Cannot create pre-script.");
       exit;
     }
     $pre_script_contents = ($_POST['pre_script_textarea']);
@@ -44,7 +44,7 @@
   if (isset($_POST['#submit_post_script']) && (isset($_POST['post_script_textarea']))) {
     // check that the root folder we want to write to exists and is writeable.
     if (!verify_dir($plugin_path)) {
-      syslog(LOG_INFO, "Could not verify $plugin_path. Cannot create new config.");
+      syslog(LOG_INFO, "Could not verify $plugin_path. Cannot create post-script.");
       exit;
     }
     $post_script_contents = ($_POST['post_script_textarea']);
