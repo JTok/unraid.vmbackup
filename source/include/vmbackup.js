@@ -300,7 +300,7 @@
       e.preventDefault();
       e.stopPropagation();
       // open the log in a new window.
-      openWindow('/usr/local/emhttp/plugins/vmbackup/runscript.php&arg1=show_log&arg2='+current_config, 'Backup Log', 800, 1200);
+      openWindow('/usr/local/emhttp/plugins/vmbackup/runscript.php&arg1=show_log&arg2=' + current_config, 'Backup Log', 800, 1200);
     });
   }
 
