@@ -309,7 +309,7 @@ Icon="clone"
 
   // function to set the current config.
   function config_changed() {
-    var $current_config = $("#choose_config").children("option:selected").val();
+    var $current_config = $("#current_config").children("option:selected").val();
     set_variable_cookie("current_config", $current_config);
     // reset the form.
     $.ajax({
@@ -678,8 +678,8 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
       prepare_form(vmbackup_settings_form);
-      // remove choose_config from form before submission.
-      $("#choose_config").remove();
+      // remove current_config from form before submission.
+      $("#current_config").remove();
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
@@ -764,8 +764,8 @@ Icon="clone"
       },
       function(isConfirm) {
         if (isConfirm) {
-          // remove choose_config from form before submission.
-          $("#choose_config").remove();
+          // remove current_config from form before submission.
+          $("#current_config").remove();
           // append input to form submission to force text files to be re-created.
           $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
           // submit the form with the clicked button appended.
@@ -1273,7 +1273,7 @@ Icon="clone"
     refresh_settings = (get_cookie("refresh_settings") === "true");
     current_config = get_cookie("current_config");
     // set the current config based on the cookie.
-    $("#choose_config").val(current_config);
+    $("#current_config").val(current_config);
   });
 </script>
 
@@ -1555,12 +1555,13 @@ Icon="clone"
       <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
     </div>
     <div markdown="1" style="width:45%; clear:right; float:left">
-      Choose config:
-      : <select id="choose_config" name="choose_config" size="1" onchange="config_changed()">
+      Current config:
+      : <select id="current_config" name="current_config" size="1" onchange="config_changed()">
         <option value="default">default</option>
         <?php
           $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
-          foreach ($configs as $config) { ?>
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
             <option value="<?= $config ?>"><?= $config ?></option>
         <?php
           } ?>
