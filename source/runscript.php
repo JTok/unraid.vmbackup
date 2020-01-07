@@ -34,7 +34,7 @@
   // function to determine if a script is already running.
   function script_running($path) {
     // get array of pid files from the path.
-    $pid_files = glob($path);
+    $pid_files = glob($path ."/*.pid");
     // if the array is not empty, return true because a script is already running.
     return (!empty($pid_files));
   }
