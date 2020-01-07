@@ -51,9 +51,11 @@
     // create variables.
     // user files.
     if (!$config_name == "default") {
-      $user_script_file = $plugin_path . '/' . $config_name . '/user-script.sh';
-      $pre_script_file = $plugin_path . '/' . $config_name . '/pre-script.sh';
-      $post_script_file = $plugin_path . '/' . $config_name . '/post-script.sh';
+      $configs_plugin_path = $plugin_path . '/configs';
+      $current_config_path = $configs_plugin_path . '/' . $current_config;
+      $user_script_file = $current_config_path . '/user-script.sh';
+      $pre_script_file = $current_config_path . '/pre-script.sh';
+      $post_script_file = $current_config_path . '/post-script.sh';
     } else {
       $user_script_file = $plugin_path . '/user-script.sh';
       $pre_script_file = $plugin_path . '/pre-script.sh';
@@ -439,17 +441,33 @@
   }
 
   if ($arg1 == "show_log") {
-    if (file_exists($tmp_plugin_path)) {
-      $files = scandir($tmp_plugin_path, SCANDIR_SORT_DESCENDING);
+    // if no arguments were passed, set arg2 to default for backwards compatibility.
+    if (empty($arg2)) {
+      $arg2 = "default";
+    } 
+    
+    // get variables from arguments.
+    $config_name = $arg2;
+
+    // create variables.
+    // user files.
+    if (!$config_name == "default") {
+      $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
+    } else {
+      $tmp_plugin_path_config = $tmp_plugin_path;
+    }
+
+    if (file_exists($tmp_plugin_path_config)) {
+      $files = scandir($tmp_plugin_path_config, SCANDIR_SORT_DESCENDING);
       for ($i = 0; $i < count($files); $i++) {
         if (preg_match('/.*_user-script.log/', $files[$i])) {
           $newest_file = $files[$i];
           break;
         }
       }
-      $newest_log_file = $tmp_plugin_path . '/' . $newest_file;
+      $newest_log_file = $tmp_plugin_path_config . '/' . $newest_file;
       if (is_file($newest_log_file)) {
-        $tail_log = popen('/usr/bin/tail -n 80 -f ' . escapeshellarg($tmp_plugin_path . '/' . $newest_file) . ' 2>&1' , 'r');
+        $tail_log = popen('/usr/bin/tail -n 80 -f ' . escapeshellarg($tmp_plugin_path_config . '/' . $newest_file) . ' 2>&1' , 'r');
         while (!feof($tail_log)) {
           $line = fgets($tail_log);
           echo $line;
@@ -459,5 +477,4 @@
       }
     }
   }
-
 ?>
