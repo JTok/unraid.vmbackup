@@ -612,13 +612,12 @@
 
   case "$1" in
     'update_user_script')
-      if [[ -n "$3" ]]; then
-        update_user_script "$3"
+      if [[ -n "$2" ]]; then
+        update_user_script "$2"
       else
         update_user_script "default"
       fi
-      update_user_script
-      if [[ "$2" == "rebuild_text_files" ]]; then
+      if [[ "$3" == "rebuild_text_files" ]]; then
         create_vm_lists true
       fi
       ;;
