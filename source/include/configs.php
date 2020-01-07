@@ -13,6 +13,7 @@
   // default files.
   $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
   $script_path = $plugin_source_path . '/scripts';
+  $commands_script_file = $script_path . '/commands.sh';
   $default_script_file = $script_path . '/default-script.sh';
   $default_conf_file = $plugin_source_path . '/default.cfg';
   // user files.
@@ -124,7 +125,10 @@
       syslog(LOG_WARNING, "Could not remove $old_config_path during rename. Directory is not empty.");
     }
 
-    // still need to update the cronjob.
+    // remove the old cron job.
+    exec("$commands_script_file remove_cron_job ".escapeshellarg($old_config_name));
+    // add the new cron job.
+    exec("$commands_script_file update_cron_job ".escapeshellarg($new_config_name));
 
   }
 
@@ -195,15 +199,15 @@
     file_put_contents($copy_config_conf_file, $copy_config_conf_contents);
   }
 
-  // if post is rename config, then rename the config.
+  // if post is remove config, then remove the config.
   if (isset($_POST['#remove_configs_button']) && (isset($_POST['selected_configs']))) {
     // check that the root folder we want to write to exists and is writeable.
     if (!verify_dir($plugin_config_path)) {
-      syslog(LOG_INFO, "Could not verify $plugin_config_path. Cannot rename config.");
+      syslog(LOG_INFO, "Could not verify $plugin_config_path. Cannot remove config.");
       exit;
     }
 
-    // get the old config name and path.
+    // get the selected configs.
     $selected_configs_array = json_decode($_POST['selected_configs']);
 
     // remove all the files from each config and then remove the directory.
@@ -214,9 +218,8 @@
       if (!remove_dir($config_path)) {
         syslog(LOG_ALERT, "Failed to remove config $config_name.");
       }
+      // remove the old cron job.
+      exec("$commands_script_file remove_cron_job ".escapeshellarg($config_name));
     }
-
-    // still need to remove the cronjob.
-
   }
 ?>
