@@ -10,27 +10,92 @@
     # create local variables.
     local php_functions_script="/usr/local/emhttp/plugins/vmbackup/include/functions.php"
     local default_script="/usr/local/emhttp/plugins/vmbackup/scripts/default-script.sh"
-    local user_script="/boot/config/plugins/vmbackup/user-script.sh"
-    local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local default_fix_snapshots_script="/usr/local/emhttp/plugins/vmbackup/scripts/default-fix-snapshots.sh"
     local user_fix_snapshots_script="/boot/config/plugins/vmbackup/user-fix-snapshots.sh"
-
-    # verify the default script and the user config files exist.
-    if [[ -f "$default_script" ]] && [[ -f "$user_config" ]]; then
-
-      # if the a user script already exists, remove it.
-      if [[ -f "$user_script" ]]; then
-        rm -f "$user_script"
+    local configs_path="/boot/config/plugins/vmbackup/configs"
+    if [[ -n "$1" ]]; then
+      local config_name="$1"
+      if [[ ! "$config_name" == "default" ]]; then
+        local pre_script="$configs_path/$config_name/pre-script.sh"
+        local user_script="$configs_path/$config_name/user-script.sh"
+        local post_script="$configs_path/$config_name/post-script.sh"
+        local user_config="$configs_path/$config_name/user.cfg"
+      else
+        local pre_script="/boot/config/plugins/vmbackup/pre-script.sh"
+        local user_script="/boot/config/plugins/vmbackup/user-script.sh"
+        local post_script="/boot/config/plugins/vmbackup/post-script.sh"
+        local user_config="/boot/config/plugins/vmbackup/user.cfg"
       fi
-
-      php "$php_functions_script" "update_user_script" "$default_script" "$user_script" "$user_config"
-
-      # update cronjob.
-      update_cron_job
+    else
+      local config_name="default"
+      local pre_script="/boot/config/plugins/vmbackup/pre-script.sh"
+      local user_script="/boot/config/plugins/vmbackup/user-script.sh"
+      local post_script="/boot/config/plugins/vmbackup/post-script.sh"
+      local user_config="/boot/config/plugins/vmbackup/user.cfg"
     fi
 
-    # verify the default fix snapshots script and the user config files exist.
-    if [[ -f "$default_fix_snapshots_script" ]] && [[ -f "$user_config" ]]; then
+    if [[ "$config_name" == "all" ]]; then
+      # loop through each config (directory) in the configs folder.
+      for config in "$configs_path"/*/
+      do
+        # verify that we are working with a directory.
+        if [[ -d "${config}" ]]; then
+          pre_script="${config}/pre-script.sh"
+          user_script="${config}/user-script.sh"
+          post_script="${config}/post-script.sh"
+          user_config="${config}/user.cfg"
+
+          # verify the default script and the user config files exist.
+          if [[ -f "$default_script" ]] && [[ -f "$user_config" ]]; then
+            # if the a user script already exists, remove it.
+            if [[ -f "$user_script" ]]; then
+              rm -f "$user_script"
+            fi
+
+            php "$php_functions_script" "update_user_script" "$default_script" "$user_script" "$user_config"
+
+            # update cronjob.
+            update_cron_job "$config_name"
+
+            # verify that the pre-script file exists and then update its special variables.
+            if [[ -f "$pre_script" ]]; then
+              php "$php_functions_script" "update_special_variables" "$pre_script" "$user_config"
+            fi
+            # verify that the post-script file exists and then update its special variables.
+            if [[ -f "$post_script" ]]; then
+              php "$php_functions_script" "update_special_variables" "$post_script" "$user_config"
+            fi
+          fi
+        fi
+      done
+        # call this function again and update the default user config.
+        update_user_script "default"
+    else
+      # verify the default script and the user config files exist.
+      if [[ -f "$default_script" ]] && [[ -f "$user_config" ]]; then
+        # if the a user script already exists, remove it.
+        if [[ -f "$user_script" ]]; then
+          rm -f "$user_script"
+        fi
+
+        php "$php_functions_script" "update_user_script" "$default_script" "$user_script" "$user_config"
+
+        # update cronjob.
+        update_cron_job "$config_name"
+
+        # verify that the pre-script file exists and then update its special variables.
+        if [[ -f "$pre_script" ]]; then
+          php "$php_functions_script" "update_special_variables" "$pre_script" "$user_config"
+        fi
+        # verify that the post-script file exists and then update its special variables.
+        if [[ -f "$post_script" ]]; then
+          php "$php_functions_script" "update_special_variables" "$post_script" "$user_config"
+        fi
+      fi
+    fi
+
+    # verify the default fix snapshots script and the user config files exist and that we are working with the default config.
+    if [[ -f "$default_fix_snapshots_script" ]] && [[ -f "$user_config" ]] && [[ "$config_name" == "default" ]]; then
 
       # if the a user fix snapshots script already exists, remove it.
       if [[ -f "$user_fix_snapshots_script" ]]; then
@@ -46,18 +111,128 @@
     # create local variables.
     local php_functions_script="/usr/local/emhttp/plugins/vmbackup/include/functions.php"
     local default_config="/usr/local/emhttp/plugins/vmbackup/default.cfg"
-    local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    if [[ -n "$1" ]]; then
+      local config_name="$1"
+      if [[ ! "$config_name" == "default" ]]; then
+        local user_config="/boot/config/plugins/vmbackup/configs/$config_name/user.cfg"
+      else
+        local user_config="/boot/config/plugins/vmbackup/user.cfg"
+      fi
+    else
+      local config_name="default"
+      local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    fi
 
-    php "$php_functions_script" "update_user_conf_file" "$default_config" "$user_config"
+    if [[ "$config_name" == "all" ]]; then
+      # loop through each config (directory) in the configs folder.
+      for config in "$configs_path"/*/
+      do
+        # verify that we are working with a directory.
+        if [[ -d "${config}" ]]; then
+          user_config="${config}/user.cfg"
+
+          php "$php_functions_script" "update_user_conf_file" "$default_config" "$user_config"
+        fi
+      done
+        # call this function again and update the default user config.
+        update_user_conf_file "default"
+    else
+      php "$php_functions_script" "update_user_conf_file" "$default_config" "$user_config"
+    fi
   }
 
   # function to update cronjob
   update_cron_job () {
     # create local variables.
+    if [[ -n "$1" ]]; then
+      local config_name="$1"
+      if [[ ! "$config_name" == "default" ]]; then
+        local user_config="/boot/config/plugins/vmbackup/configs/$config_name/user.cfg"
+      else
+        local user_config="/boot/config/plugins/vmbackup/user.cfg"
+      fi
+    else
+      local config_name="default"
+      local user_config="/boot/config/plugins/vmbackup/user.cfg"
+    fi
+
+    if [[ "$config_name" == "all" ]]; then
+      # loop through each config (directory) in the configs folder.
+      for config in "$configs_path"/*/
+      do
+        # verify that we are working with a directory.
+        if [[ -d "${config}" ]]; then
+          user_config="${config}/user.cfg"
+          write_to_crontab "$user_config" "${config}"
+        fi
+      done
+        # call this function again and update the default user config.
+        update_cron_job "default"
+    else
+      write_to_crontab "$user_config" "$config_name"
+    fi
+  }
+
+  # function to remove cronjob
+  remove_cron_job () {
+    # create local variables.
     local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
-    local runscript_argument="run_backup"
-    local user_config="/boot/config/plugins/vmbackup/user.cfg"
-    local cronjob_comment="# Job for VM Backup plugin:"
+    if [[ -n "$1" ]]; then
+      local config_name="$1"
+      if [[ ! "$config_name" == "default" ]]; then
+        local cronjob_comment="# Job for VM Backup plugin $config_name:"
+        local runscript_argument="run_backup $config_name"
+      else
+        local cronjob_comment="# Job for VM Backup plugin:"
+        local runscript_argument="run_backup default"
+      fi
+    else
+      local config_name="default"
+      local cronjob_comment="# Job for VM Backup plugin:"
+      local runscript_argument="run_backup default"
+    fi
+
+    if [[ "$config_name" == "all" ]]; then
+      # loop through each config (directory) in the configs folder.
+      for config in "$configs_path"/*/
+      do
+        # verify that we are working with a directory.
+        if [[ -d "${config}" ]]; then
+          cronjob_comment="# Job for VM Backup plugin ${config}:"
+          runscript_argument="run_backup ${config}"
+          ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
+          ( crontab -l | grep -v -F "$runscript $runscript_argument" ) | crontab -
+        fi
+      done
+        # call this function again and update the default user config.
+        remove_cron_job "default"
+    else
+      ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
+      ( crontab -l | grep -v -F "$runscript $runscript_argument" ) | crontab -
+    fi
+  }
+
+  # function to write to crontab.
+  write_to_crontab() {
+    # create local variables.
+    local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
+    local user_config="$1"
+    if [[ -n "$2" ]]; then
+      local config_name="$2"
+      if [[ ! "$config_name" == "default" ]]; then
+        local cronjob_comment="# Job for VM Backup plugin $config_name:"
+        local runscript_argument="run_backup $config_name"
+      else
+        local cronjob_comment="# Job for VM Backup plugin:"
+        local runscript_argument="run_backup default"
+      fi
+    else
+      local config_name="default"
+      local cronjob_comment="# Job for VM Backup plugin:"
+      local runscript_argument="run_backup default"
+    fi
+
+    # this function does not need to handle "all" configs argument because this function is only called from other functions that handle that argument.
 
     # verify user config file exists.
     if [[ -f "$user_config" ]]; then
@@ -112,7 +287,7 @@
         "disabled")
           # no schedule set. remove existing cron job and exit function.
           ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-          ( crontab -l | grep -v -F "$runscript" ) | crontab -
+          ( crontab -l | grep -v -F "$runscript $runscript_argument" ) | crontab -
           return 0
           ;;
         "daily")
@@ -141,7 +316,7 @@
 
       # write cronjob to crontab.
       ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-      ( crontab -l | grep -v -F "$runscript" ; echo "$cronjob" ) | crontab -
+      ( crontab -l | grep -v -F "$runscript $runscript_argument" ; echo "$cronjob" ) | crontab -
     fi
   }
 
@@ -379,8 +554,13 @@
     # create local variables.
     local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
     local argument1="run_backup"
+    if [[ -n "$1" ]]; then
+      local config_name="$1"
+    else
+      local config_name="default"
+    fi
 
-    "$runscript" "$argument1" | at NOW -M > /dev/null 2>&1
+    "$runscript" "$argument1" "$config_name" | at NOW -M > /dev/null 2>&1
   }
 
   function fix_snapshots() {
@@ -432,13 +612,36 @@
 
   case "$1" in
     'update_user_script')
+      if [[ -n "$3" ]]; then
+        update_user_script "$3"
+      else
+        update_user_script "default"
+      fi
       update_user_script
       if [[ "$2" == "rebuild_text_files" ]]; then
         create_vm_lists true
       fi
       ;;
     'update_user_conf_file')
-      update_user_conf_file
+      if [[ -n "$2" ]]; then
+        update_user_conf_file "$2"
+      else
+        update_user_conf_file "default"
+      fi
+      ;;
+    'update_cron_job')
+      if [[ -n "$2" ]]; then
+        update_cron_job "$2"
+      else
+        update_cron_job "default"
+      fi
+      ;;
+    'remove_cron_job')
+      if [[ -n "$2" ]]; then
+        remove_cron_job "$2"
+      else
+        remove_cron_job "default"
+      fi
       ;;
     'create_vm_lists')
       if [[ "$2" == "rebuild_text_files" ]]; then
@@ -448,7 +651,11 @@
       fi
       ;;
     'backup_now')
-      backup_now
+      if [[ -n "$2" ]]; then
+        backup_now "$2"
+      else
+        backup_now "default"
+      fi
       ;;
     'fix_snapshots')
       fix_snapshots
