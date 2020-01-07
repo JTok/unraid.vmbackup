@@ -341,10 +341,19 @@ Icon="clone"
         $(this).html(s);
       }
     });
+    update_form_config($current_config);
+  }
+
+  // function to update form elements based on current config.
+  function update_form_config(current_config) {
+    // change config file passed with form.
+    $("#vmbackup_settings_form input[name=#file]").val("vmbackup/" + current_config + "/user.cfg");
+    $("#vmbackup_other_settings input[name=#file]").val("vmbackup/" + current_config + "/user.cfg");
+    $("#vmbackup_danger_zone_form input[name=#file]").val("vmbackup/" + current_config + "/user.cfg");
     // append current config to forms.
-    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + $current_config + '">');
-    $("#vmbackup_other_settings").append('<input type="hidden" name="#arg[2]" value="' + $current_config + '">');
-    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + $current_config + '">');
+    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    $("#vmbackup_other_settings").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
   }
 
 
@@ -1303,9 +1312,7 @@ Icon="clone"
     // set the current config based on the cookie.
     $("#current_config").val(current_config);
     // append current config to forms.
-    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
-    $("#vmbackup_other_settings").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
-    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    update_form_config(current_config);
   });
 </script>
 
