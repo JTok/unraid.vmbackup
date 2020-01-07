@@ -700,6 +700,8 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
       prepare_form(vmbackup_settings_form);
+      // disable current_config to prevent submission with form.
+      change_prop("#current_config", "disabled", true);
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
@@ -723,6 +725,7 @@ Icon="clone"
             });
             set_variable_cookie("refresh_settings", false);
           }
+          change_prop("#current_config", "disabled", false);
         });
     });
     $("#apply_vmbackup_other_settings").click(function(e) {
@@ -784,11 +787,13 @@ Icon="clone"
       },
       function(isConfirm) {
         if (isConfirm) {
+          // disable current_config to prevent submission with form.
+          change_prop("#current_config", "disabled", true);
           // append input to form submission to force text files to be re-created.
           $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
           // submit the form with the clicked button appended.
           $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + clicked_button,
-            function(){
+            function() {
               // refresh the form.
               $.ajax({
                 url: "",
@@ -797,6 +802,7 @@ Icon="clone"
                   $(this).html(s);
                 }
               });
+              change_prop("#current_config", "disabled", false);
             });
         }
       });
@@ -1574,7 +1580,7 @@ Icon="clone"
     </div>
     <div markdown="1" style="width:45%; clear:right; float:left">
       Current config:
-      : <select id="current_config" size="1" onchange="config_changed()">
+      : <select id="current_config" name="current_config" size="1" onchange="config_changed()">
         <option value="default">default</option>
         <?php
           $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
