@@ -18,7 +18,7 @@ Icon="clone"
   // default files.
   $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
   $script_path = $plugin_source_path . '/scripts';
-  $command_script_file = $script_path . '/commands.sh';
+  $commands_script_file = $script_path . '/commands.sh';
   $default_script_file = $script_path . '/default-script.sh';
   $default_conf_file = $plugin_source_path . '/default.cfg';
   $default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
@@ -55,7 +55,7 @@ Icon="clone"
   }
 
   // create text files containing a list of vms and a list of vdisks respectively.
-  exec("$command_script_file create_vm_lists");
+  exec("$commands_script_file create_vm_lists");
 
   // get vm and vdisk lists as arrays.
   $vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
