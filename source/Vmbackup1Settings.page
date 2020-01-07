@@ -346,10 +346,17 @@ Icon="clone"
 
   // function to update form elements based on current config.
   function update_form_config(current_config) {
-    // change config file passed with form.
-    $("#vmbackup_settings_file").val("vmbackup/" + current_config + "/user.cfg");
-    $("#vmbackup_other_settings_file").val("vmbackup/" + current_config + "/user.cfg");
-    $("#vmbackup_danger_zone_file").val("vmbackup/" + current_config + "/user.cfg");
+    if (!current_config == "default") {
+      // change config file passed with form.
+      $("#vmbackup_settings_file").val("vmbackup/configs/" + current_config + "/user.cfg");
+      $("#vmbackup_other_settings_file").val("vmbackup/configs/" + current_config + "/user.cfg");
+      $("#vmbackup_danger_zone_file").val("vmbackup/configs/" + current_config + "/user.cfg");
+    } else {
+      // change config file passed with form.
+      $("#vmbackup_settings_file").val("vmbackup/user.cfg");
+      $("#vmbackup_other_settings_file").val("vmbackup/user.cfg");
+      $("#vmbackup_danger_zone_file").val("vmbackup/user.cfg");
+    }
     // append current config to forms.
     $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
     $("#backup_now_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
