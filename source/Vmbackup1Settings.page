@@ -341,6 +341,10 @@ Icon="clone"
         $(this).html(s);
       }
     });
+    // append current config to forms.
+    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + $current_config + '">');
+    $("#vmbackup_other_settings").append('<input type="hidden" name="#arg[2]" value="' + $current_config + '">');
+    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + $current_config + '">');
   }
 
 
@@ -480,7 +484,7 @@ Icon="clone"
           // check to see if text files should be rebuilt.
           if (rebuild_text_files) {
             // append input to form submission to force text files to be re-created.
-            $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+            $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[3]" value="rebuild_text_files">');
             set_variable_cookie("rebuild_text_files", false);
           }
           // submit the vmbackup settings form like normal.
@@ -705,7 +709,7 @@ Icon="clone"
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
-        $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+        $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[3]" value="rebuild_text_files">');
         set_variable_cookie("rebuild_text_files", false);
       }
       // disable the apply button.
@@ -758,7 +762,7 @@ Icon="clone"
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
-        $("#apply_vmbackup_danger_zone").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+        $("#apply_vmbackup_danger_zone").append('<input type="hidden" name="#arg[3]" value="rebuild_text_files">');
         set_variable_cookie("rebuild_text_files", false);
       }
       // disable the apply button.
@@ -790,7 +794,7 @@ Icon="clone"
           // disable current_config to prevent submission with form.
           change_prop("#current_config", "disabled", true);
           // append input to form submission to force text files to be re-created.
-          $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
+          $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[3]" value="rebuild_text_files">');
           // submit the form with the clicked button appended.
           $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + clicked_button,
             function() {
@@ -1298,6 +1302,10 @@ Icon="clone"
     current_config = get_cookie("current_config");
     // set the current config based on the cookie.
     $("#current_config").val(current_config);
+    // append current config to forms.
+    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    $("#vmbackup_other_settings").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
   });
 </script>
 
@@ -1601,6 +1609,7 @@ Icon="clone"
     <form id="backup_now_form" name="backup_now_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
       <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
       <input type="hidden" name="#args[1]" value="backup_now">
+      <input type="hidden" name="#args[2]" value="<?php $current_config ?>">
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
