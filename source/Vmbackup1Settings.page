@@ -39,8 +39,8 @@ Icon="clone"
 
   // finish creating variables based on current config.
   if (!strcasecmp($current_config, "default") == 0) {
-    $config_plugin_path = $plugin_path . '/configs';
-    $current_config_path = $config_plugin_path . '/' . $current_config;
+    $configs_plugin_path = $plugin_path . '/configs';
+    $current_config_path = $configs_plugin_path . '/' . $current_config;
     $user_script_file = $current_config_path . '/user-script.sh';
     $user_conf_file = $current_config_path . '/user.cfg';
     $pre_script_file = $current_config_path . '/pre-script.sh';
