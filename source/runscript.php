@@ -25,6 +25,7 @@
   $tmp_abort_now_file = $tmp_plugin_path . '/'. 'abort-now.txt';
   // get arguments.
   $arg1 = $argv[1];
+  $arg2 = $argv[2];
 
   // if no arguments were passed, set arg1 to run_backup for backwards compatibility.
   if (empty($arg1)) {
