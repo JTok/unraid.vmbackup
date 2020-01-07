@@ -24,14 +24,36 @@ Icon="clone"
   $default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
   // user files.
   $plugin_path = '/boot/config/plugins/' . $plugin;
-  $user_script_file = $plugin_path . '/user-script.sh';
-  $user_conf_file = $plugin_path . '/user.cfg';
   $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
-  $pre_script_file = $plugin_path . '/pre-script.sh';
-  $post_script_file = $plugin_path . '/post-script.sh';
   // generated files.
   $vm_list = $plugin_path . '/vm-list.txt';
   $vdisk_list = $plugin_path . '/vdisk-list.txt';
+
+  // get current config from cookie.
+  if (!isset($_COOKIE["current_config"])) {
+    setcookie("current_config", "default");
+    $current_config = $_COOKIE["current_config"];
+    syslog(LOG_INFO, "not set: $current_config");
+  } else {
+    $current_config = $_COOKIE["current_config"];
+    syslog(LOG_INFO, "set: $current_config");
+  }
+
+  // finish creating variables based on current config.
+  if (!strcasecmp($current_config, "default") == 0) {
+    $config_plugin_path = $plugin_path . '/configs';
+    $current_config_path = $config_plugin_path . '/' . $current_config;
+    $user_script_file = $current_config_path . '/user-script.sh';
+    $user_conf_file = $current_config_path . '/user.cfg';
+    $pre_script_file = $current_config_path . '/pre-script.sh';
+    $post_script_file = $current_config_path . '/post-script.sh';
+  } else {
+    $user_script_file = $plugin_path . '/user-script.sh';
+    $user_conf_file = $plugin_path . '/user.cfg';
+    $pre_script_file = $plugin_path . '/pre-script.sh';
+    $post_script_file = $plugin_path . '/post-script.sh';
+  }
+
 
   // create or update the user config file as necessary and return the results as a config array.
   $conf_array=update_user_conf_file($default_conf_file, $user_conf_file);
@@ -678,8 +700,6 @@ Icon="clone"
       // grab the settings from the form and prepare it.
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
       prepare_form(vmbackup_settings_form);
-      // remove current_config from form before submission.
-      $("#current_config").remove();
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
@@ -764,8 +784,6 @@ Icon="clone"
       },
       function(isConfirm) {
         if (isConfirm) {
-          // remove current_config from form before submission.
-          $("#current_config").remove();
           // append input to form submission to force text files to be re-created.
           $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="rebuild_text_files">');
           // submit the form with the clicked button appended.
@@ -1556,7 +1574,7 @@ Icon="clone"
     </div>
     <div markdown="1" style="width:45%; clear:right; float:left">
       Current config:
-      : <select id="current_config" name="current_config" size="1" onchange="config_changed()">
+      : <select id="current_config" size="1" onchange="config_changed()">
         <option value="default">default</option>
         <?php
           $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
