@@ -51,9 +51,9 @@
 
     // create variables.
     // user files.
-    if (!$config_name == "default") {
+    if (!strcasecmp($config_name, "default") == 0) {
       $configs_plugin_path = $plugin_path . '/configs';
-      $current_config_path = $configs_plugin_path . '/' . $current_config;
+      $current_config_path = $configs_plugin_path . '/' . $config_name;
       $user_script_file = $current_config_path . '/user-script.sh';
       $pre_script_file = $current_config_path . '/pre-script.sh';
       $post_script_file = $current_config_path . '/post-script.sh';
@@ -452,7 +452,7 @@
 
     // create variables.
     // user files.
-    if (!$config_name == "default") {
+    if (!strcasecmp($config_name, "default") == 0) {
       $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
     } else {
       $tmp_plugin_path_config = $tmp_plugin_path;
