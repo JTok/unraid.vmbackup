@@ -135,8 +135,12 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file
-    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script
+    # remove legacy default cronjob.
+    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
+    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
+    # update files and re-add missing cronjobs.
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file all
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script all
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh create_vm_lists
   </INLINE>
 </FILE>
