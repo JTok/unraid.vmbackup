@@ -5,6 +5,7 @@
 
 
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
+  require_once '/usr/local/emhttp/plugins/vmbackup/include/validation.php';
 
   // function to compare versions of two files.
   function same_file_version($default_file, $user_file, $is_config = false) {
@@ -149,6 +150,32 @@
     return $script_contents;
   }
 
+  // function to update just special variables.
+  function update_special_variables($script_file, $conf_file, $write_file = true) {
+    // parse config file.
+    $conf = parse_ini_file($conf_file);
+
+    // get special variables from script file.
+    $special_variables = get_special_variables($script_file);
+
+    // see if the file should be written or not.
+    if ($write_file) {
+      // replace the special variables in the script with the ones from the user config. This will write the file back to the drive.
+      foreach ($special_variables as $key => $value) {
+        replace_line("#$key=\"$value\"", "#$key=\"$conf[$key]\"", $script_file);
+      }
+      return true;
+    } else {
+      // replace the special variables in the script with the ones from the user config. Get the updated file contents in return.
+      // get the file contents as a string.
+      $script_contents = file_get_contents($script_file);
+      foreach ($special_variables as $key => $value) {
+        $script_contents = replace_line("#$key=\"$value\"", "#$key=\"$conf[$key]\"", $script_contents, false);
+      }
+      // return the updated script contents.
+      return $script_contents;
+    }
+  }
 
   // function to create an array of padded numbers as the key with un-padded values.
   function create_number_array($start_number, $finish_number, $padding_depth = "0") {
@@ -394,5 +421,17 @@
 
     // create or update the user config file as necessary.
     update_user_conf_file($default_conf_file, $user_conf_file);
+  }
+  // if first argument is update special variables, then update the special variables.
+  if ($argv[1] == "update_special_variables") {
+    // create variables for passed parameters.
+    $script_file = $argv[2];
+    $conf_file = $argv[3];
+
+    // get a string containing the script contents merged with the config file.
+    $script_contents = update_special_variables($script_file, $conf_file, false);
+
+    // write user script contents variable as the user script file.
+    file_put_contents($script_file, $script_contents);
   }
 ?>
