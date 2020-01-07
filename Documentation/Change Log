@@ -7,6 +7,7 @@
 # - added ability to run pre and post scripts.
 # - added option to run backup without array started.
 # - added confirmation dialogs to destructive or dangerous buttons.
+# - added support for multiple configs/schedules.
 # - changed alert dialogs to use sweet alerts.
 # - updated help for custom cron.
 
