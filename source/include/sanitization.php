@@ -1,7 +1,7 @@
 <?php
 
   /* vmbackup plugin
-    copyright 2019 JTok */
+    copyright JTok */
 
 
   // function to return sanitized config file contents, without writing it to a file.

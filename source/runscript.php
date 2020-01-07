@@ -3,7 +3,7 @@
 <?php
 
   /* vmbackup plugin
-  copyright 2019 JTok */
+  copyright JTok */
 
   require_once '/usr/local/emhttp/plugins/vmbackup/include/functions.php';
 

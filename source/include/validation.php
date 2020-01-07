@@ -1,7 +1,7 @@
 <?php
 
   /* vmbackup plugin
-    copyright 2019 JTok */
+    copyright JTok */
 
   // function to validate form options.
   function validate_form() {
