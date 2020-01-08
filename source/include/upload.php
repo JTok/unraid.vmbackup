@@ -12,16 +12,36 @@
   $plugin = 'vmbackup';
   // user files.
   $plugin_path = '/boot/config/plugins/' . $plugin;
-  $user_conf_file = $plugin_path . '/user.cfg';
-  $pre_script_file = $plugin_path . '/pre-script.sh';
-  $post_script_file = $plugin_path . '/post-script.sh';
 
   // check for post commands.
+  // see if current_config was sent with post.
+  if (isset($_POST['#current_config'])) {
+    // if so, set the variable based on post.
+    $current_config = ($_POST['#current_config']);
+  } else {
+    // if not, set as default for backwards compatibility.
+    $current_config = "default";
+  }
+
+  // set variables based on current config.
+  if (!strcasecmp($current_config, "default") == 0) {
+    $plugin_configs_path = $plugin_path . '/configs';
+    $current_config_path = $plugin_configs_path . '/' . $current_config;
+    $user_conf_file = $current_config_path . '/user.cfg';
+    $pre_script_file = $current_config_path . '/pre-script.sh';
+    $post_script_file = $current_config_path . '/post-script.sh';
+  } else {
+    $current_config_path = $plugin_path;
+    $user_conf_file = $plugin_path . '/user.cfg';
+    $pre_script_file = $plugin_path . '/pre-script.sh';
+    $post_script_file = $plugin_path . '/post-script.sh';
+  }
+
   // if submit pre-script, then update pre-script.
   if (isset($_POST['#submit_pre_script']) && (isset($_POST['pre_script_textarea']))) {
     // check that the root folder we want to write to exists and is writeable.
-    if (!verify_dir($plugin_path)) {
-      syslog(LOG_INFO, "Could not verify $plugin_path. Cannot create pre-script.");
+    if (!verify_dir($current_config_path)) {
+      syslog(LOG_INFO, "Could not verify $current_config_path. Cannot create pre-script.");
       exit;
     }
     $pre_script_contents = ($_POST['pre_script_textarea']);
@@ -43,8 +63,8 @@
   // if submit post-script, then update post-script.
   if (isset($_POST['#submit_post_script']) && (isset($_POST['post_script_textarea']))) {
     // check that the root folder we want to write to exists and is writeable.
-    if (!verify_dir($plugin_path)) {
-      syslog(LOG_INFO, "Could not verify $plugin_path. Cannot create post-script.");
+    if (!verify_dir($current_config_path)) {
+      syslog(LOG_INFO, "Could not verify $current_config_path. Cannot create post-script.");
       exit;
     }
     $post_script_contents = ($_POST['post_script_textarea']);
