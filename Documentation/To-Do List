@@ -18,7 +18,8 @@
 #  - ability to perform different backup schemes, such as incremental.
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
-#  - add restore functionality.
 #  - reorganize code for manageability.
 #  - adjust div loads to re-execute only relevant script blocks.
 #  - add multi-threaded compression. Install and use pigz by default for backwards compatibility, but allow lbzip2 and zstnd as options in the future.
+#  - allow users to choose number of threads when using compression.
+#  - add restore functionality.

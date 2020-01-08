@@ -7,6 +7,8 @@
 v0.1.9 - 2019/12/31
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
+This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
+This plugin installs [pigz](https://zlib.net/pigz/) to allow for multi-threaded gzip compression.
 
 Currently the plugin is in beta. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
 
