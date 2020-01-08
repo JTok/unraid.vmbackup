@@ -35,7 +35,7 @@
   // function to determine if a script is already running.
   function script_running($path) {
     // get array of pid files from the path.
-    $pid_files = glob($path ."/*.pid");
+    $pid_files = glob($path . "/*.pid");
     // if the array is not empty, return true because a script is already running.
     return (!empty($pid_files));
   }
@@ -343,7 +343,7 @@
     }
 
     // get array of pid files from the tmp plugin path.
-    $pid_files = glob($tmp_plugin_path);
+    $pid_files = glob($tmp_plugin_path . "/*.pid");
     // go through each pid file and get the config name then try to kill that pid.
     foreach ($pid_files as $pid_file) {
       if (is_file($pid_file)) {
