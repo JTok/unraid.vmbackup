@@ -8,7 +8,9 @@ v0.1.9 - 2019/12/31
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 
-Currently the plugin is in beta. Most of the features have been implemented. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
+Currently the plugin is in beta. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
+
+This plugin does use cookies to allow user settings to persist across page refreshes. They do not do anything else! They expire as soon as unRAID browser window is closed.
 
 ## Important
 
