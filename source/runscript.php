@@ -452,11 +452,7 @@
 
     // create variables.
     // user files.
-    if (!strcasecmp($config_name, "default") == 0) {
-      $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
-    } else {
-      $tmp_plugin_path_config = $tmp_plugin_path;
-    }
+    $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
 
     if (file_exists($tmp_plugin_path_config)) {
       $files = scandir($tmp_plugin_path_config, SCANDIR_SORT_DESCENDING);
