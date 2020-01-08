@@ -36,6 +36,16 @@ Icon="clone"
     $current_config = $_COOKIE["current_config"];
   }
 
+  // if the current config is not default, then check to see if current config is still valid.
+  if (!strcasecmp($current_config, "default") == 0) {
+    $configs_plugin_path = $plugin_path . '/configs';
+    $current_config_path = $configs_plugin_path . '/' . $current_config;
+    // if the current config does not exist, then change the current config to default.
+    if (!is_dir($current_config_path)) {
+      $current_config = "default";
+    }
+  }
+
   // finish creating variables based on current config.
   if (!strcasecmp($current_config, "default") == 0) {
     $configs_plugin_path = $plugin_path . '/configs';
