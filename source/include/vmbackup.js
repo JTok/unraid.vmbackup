@@ -36,6 +36,7 @@
     // append current config to forms.
     $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
     $("#backup_now_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    $("#upload_form").append('<input type="hidden" name="#current_config" value="' + current_config + '">');
     $("#vmbackup_other_settings").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
     $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
   }
