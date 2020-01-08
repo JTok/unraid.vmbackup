@@ -22,3 +22,4 @@
 #  - reorganize code for manageability.
 #  - adjust div loads to re-execute only relevant script blocks.
 #  - when allowing multiple script variations/schedules have setting to allow/disallow running simultaneously.
+#  - add multi-threaded compression. Use pigz by default for backwards compatibility, but allow lbzip2 and zstnd as options in the future.
