@@ -179,17 +179,12 @@
     local runscript="/usr/local/emhttp/plugins/vmbackup/runscript.php"
     if [[ -n "$1" ]]; then
       local config_name="$1"
-      if [[ ! "$config_name" == "default" ]]; then
-        local cronjob_comment="# Job for VM Backup plugin $config_name:"
-        local runscript_argument="run_backup $config_name"
-      else
-        local cronjob_comment="# Job for VM Backup plugin:"
-        local runscript_argument="run_backup default"
-      fi
+      local cronjob_comment="# Job for VM Backup plugin $config_name:"
+      local runscript_argument="run_backup $config_name"
     else
       local config_name="default"
-      local cronjob_comment="# Job for VM Backup plugin:"
-      local runscript_argument="run_backup default"
+      local cronjob_comment="# Job for VM Backup plugin $config_name:"
+      local runscript_argument="run_backup $config_name"
     fi
 
     if [[ "$config_name" == "all" ]]; then
@@ -201,14 +196,14 @@
           cronjob_comment="# Job for VM Backup plugin ${config}:"
           runscript_argument="run_backup ${config}"
           ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-          ( crontab -l | grep -v -F "$runscript $runscript_argument" ) | crontab -
+          ( crontab -l | grep -v -F "$runscript $runscript_argument >" ) | crontab -
         fi
       done
         # call this function again and update the default user config.
         remove_cron_job "default"
     else
       ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-      ( crontab -l | grep -v -F "$runscript $runscript_argument" ) | crontab -
+      ( crontab -l | grep -v -F "$runscript $runscript_argument >" ) | crontab -
     fi
   }
 
@@ -219,17 +214,12 @@
     local user_config="$1"
     if [[ -n "$2" ]]; then
       local config_name="$2"
-      if [[ ! "$config_name" == "default" ]]; then
-        local cronjob_comment="# Job for VM Backup plugin $config_name:"
-        local runscript_argument="run_backup $config_name"
-      else
-        local cronjob_comment="# Job for VM Backup plugin:"
-        local runscript_argument="run_backup default"
-      fi
+      local cronjob_comment="# Job for VM Backup plugin $config_name:"
+      local runscript_argument="run_backup $config_name"
     else
       local config_name="default"
-      local cronjob_comment="# Job for VM Backup plugin:"
-      local runscript_argument="run_backup default"
+      local cronjob_comment="# Job for VM Backup plugin $config_name:"
+      local runscript_argument="run_backup $config_name"
     fi
 
     # this function does not need to handle "all" configs argument because this function is only called from other functions that handle that argument.
@@ -287,7 +277,7 @@
         "disabled")
           # no schedule set. remove existing cron job and exit function.
           ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-          ( crontab -l | grep -v -F "$runscript $runscript_argument" ) | crontab -
+          ( crontab -l | grep -v -F "$runscript $runscript_argument >" ) | crontab -
           return 0
           ;;
         "daily")
@@ -316,7 +306,7 @@
 
       # write cronjob to crontab.
       ( crontab -l | grep -v -F "$cronjob_comment" ) | crontab -
-      ( crontab -l | grep -v -F "$runscript $runscript_argument" ; echo "$cronjob" ) | crontab -
+      ( crontab -l | grep -v -F "$runscript $runscript_argument >" ; echo "$cronjob" ) | crontab -
     fi
   }
 
