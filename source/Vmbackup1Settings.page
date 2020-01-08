@@ -31,8 +31,7 @@ Icon="clone"
 
   // get current config from cookie.
   if (!isset($_COOKIE["current_config"])) {
-    setcookie("current_config", "default");
-    $current_config = $_COOKIE["current_config"];
+    $current_config = "default";
   } else {
     $current_config = $_COOKIE["current_config"];
   }
