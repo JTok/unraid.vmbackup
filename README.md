@@ -95,6 +95,16 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - "Backup Now" button runs a backup using current settings. It will automatically apply changes before it starts.
 
+### Upload Scripts
+
+#### Pre-Script
+
+- Option to create a pre-script that will run before the backup script.
+
+#### Post-Script
+
+- Option to create a post-script that will run after the backup script.
+
 ### Other Settings
 
 #### Logging
@@ -171,6 +181,10 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
   - Dry-run backups will still create empty files in your backup directory.
 
+- Option to allow multiple configs to run simultaneously.
+
+  - Does not allow the same config to run more than once.
+
 - Option to allow backups to run during a parity check. This could cause significant slowdowns.
 
 - Disable validation for the custom cron text box.
@@ -180,6 +194,24 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - "Abort Script" button will abort any running scripts. This may cause major issues. Use with caution!
 
 - "Fix Snapshots" button to fix stuck snapshots that weren't removed. This could cause more issues than it fixes. Use with caution!
+
+### Manage Configs
+
+#### Add Config
+
+- Option to create a separate config with its own settings and pre/post scripts.
+
+#### Rename/Delete Configs
+
+- Gives the ability to manage user created configs.
+
+  - Option to rename an existing config.
+
+  - Option to copy an existing config.
+
+    - The copy will have its schedule disabled by default.
+
+  - Option to remove existing configs.
 
 ##### Disclaimer
 
