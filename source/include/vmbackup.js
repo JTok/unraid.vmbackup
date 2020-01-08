@@ -418,7 +418,7 @@
                 // refresh the div containing the text area.
                 $("#pre_script_div").load(location.href + " #pre_script_div",
                   function () {
-                    swal("Pre-script submitted");
+                    swal.close();
                   });
               });
           }
@@ -483,7 +483,7 @@
                 // refresh the div containing the text area.
                 $("#post_script_div").load(location.href + " #post_script_div",
                   function () {
-                    swal("Post-script submitted");
+                    swal.close();
                   });
               });
           }
@@ -1174,6 +1174,12 @@
                 // return config name.
                 return $(this).parent().find('a:first').html();
               }).get();
+              // see if one of the configs to be removed is the current config.
+              selected_configs_array.forEach(config => {
+                if (config.toUpperCase() == current_config.toUpperCase()) {
+                  is_current_config = true;
+                }
+              });
               // get the serialized form data.
               var config_form_data = $("#manage_configs_form").serialize();
               // append the array of selected configs to the form data.
@@ -1194,6 +1200,11 @@
                         folderEvent: "nothing"
                       });
                     });
+                    // if current config was removed, change to default config.
+                  if (is_current_config) {
+                    $("#current_config").children("option:selected").val("default");
+                    config_changed();
+                  }
                 });
             }
           });
