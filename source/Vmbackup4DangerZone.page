@@ -201,6 +201,22 @@ Icon="clone"
         </ul>
       </blockquote>
 
+      Allow simultaneous execution?
+      : <select id="allow_simultaneous_scripts" name="allow_simultaneous_scripts" size="1">
+        <?=mk_option($conf_array['allow_simultaneous_scripts'], "0", "No");?>
+        <?=mk_option($conf_array['allow_simultaneous_scripts'], "1", "Yes");?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to 'Yes' if you would like to have multiple scripts able to be executed at the same time.</p>
+        <ul>
+          <li>When set to 'Yes', multiple configs will be able to run at the same time.</li>
+          <li>This will not allow the same config to run multiple times.</li>
+          <li>Simultaneous execution is set on a per-config basis, so each config you want to allow will need this setting changed.</li>
+          <li>A backup will not run if Fix Snapshots is running, and vice versa, regardless of this setting.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </blockquote>
 
       Require array to be started?
       : <select id="arrayStarted" name="arrayStarted" size="1">
