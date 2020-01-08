@@ -8,6 +8,7 @@
 # - added option to run backup without array started.
 # - added confirmation dialogs to destructive or dangerous buttons.
 # - added support for multiple configs/schedules.
+# - added option to allow multiple configs to run simultaneously.
 # - changed alert dialogs to use sweet alerts.
 # - updated help for custom cron.
 
