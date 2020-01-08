@@ -111,6 +111,7 @@
     # create local variables.
     local php_functions_script="/usr/local/emhttp/plugins/vmbackup/include/functions.php"
     local default_config="/usr/local/emhttp/plugins/vmbackup/default.cfg"
+    local configs_path="/boot/config/plugins/vmbackup/configs"
     if [[ -n "$1" ]]; then
       local config_name="$1"
       if [[ ! "$config_name" == "default" ]]; then
