@@ -23,3 +23,4 @@
 #  - add multi-threaded compression. Install and use pigz by default for backwards compatibility, but allow lbzip2 and zstnd as options in the future.
 #  - allow users to choose number of threads when using compression.
 #  - add restore functionality.
+#  - handle parenthesis in paths/vm names. Especially when parsing vm-list.
