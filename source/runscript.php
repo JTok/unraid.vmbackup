@@ -54,10 +54,12 @@
     if (!strcasecmp($config_name, "default") == 0) {
       $configs_plugin_path = $plugin_path . '/configs';
       $current_config_path = $configs_plugin_path . '/' . $config_name;
+      $user_conf_file = $current_config_path . '/user.cfg';
       $user_script_file = $current_config_path . '/user-script.sh';
       $pre_script_file = $current_config_path . '/pre-script.sh';
       $post_script_file = $current_config_path . '/post-script.sh';
     } else {
+      $user_conf_file = $plugin_path . '/user.cfg';
       $user_script_file = $plugin_path . '/user-script.sh';
       $pre_script_file = $plugin_path . '/pre-script.sh';
       $post_script_file = $plugin_path . '/post-script.sh';
@@ -74,15 +76,59 @@
     // make directory in tmp to run script from.
     exec("mkdir -p ".escapeshellarg($tmp_plugin_path_config));
 
-    // check to see if a backup is already running.
-    if (script_running($tmp_plugin_path)) {
-      file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." A script is already running. Exiting.\n", FILE_APPEND);
-      exit();
+    // check config file to see if allow_simultaneous_scripts is enabled.
+    $user_conf_array = parse_ini_file($user_conf_file);
+    $allow_simultaneous_scripts = ($user_conf_array["allow_simultaneous_scripts"] == "1");
+
+    // if the boolean is not set, set it to false for backwards compatibility.
+    if (empty($allow_simultaneous_scripts)) {
+      $allow_simultaneous_scripts = false;
     }
+
+    // check to see if simultaneous scripts are allowed.
+    if ($allow_simultaneous_scripts == true) {
+      // if so, only verify that this script is not already running.
+      if (is_file($tmp_user_script_pid)) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Simultaneous execution is enabled, but $config_name is already running. Exiting.\n", FILE_APPEND);
+        exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Simultaneous execution is enabled, but '.$config_name.' is already running. Exiting."');
+        exit();
+      }
+      // check to see if the other running scripts allow simultaneous execution.
+      // get array of pid files from the path.
+      $pid_files = glob($tmp_plugin_path . "/*.pid");
+      // check to see if simultaneous scripts are allowed for each running config.
+      foreach ($pid_files as $pid_file) {
+        // get the config name from the pid file and set the path to the config file.
+        $running_config_name = pathinfo($pid_file, PATHINFO_FILENAME);
+        if (!strcasecmp($running_config_name, "default") == 0) {
+          $running_conf_file = $plugin_path . '/configs' . '/' . $running_config_name . '/user.cfg';
+        } else {
+          $running_conf_file = $plugin_path . '/user.cfg';
+        }
+        // parse the config and return a boolean for allow simultaneous scripts.
+        $running_conf_array = parse_ini_file($running_conf_file);
+        $running_allow_simultaneous_scripts = ($running_conf_array["allow_simultaneous_scripts"] == "1");
+        // if one of the already running configs does not allow simultaneous execution, exit current config without running the script.
+        if ($running_allow_simultaneous_scripts == false) {
+          file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Simultaneous execution is enabled for $config_name, but $running_config_name does not allow it and is already running. Exiting.\n", FILE_APPEND);
+          exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Simultaneous execution is enabled for '.$config_name.', but '.$running_config_name.' does not allow it and is already running. Exiting."');
+          exit();
+        }
+      }
+    } else {
+      // check to see if a backup is already running.
+      if (script_running($tmp_plugin_path)) {
+        file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Simultaneous execution is disabled, and a script is already running. Exiting.\n", FILE_APPEND);
+        exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Simultaneous execution is disabled, and a script is already running. Exiting."');
+        exit();
+      }
+    }
+
 
     // check to see if a snapshot fix is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Fix Snapshots is already running. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Fix Snapshots is already running. Exiting."');
       exit();
     }
 
@@ -90,6 +136,7 @@
     if (!is_file($user_script_file)) {
       // if not, exit the script.
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." User script file does not exist. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') User script file does not exist. Exiting."');
       exit();
     }
 
@@ -114,6 +161,7 @@
     // verify that the array is started before trying to run the script. if not, exit.
     if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Array is not started. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Array is not started. Cannot run '.$user_script_file.'. Exiting."');
       exit();
     }
 
@@ -129,6 +177,7 @@
       // verify that the array is not running a parity check or rebuild. if so, exit.
       if ($parityRunning == true) {
         file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
+        exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Parity check or rebuild is in progress. Cannot run '.$user_script_file.'. Exiting."');
         exit();
       }
     }
@@ -228,12 +277,14 @@
     // check to see if a backup is already running.
     if (script_running($tmp_plugin_path)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." A script is already running. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run fix snapshots" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') A script is already running. Exiting."');
       exit();
     }
 
     // check to see if a snapshot fix is already running.
     if (is_file($tmp_fix_snapshots_file)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Fix Snapshots is already running. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run fix snapshots" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Fix Snapshots is already running. Exiting."');
       exit();
     }
 
@@ -241,6 +292,7 @@
     if (!is_file($user_fix_snapshots_file)) {
       // if not, exit the script.
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Fix Snapshots script file does not exist. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run fix snapshots" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Fix Snapshots script file does not exist. Exiting."');
       exit();
     }
 
@@ -265,6 +317,7 @@
     // verify that the array is started before trying to run the script. if not, exit.
     if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Array is not started. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
+      exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run fix snapshots" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Array is not started. Cannot run '.$user_fix_snapshots_file.'. Exiting."');
       exit();
     }
 
@@ -280,6 +333,7 @@
       // verify that the array is not running a parity check or rebuild. if so, exit.
       if ($parityRunning == true) {
         file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Parity check or rebuild is in progress. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
+        exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run fix snapshots" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Parity check or rebuild is in progress. Cannot run '.$user_fix_snapshots_file.'. Exiting."');
         exit();
       }
     }
