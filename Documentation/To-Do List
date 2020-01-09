@@ -1,11 +1,12 @@
 ## To-Do List ##
-#  - option to backup vdisks using full paths. will resolve issues with unique names.
+#  - option to backup vdisks using full paths. will resolve issues with unique names. use transform to accomplish?
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings.
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
 #  - move some of the settings alerts to php form validation instead.
 #  - set up separate css stylesheets.
+#  - add compression algorithm choices lbzip2 and zstnd?
 #  - update script to use xmlstarlet.
 #  - re-add vms_to_backup_running to danger zone.
 #  - create more advanced regex for custom cron.
@@ -18,9 +19,7 @@
 #  - ability to perform different backup schemes, such as incremental.
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
+#  - handle parenthesis in paths/vm names. Especially when parsing vm-list.
+#  - add restore functionality.
 #  - reorganize code for manageability.
 #  - adjust div loads to re-execute only relevant script blocks.
-#  - add multi-threaded compression. Install and use pigz by default for backwards compatibility, but allow lbzip2 and zstnd as options in the future.
-#  - allow users to choose number of threads when using compression.
-#  - add restore functionality.
-#  - handle parenthesis in paths/vm names. Especially when parsing vm-list.
