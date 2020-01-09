@@ -136,6 +136,27 @@ Icon="clone"
     <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Features</div>
     <div markdown="1" style="width:45%; clear:both; float:left">
 
+      Compression level?
+      : <select id="compression_level" name="compression_level" size="1">
+        <?php
+          $compression_level = create_number_array(1,9);
+          foreach($compression_level as $key => $value) {
+        ?>
+            <?=mk_option($conf_array['compression_level'], $value, $key);?>
+          <?php
+          }
+          ?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to '1' for the lowest compression level with the largest file sizes, but the highest speeds.
+        <br>Set to '9' for the highest compression level with the smallest file sizes, but the lowest speeds.</p>
+        <ul>
+          <li>Default is '9'.</li>
+        </ul>
+      </blockquote>
+
+
       Timestamp backups?
       : <select id="timestamp_files" name="timestamp_files" size="1">
         <?=mk_option($conf_array['timestamp_files'], "0", "No");?>
