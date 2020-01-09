@@ -336,11 +336,11 @@
       # get cpu file contents and count the number of times the substring "processor" appears.
       $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
       $thread_count = substr_count($cpuinfo_contents, "processor");
-      # if get core count is greater than 0 return it. otherwise return 0.
+      # if get core count is greater than 0 return it. otherwise return 2 so that at least 2 threads can run.
       if ($thread_count > 0) {
         return $thread_count;
       } else {
-        return 0;
+        return 2;
       }
     }
   }
