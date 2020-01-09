@@ -329,6 +329,23 @@
     return (!$keep_folder ? @rmdir($path) : true);
   }
 
+  // function to get number of CPU cores using php
+  function cpu_core_count() {
+    # make sure we can read cpuinfo.
+    if (is_readable("/proc/cpuinfo")) {
+      # get cpu file contents and count the number of times the substring "processor" appears.
+      $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
+      $core_count = substr_count($cpuinfo, "processor");
+      # if get core count is greater than 0 return it. otherwise return 0.
+      if ($core_count > 0) {
+        return $core_count;
+      } else {
+        return 0;
+      }
+    }
+  }
+
+
   // function to send a post command to another php page.
   function send_post($url, $data) {
 
