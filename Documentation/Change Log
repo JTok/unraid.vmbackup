@@ -9,6 +9,9 @@
 # - added confirmation dialogs to destructive or dangerous buttons.
 # - added support for multiple configs/schedules.
 # - added option to allow multiple configs to run simultaneously.
+# - added option to set compression level.
+# - added option to set the number of threads used during compression.
+# - changed compression program from gzip to pigz to support multi-threading.
 # - changed alert dialogs to use sweet alerts.
 # - updated help for custom cron.
 
