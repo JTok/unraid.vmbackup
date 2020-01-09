@@ -28,6 +28,29 @@ Icon="clone"
     <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Danger Zone</div>
     <div markdown="1" style="width:45%; clear:both; float:left">
 
+      Number of compression threads:
+      : <select id="threads" name="threads" size="1">
+        <?php
+          $core_count = cpu_core_count();
+          $threads = $core_count * 2;
+          for ($i = 0; $i <= $threads; $i++) {
+        ?>
+            <?=mk_option($conf_array['threads'], $i, $i);?>
+          <?php
+          }
+          ?>
+      </select>
+
+      <blockquote class="inline_help">
+        <p>Set to the number of threads you would like to use when compressing backups.</p>
+        <ul>
+          <li>Set to '0' to let the compression algorithm automatically choose the number of online processors.</li>
+          <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
+          <li>Default is '2'.</li>
+        </ul>
+      </blockquote>
+
+
       Keep error log file?
       : <select id="keep_error_log_file" name="keep_error_log_file" size="1">
         <?=mk_option($conf_array['keep_error_log_file'], "0", "No");?>
