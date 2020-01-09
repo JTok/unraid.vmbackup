@@ -330,15 +330,15 @@
   }
 
   // function to get number of CPU cores using php
-  function cpu_core_count() {
+  function cpu_thread_count() {
     # make sure we can read cpuinfo.
     if (is_readable("/proc/cpuinfo")) {
       # get cpu file contents and count the number of times the substring "processor" appears.
       $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
-      $core_count = substr_count($cpuinfo, "processor");
+      $thread_count = substr_count($cpuinfo_contents, "processor");
       # if get core count is greater than 0 return it. otherwise return 0.
-      if ($core_count > 0) {
-        return $core_count;
+      if ($thread_count > 0) {
+        return $thread_count;
       } else {
         return 0;
       }
