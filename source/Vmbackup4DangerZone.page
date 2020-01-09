@@ -31,9 +31,8 @@ Icon="clone"
       Number of compression threads:
       : <select id="threads" name="threads" size="1">
         <?php
-          $core_count = cpu_core_count();
-          $threads = $core_count * 2;
-          for ($i = 0; $i <= $threads; $i++) {
+          $thread_count = cpu_thread_count();
+          for ($i = 0; $i <= $thread_count; $i++) {
         ?>
             <?=mk_option($conf_array['threads'], $i, $i);?>
           <?php
