@@ -63,7 +63,7 @@ Icon="clone"
 
 
   // create or update the user config file as necessary and return the results as a config array.
-  $conf_array=update_user_conf_file($default_conf_file, $user_conf_file);
+  $conf_array = update_user_conf_file($default_conf_file, $user_conf_file);
 
   // see if default script version is the same as user script version.
   if (!same_file_version($default_script_file, $user_script_file, false)) {
@@ -74,57 +74,32 @@ Icon="clone"
     file_put_contents($user_script_file, $script_contents);
   }
 
-  // see if default fix snapshots script version is the same as user fix snapshots script version.
-  if (!same_file_version($default_fix_snapshots_file, $user_fix_snapshots_file, false)) {
-    // create a variable with the default fix snapshots script contents and user config file merged.
-    $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
+  // check to see if we are working with the default config.
+  if (strcasecmp($current_config, "default") == 0) {
+    // see if default fix snapshots script version is the same as user fix snapshots script version.
+    if (!same_file_version($default_fix_snapshots_file, $user_fix_snapshots_file, false)) {
+      // create a variable with the default fix snapshots script contents and user config file merged.
+      $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
 
-    // write script contents variable as the user fix snapshots script file.
-    file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+      // write script contents variable as the user fix snapshots script file.
+      file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+    }
   }
 
   // create text files containing a list of vms and a list of vdisks respectively.
   exec("$commands_script_file create_vm_lists");
-
-  // get vm and vdisk lists as arrays.
-  $vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-  $vdisk_list_array = parse_ini_file($vdisk_list);
 ?>
-
-<!-- import javascript sources -->
-<script type="text/javascript" src="<?=autov('/webGui/javascript/jquery.filetree.js')?>"></script>
-<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
-<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/functions.js')?>"></script>
-<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/vmbackup.js')?>"></script>
 
 <!-- import stylesheets -->
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.filetree.css')?>">
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/plugins/vmbackup/include/vmbackup.css')?>">
 
-<!-- apply css -->
-<style>
-  /* set fileTree properties */
-  .fileTree {
-    width:300px;
-    max-height:150px;
-    overflow-y:scroll;
-    overflow-x:hidden;
-    position:absolute;
-    z-index:100;
-    display:none;
-    color:initial;
-  }
-
-  /* set cursor for help class */
-  .help {
-    cursor:help;
-  }
-
-  /* set border color for failed validation */
-  input:invalid {
-    border-color: red;
-  }
-</style>
+<!-- import javascript sources -->
+<script type="text/javascript" src="<?=autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
+<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/javascript/functions.js')?>"></script>
+<script type="text/javascript" src="<?autov('/plugins/vmbackup/include/javascript/vmbackup.js')?>"></script>
 
 <!-- run jquery/javascript -->
 <script type="text/javascript">
@@ -165,21 +140,6 @@ Icon="clone"
       item.value = vms_to_backup;
       item.selected = true;
     }
-    
-    // make vms to backup running a comma separated list for user config.
-    if (typeof form.vms_to_backup_running !== 'undefined') {
-      var vms_to_backup_running = '';
-      for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
-        if (item.selected) {
-          if (vms_to_backup_running.length) vms_to_backup_running += ',';
-          vms_to_backup_running += item.value;
-          item.selected = false;
-        }
-      }
-      item = form.vms_to_backup_running.options[0];
-      item.value = vms_to_backup_running;
-      item.selected = true;
-    }
 
     // remove whitespace and prepare comma separated lists.
     var vdisk_extensions_to_skip = document.getElementById("vdisk_extensions_to_skip");
@@ -189,20 +149,18 @@ Icon="clone"
 
   // document ready function.
   $(function() {
+    // set the width of the first grid column based on content.
+    set_width();
+    // set up inline help toggle handler.
+    toggle_inline_help();
     //configure dropdown checklists.
-    $("#vdisks_to_skip").dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
-    $("#vms_to_backup").dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
-    $("#vms_to_backup_running").dropdownchecklist({emptyText:'None', width:166, explicitClose:'...close'});
+    configure_vdisks_to_skip();
+    configure_vms_to_backup();
     // set the regex pattern each element should use.
     toggle_cron_regex();
     toggle_restrictive_regex();
     // build config selection.
-    $("#select_configs_div").fileTree({
-      root: "/boot/config/plugins/vmbackup/configs/",
-      multiSelect: true,
-      filter: "HIDE_FILES_FILTER",
-      folderEvent: "nothing"
-    });
+    build_configs_file_tree();
     // set the validation for each element.
     set_validation();
     // set the initial attributes for cron controls.
@@ -226,31 +184,35 @@ Icon="clone"
   });
 </script>
 
-<div style="width:90%; float:left">
-  <form id="vmbackup_settings_form" name="vmbackup_settings" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
+<div id="vmbackup_settings_div" class="wrapper_div">
+  <form id="vmbackup_settings_form" name="vmbackup_settings" autocomplete="off" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" id="vmbackup_settings_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
-    <!-- basic settings -->
-    <div markdown="1" style="width:45%; float:left">
-    <div id="title" class="nocontrol">Basic Settings</div>
+    <!-- first titles -->
+    <div class="half_width_title"><div id="title" class="nocontrol">Basic Settings</div></div>
+    <div class="half_width_title"><div id="title" class="nocontrol">Schedule</div></div>
 
-      Enable backups?
-      : <select id="enabled" name="enabled" size="1">
+    <!-- basic settings -->
+    <div id="basic_settings_div" class="grid_container_left">
+
+      <label name="enabled_label" class="input_description">Enable backups?</label>
+      <div class="user_input_div"><select id="enabled" name="enabled" size="1">
         <?=mk_option($conf_array['enabled'], "0", "No");?>
         <?=mk_option($conf_array['enabled'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="enabled_help" name="enabled_help" class="custom_inline_help">
         <p>Must be set to 'Yes' to enable backups.
         <br>Set to 'No' to disable backups without disabling the schedule.</p>
-      </blockquote>
+      </span>
 
 
-      Set backup location:
-      : <input type="text" id="backup_location" name="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="^\/mnt\/([\w.-]*)+(\/[\w.-]*)*$" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickfolders="true" required>
-      <blockquote class="inline_help">
+      <label name="backup_location_label" class="input_description">Set backup location:</label>
+      <div class="user_input_div"><input type="text" id="backup_location" name="backup_location" class="setting" value="<?=$conf_array['backup_location'];?>" pattern="^\/mnt\/([\w.-]*)+(\/[\w.-]*)*$" placeholder="Select a backup location" data-pickfilter="NO_FILES_FILTER" data-pickfolders="true" required></div>
+
+      <span id="backup_location_help" name="backup_location_help" class="custom_inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
           <li>This should be an unassigned device, or a share you have already created.</li>
@@ -258,90 +220,90 @@ Icon="clone"
           <li>To change the dropdown menu from /mnt/users/ to /mnt/, disable restrictive validation.</li>
           <li>Any typed path in /mnt/ will validate. If a different path is needed, disable restrictive validation.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Backup all VMs?
-      : <select id="backup_all_vms" name="backup_all_vms" size="1" onchange="set_vms_to_backup_lbl()">
+      <label name="backup_all_vms_label" class="input_description">Backup all VMs?</label>
+      <div class="user_input_div"><select id="backup_all_vms" name="backup_all_vms" size="1" onchange="set_vms_to_backup_lbl()">
         <?=mk_option($conf_array['backup_all_vms'], "0", "No");?>
         <?=mk_option($conf_array['backup_all_vms'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="backup_all_vms_help" name="backup_all_vms_help" class="custom_inline_help">
         <p>Set to 'Yes' to backup all VMs.</p>
         <ul>
           <li>When set to 'No', "List VMs to backup" will be used to determine which VMs to backup.</li>
           <li>When set to 'Yes', "List VMs to backup" will be used as a list of VMs to exclude from the backup.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      <label for="vms_to_backup" class="help">List VMs to backup:</label>
-      : <select id="vms_to_backup" name="vms_to_backup" size="1" multiple="multiple" style="display:none">
-        <?foreach ($vm_list_array as $vm):?>
+      <label name="vms_to_backup_label" class="input_description">List VMs to backup:</label>
+      <div class="user_input_div"><select id="vms_to_backup" name="vms_to_backup" size="1" multiple="multiple" style="display:none">
+        <?$vm_list_array = file($vm_list, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($vm_list_array as $vm):?>
           <?=mk_option_check($conf_array['vms_to_backup'], $vm, $vm)?>
         <?endforeach;?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="vms_to_backup_help" name="vms_to_backup_help" class="custom_inline_help">
         <p>Check the names of VMs to backup.
         <br>If "Backup all VMs" is set to 'Yes', then this list will be used as a list of VMs to exclude from the backup.</p>
         <ul>
           <li>Names should be the same names used in the configs.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Number of days to keep backups:
-      : <input type="text" id="number_of_days_to_keep_backups" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>" pattern="^(0|([7-9]|[1-8][0-9]|9[0-9]|1[0-7][0-9]|180))$">
+      <label name="number_of_days_to_keep_backups_label" class="input_description">Number of days to keep backups:</label>
+      <div class="user_input_div"><input type="text" id="number_of_days_to_keep_backups" name="number_of_days_to_keep_backups" class="narrow" maxlength="5" value="<?=$conf_array['number_of_days_to_keep_backups'];?>" pattern="^(0|([7-9]|[1-8][0-9]|9[0-9]|1[0-7][0-9]|180))$"></div>
 
-      <blockquote class="inline_help">
+      <span id="number_of_days_to_keep_backups_help" name="number_of_days_to_keep_backups_help" class="custom_inline_help">
         <p>Set this to the number of days backups should be kept.
         <br>'0' means indefinitely.</p>
         <ul>
           <li>Default is '0'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Number of backups to keep:
-      : <input type="text" id="number_of_backups_to_keep" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$">
+      <label name="number_of_backups_to_keep_label" class="input_description">Number of backups to keep:</label>
+      <div class="user_input_div"><input type="text" id="number_of_backups_to_keep" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$"></div>
       
-      <blockquote class="inline_help">
+      <span id="number_of_backups_to_keep_help" name="number_of_backups_to_keep_help" class="custom_inline_help">
         <p>Set this to the number of backups that should be kept.
         <br>'0' means indefinitely.</p>
         <ul>
           <li>WARNING: If a VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).</li>
           <li>Default is '0'.</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
 
 
     <!-- schedule -->
-    <div markdown="1" style="width:45%; float:left">
-    <div id="title" class="nocontrol">Schedule</div>
+    <div id="schedule_div" class="grid_container_right">
 
-      Backup Frequency:
-      : <select id="frequency" name="frequency" size="1" onchange="backup_frequency()">
+      <label name="frequency_label" class="input_description">Backup Frequency:</label>
+      <div class="user_input_div"><select id="frequency" name="frequency" size="1" onchange="backup_frequency()">
         <?=mk_option($conf_array['frequency'], "disabled", "Disabled");?>
         <?=mk_option($conf_array['frequency'], "daily", "Daily");?>
         <?=mk_option($conf_array['frequency'], "weekly", "Weekly");?>
         <?=mk_option($conf_array['frequency'], "monthly", "Monthly");?>
         <?=mk_option($conf_array['frequency'], "custom", "Custom");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="frequency_help" name="frequency_help" class="custom_inline_help">
         <p>Set to the desired backup frequency.</p>
         <ul>
           <li>Selecting 'Custom' will allow for a custom Cron setting.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Day of the Week:
-      : <select id="week" name="week" size="1">
+      <label name="week_label" class="input_description">Day of the Week:</label>
+      <div class="user_input_div"><select id="week" name="week" size="1">
         <?=mk_option($conf_array['week'], "0", "Sunday");?>
         <?=mk_option($conf_array['week'], "1", "Monday");?>
         <?=mk_option($conf_array['week'], "2", "Tuesday");?>
@@ -349,15 +311,15 @@ Icon="clone"
         <?=mk_option($conf_array['week'], "4", "Thursday");?>
         <?=mk_option($conf_array['week'], "5", "Friday");?>
         <?=mk_option($conf_array['week'], "6", "Saturday");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="week_help" name="week_help" class="custom_inline_help">
         <p>Set the day of the week to perform the backup.</p>
-      </blockquote>
+      </span>
 
 
-      Day of the Month:
-      : <select id="month" name="month" size="1">
+      <label name="month_label" class="input_description">Day of the Month:</label>
+      <div class="user_input_div"><select id="month" name="month" size="1">
         <?php
           $days = create_number_array(1,31,"2");
           foreach($days as $key => $value) {
@@ -366,15 +328,15 @@ Icon="clone"
           <?php
           }
           ?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="month_help" name="month_help" class="custom_inline_help">
         </p>Set the day of the month to perform the backup.</p>
-      </blockquote>
+      </span>
 
 
-      Hour:
-      : <select id="hour" name="hour" size="1">
+      <label name="hour_label" class="input_description">Hour:</label>
+      <div class="user_input_div"><select id="hour" name="hour" size="1">
         <?php
           $hours = create_number_array(0,23,"2");
           foreach($hours as $key => $value) {
@@ -383,15 +345,15 @@ Icon="clone"
           <?php
           }
           ?>
-      </select>
+      </select></div>
 
-    <blockquote class="inline_help">
+    <span id="hour_help" name="hour_help" class="custom_inline_help">
       <p>Set the hour to perform the backup.</p>
-    </blockquote>
+    </span>
 
 
-      Minute:
-      : <select id="minute" name="minute" size="1">
+      <label name="minute_label" class="input_description">Minute:</label>
+      <div class="user_input_div"><select id="minute" name="minute" size="1">
         <?php
           $minutes = create_number_array(0,59,"2");
           foreach($minutes as $key => $value) {
@@ -400,63 +362,66 @@ Icon="clone"
           <?php
           }
           ?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span id="minute_help" name="minute_help" class="custom_inline_help">
         <p>Set the minute to perform the backup.</p>
-      </blockquote>
+      </span>
 
 
-      Custom Cron:
-      : <input type="text" id="custom" name="custom" class="narrow" maxlength="100" value="<?=$conf_array['custom'];?>" required>
+      <label name="custom_label" class="input_description">Custom Cron:</label>
+      <div class="user_input_div"><input type="text" id="custom" name="custom" class="narrow" maxlength="100" value="<?=$conf_array['custom'];?>" required></div>
 
-      <blockquote class="inline_help">
+      <span id="custom_help" name="custom_help" class="custom_inline_help">
         <p>Set a custom Cron schedule.</p>
         <ul>
           <li>By default this field will only take asterisks, numbered ranges, and extensions (such as @weekly).</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
 
 
-    <!-- advanced settings -->
-    <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Settings</div>
-    <div markdown="1" style="width:45%; clear:left; float:left">
+    <!-- second titles -->
+    <div id="title" class="nocontrol full_width_title clear_both">Advanced Settings</div>
 
-      List vdisks to skip:
-      : <select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
-        <?foreach ($vdisk_list_array as $key => $value):?>
+    <!-- advanced settings -->
+    <div id="advanced_settings" class="grid_container_left">
+
+      <label name="vdisks_to_skip_label" class="input_description">List vdisks to skip:</label>
+      <div class="user_input_div"><select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
+        <?$vdisk_list_array = parse_ini_file($vdisk_list);
+        foreach ($vdisk_list_array as $key => $value):?>
           <?=mk_option_check($conf_array['vdisks_to_skip'], $key, $value)?>
         <?endforeach;?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span name="vdisks_to_skip_help" class="custom_inline_help">
         <p>Check the specific vdisks to skip.</p>
         <ul>
           <li>IMPORTANT: Remember to change the path if you change the virtual disk path when enabling snapshots.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      List vdisk extensions to skip:
-      : <input type="text" id="vdisk_extensions_to_skip" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>" pattern="^([\w.-]*)(,\s{0,1}[\w.-]+)*$">
+      <label name="vdisk_extensions_to_skip_label" class="input_description">List vdisk extensions to skip:</label>
+      <div class="user_input_div"><input type="text" id="vdisk_extensions_to_skip" name="vdisk_extensions_to_skip" class="narrow" maxlength="9999" value="<?=$conf_array['vdisk_extensions_to_skip'];?>" pattern="^([\w.-]*)(,\s{0,1}[\w.-]+)*$"></div>
 
-      <blockquote class="inline_help">
+      <span name="vdisk_extensions_to_skip_help" class="custom_inline_help">
         <p>Comma separated list of vdisk extensions to skip.</p>
         <ul>
           <li>WARNING: Choosing an extension that is the same as one of your vdisks will cause it not to be backed up.</li>
           <li>iso extensions are skipped by default.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Enable snapshots?
-      : <select id="use_snapshots" name="use_snapshots" size="1">
+      <label name="use_snapshots_label" class="input_description">Enable snapshots?</label>
+      <div class="user_input_div"><select id="use_snapshots" name="use_snapshots" size="1">
         <?=mk_option($conf_array['use_snapshots'], "0", "No");?>
         <?=mk_option($conf_array['use_snapshots'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span name="use_snapshots_help" class="custom_inline_help">
         <p>Snapshots will be used when backing up VMs to prevent them from needing to be shutdown.</p>
         <ul>
           <li>WARNING: This will fail if the config path for the virtual disk is /mnt/user/. you must use /mnt/cache/ or /mnt/diskX/ for snapshots to work.</li>
@@ -464,15 +429,15 @@ Icon="clone"
           <li>If a VM is already shutdown the default backup method will be used instead.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
-      Compress backups?
-      : <select id="compress_backups" name="compress_backups" size="1">
+      <label name="compress_backups_label" class="input_description">Compress backups?</label>
+      <div class="user_input_div"><select id="compress_backups" name="compress_backups" size="1">
         <?=mk_option($conf_array['compress_backups'], "0", "No");?>
         <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span name="compress_backups_help" class="custom_inline_help">
         <p>Set to 'Yes' to compress backups.</p>
         <ul>
           <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
@@ -480,15 +445,15 @@ Icon="clone"
           <li>Compression uses tar.gz for sparse file compatibility.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
-      Enable reconstruct write?
-      : <select id="enable_reconstruct_write" name="enable_reconstruct_write" size="1">
+      <label name="enable_reconstruct_write_label" class="input_description">Enable reconstruct write?</label>
+      <div class="user_input_div"><select id="enable_reconstruct_write" name="enable_reconstruct_write" size="1">
         <?=mk_option($conf_array['enable_reconstruct_write'], "0", "No");?>
         <?=mk_option($conf_array['enable_reconstruct_write'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span name="enable_reconstruct_write_help" class="custom_inline_help">
         <p>Set to 'Yes' to enable reconstruct write (a.k.a. turbo write) during the backup.</p>
         <ul>
           <li>IMPORTANT: Do not use if reconstruct write is already enabled.</li>
@@ -497,15 +462,16 @@ Icon="clone"
           <li>Backups may run faster with this enabled.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
-    <div style="width: 45%; clear:right; float:left">
+
+    <div id="advanced_message_div" class="container_left" style="padding-bottom:12px">
       <p>When configuring Advanced Settings, be sure to review the help.
       <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
     </div>
-    <div markdown="1" style="width:45%; clear:right; float:left">
-      Current config:
-      : <select id="current_config" name="current_config" size="1" onchange="config_changed()">
+    <div id="current_config_div" class="grid_container_left">
+      <label name="current_config_label" class="input_description">Current config:</label>
+      <div class="user_input_div"><select id="current_config" name="current_config" size="1">
         <option value="default">default</option>
         <?php
           $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
@@ -514,16 +480,24 @@ Icon="clone"
             <option value="<?= $config ?>"><?= $config ?></option>
         <?php
           } ?>
-      </select>
+      </select></div>
+
+      <span name="current_config_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
     </div>
 
-    <div markdown="1" style="width:50%; clear:both; float:left">
-      <input type="button" id="default_vmbackup_settings" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="button" id="apply_vmbackup_settings" name="#apply" value="Apply"><input type="button" id="done_vmbackup_settings" value="Done" onclick="done()">
+    <div id="buttons_left_div" class="grid_container_left clear_both">
+      <div class="input_description"><input type="button" id="default_vmbackup_settings" name="#default" value="Default" title="Load defaults." formnovalidate></div>
+      <div class="grid_right_column buttons_div"><input type="button" id="apply_vmbackup_settings" name="#apply" value="Apply" disabled><input type="button" id="done_vmbackup_settings" value="Done" formnovalidate></div>
     </div>
   </form>
-  <div markdown="1" style="width:40%; clear:right; float:left">
-    <form id="backup_now_form" name="backup_now_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+  <div id="buttons_right_div" class="buttons_right">
+    <form id="backup_now_form" name="backup_now_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
       <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
       <input type="hidden" name="#args[1]" value="backup_now">
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
@@ -532,8 +506,8 @@ Icon="clone"
   </div>
 </div>
 
-<div align="center" style="width:50%; clear:both">
-  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+<div align="center" style="padding-top:50px; width:50%; clear:both">
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
     <input type="hidden" name="cmd" value="_s-xclick" />
     <input type="hidden" name="hosted_button_id" value="NG5HGW4Q3CZU4" />
     <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />

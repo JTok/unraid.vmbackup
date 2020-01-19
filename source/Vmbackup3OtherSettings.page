@@ -10,7 +10,7 @@ Icon="clone"
 
 ?>
 
-<div style="width: 90%; float:left">
+<div class="wrapper_div">
   <p><u>Warning</u></p>
 	<p>The settings below could have unintended side effects if used improperly.
   <br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
@@ -18,96 +18,96 @@ Icon="clone"
   <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
-<div style="width:90%; float:left">
-  <form id="vmbackup_other_settings_form" name="vmbackup_other_settings" method="POST" action="/update.php" target="progressFrame">
+<div id="vmbackup_other_settings_div" class="wrapper_div">
+  <form id="vmbackup_other_settings_form" name="vmbackup_other_settings" autocomplete="off" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" id="vmbackup_other_settings_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
     <!-- logging -->
-    <div id="title" class="nocontrol" style="width:90%; float:left">Logging</div>
-    <div markdown="1" style="width:45%; float:left">
+    <div id="title" class="nocontrol full_width_title">Logging</div>
+    <div id="logging_div" class="grid_container_left">
 
-      Keep log file?
-      : <select id="keep_log_file" name="keep_log_file" size="1">
+      <label name="keep_log_file_label" class="input_description">Keep log file?</label>
+      <div class="user_input_div"><select id="keep_log_file" name="keep_log_file" size="1">
         <?=mk_option($conf_array['keep_log_file'], "0", "No");?>
         <?=mk_option($conf_array['keep_log_file'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to have log file deleted after the backup has completed.</p>
         <ul>
           <li>Error logs are separate. Settings for error logs can be found in the 'Advanced' section.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
       
-      Number of log files to keep:
-      : <input type="text" id="number_of_log_files_to_keep" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>" pattern="^(0|([1-9]|[1-3][0-9]|40))$" required>
+      <label name="number_of_log_files_to_keep_label" class="input_description">Number of log files to keep:</label>
+      <div class="user_input_div"><input type="text" id="number_of_log_files_to_keep" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>" pattern="^(0|([1-9]|[1-3][0-9]|40))$" required></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set this to the number of successful log files that should be kept.
         <br>'0' means infinitely.</p>
         <ul>
           <li>Default is '1'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Log file subfolder:
-      : <input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="100" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/ ](([\w.-]+)( [\w.-]+)*)*(\/(([\w.-]+)( [\w.-]+)*)*)*$">
+      <label name="log_file_subfolder_label" class="input_description">Log file subfolder:</label>
+      <div class="user_input_div"><input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="100" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/ ](([\w.-]+)( [\w.-]+)*)*(\/(([\w.-]+)( [\w.-]+)*)*)*$"></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Choose a folder name for storing logs.</p>
         <ul>
           <li>Set to blank to put logs in the root of backups folder.</li>
           <li>Set to "logs/subfolder" to place logs in an additional subfolder.</li>
           <li>Default is 'logs'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Number of error log files to keep:
-      : <input type="text" id="number_of_error_log_files_to_keep" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$" required>
+      <label name="number_of_error_log_files_to_keep_label" class="input_description">Number of error log files to keep:</label>
+      <div class="user_input_div"><input type="text" id="number_of_error_log_files_to_keep" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$" required></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set this to the number of error log files that should be kept.
         <br>'0' means infinitely.</p>
         <ul>
           <li>Default is '10'.</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
 
 
     <!-- notifications -->
-    <div id="title" class="nocontrol" style="width:90%; float:left">Notifications</div>
-    <div markdown="1" style="width:45%; clear:both; float:left">
+    <div id="title" class="nocontrol full_width_title">Notifications</div>
+    <div id="notifications_div" class="grid_container_left">
 
-      Send notifications?
-      : <select id="send_notifications" name="send_notifications" size="1">
+      <label name="send_notifications_label" class="input_description">Send notifications?</label>
+      <div class="user_input_div"><select id="send_notifications" name="send_notifications" size="1">
         <?=mk_option($conf_array['send_notifications'], "0", "No");?>
         <?=mk_option($conf_array['send_notifications'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to prevent notifications from being sent.
         <br>Disabling this could prevent you from receiving error notifications.</p>
         <ul>
           <li>Script failures that occur before logging can start, and before this variable is validated, will still be sent.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Enable detailed notifications?
-      : <select id="detailed_notifications" name="detailed_notifications" size="1">
+      <label name="detailed_notifications_label" class="input_description">Enable detailed notifications?</label>
+      <div class="user_input_div"><select id="detailed_notifications" name="detailed_notifications" size="1">
         <?=mk_option($conf_array['detailed_notifications'], "0", "No");?>
         <?=mk_option($conf_array['detailed_notifications'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to receive more detailed notifications.</p>
         <ul>
           <li>Will not work if "Send notifications" is set to 'No', or if "Only send error notifications" is set to 'Yes'.</li>
@@ -115,29 +115,29 @@ Icon="clone"
           <li>Sends notifications when old backups are deleted</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
-      Only send error notifications?
-      : <select id="only_send_error_notifications" name="only_send_error_notifications" size="1">
+      <label name="only_send_error_notifications_label" class="input_description">Only send error notifications?</label>
+      <div class="user_input_div"><select id="only_send_error_notifications" name="only_send_error_notifications" size="1">
         <?=mk_option($conf_array['only_send_error_notifications'], "0", "No");?>
         <?=mk_option($conf_array['only_send_error_notifications'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to only send error notifications.</p>
         <ul>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
 
 
     <!-- advanced features -->
-    <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Advanced Features</div>
-    <div markdown="1" style="width:45%; clear:both; float:left">
+    <div id="title" class="nocontrol full_width_title">Advanced Features</div>
+    <div id="advanced_features" class="grid_container_left">
 
-      Compression level?
-      : <select id="compression_level" name="compression_level" size="1">
+      <label name="compression_level_label" class="input_description">Compression level?</label>
+      <div class="user_input_div"><select id="compression_level" name="compression_level" size="1">
         <?php
           $compression_level = create_number_array(1,9);
           foreach($compression_level as $key => $value) {
@@ -146,102 +146,102 @@ Icon="clone"
           <?php
           }
           ?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to '1' for the lowest compression level with the largest file sizes, but the highest speeds.
         <br>Set to '9' for the highest compression level with the smallest file sizes, but the lowest speeds.</p>
         <ul>
           <li>Default is '9'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Timestamp backups?
-      : <select id="timestamp_files" name="timestamp_files" size="1">
+      <label name="timestamp_files_label" class="input_description">Timestamp backups?</label>
+      <div class="user_input_div"><select id="timestamp_files" name="timestamp_files" size="1">
         <?=mk_option($conf_array['timestamp_files'], "0", "No");?>
         <?=mk_option($conf_array['timestamp_files'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to prevent backups from being timestamped.</p>
         <ul>
           <li>Timestamps are dropped only when "Number of backups to keep" is set to '1'.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Compare files during backup?
-      : <select id="compare_files" name="compare_files" size="1">
+      <label name="compare_files_label" class="input_description">Compare files during backup?</label>
+      <div class="user_input_div"><select id="compare_files" name="compare_files" size="1">
         <?=mk_option($conf_array['compare_files'], "0", "No");?>
         <?=mk_option($conf_array['compare_files'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to compare files after copy and then run rsync in the event of a mismatch.</p>
         <ul>
           <li>IMPORTANT: Enabling can add a significant amount of time depending on the size of the VM.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Disable delta syncs for backups?
-      : <select id="disable_delta_sync" name="disable_delta_sync" size="1">
+      <label name="disable_delta_sync_label" class="input_description">Disable delta syncs for backups?</label>
+      <div class="user_input_div"><select id="disable_delta_sync" name="disable_delta_sync" size="1">
         <?=mk_option($conf_array['disable_delta_sync'], "0", "No");?>
         <?=mk_option($conf_array['disable_delta_sync'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to disable rsync delta syncs.</p>
         <ul>
           <li>When not using snapshots, delta syncs make a copy of the latest backup and then write just the changes since the last backup.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Only use rsync for backups?
-      : <select id="rsync_only" name="rsync_only" size="1">
+      <label name="rsync_only_label" class="input_description">Only use rsync for backups?</label>
+      <div class="user_input_div"><select id="rsync_only" name="rsync_only" size="1">
         <?=mk_option($conf_array['rsync_only'], "0", "No");?>
         <?=mk_option($conf_array['rsync_only'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to to always use rsync instead of other quicker options.</p>
         <ul>
           <li>IMPORTANT: rsync was significantly slower in my tests.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Number of VM shutdown checks:
-      : <input type="text" id="clean_shutdown_checks" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>" pattern="^(0|([5-9]|[1-4][0-9]|50))$" required>
+      <label name="clean_shutdown_checks_label" class="input_description">Number of VM shutdown checks:</label>
+      <div class="user_input_div"><input type="text" id="clean_shutdown_checks" name="clean_shutdown_checks" class="narrow" maxlength="5" value="<?=$conf_array['clean_shutdown_checks'];?>" pattern="^(0|([5-9]|[1-4][0-9]|50))$" required></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set this to the number of times to check if a clean shutdown of a VM has been successful.</p>
         <ul>
           <li>Default is '20'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Seconds between shutdown checks:
-      : <input type="text" id="seconds_to_wait" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>" pattern="^(0|([3-8][0-9]|9[0-9]|[1-5][0-9]{2}|600))$" required>
+      <label name="seconds_to_wait_label" class="input_description">Seconds between shutdown checks:</label>
+      <div class="user_input_div"><input type="text" id="seconds_to_wait" name="seconds_to_wait" class="narrow" maxlength="5" value="<?=$conf_array['seconds_to_wait'];?>" pattern="^(0|([3-8][0-9]|9[0-9]|[1-5][0-9]{2}|600))$" required></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set this to the number of seconds to wait between VM shutdown checks.</p>
         <ul>
           <li>Default is '30'.</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
 
-    <div markdown="1" style="width:50%; clear:both; float:left">
-     <input type="button" id="default_vmbackup_other_settings" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="button" id="apply_vmbackup_other_settings" name="#apply" value="Apply"><input type="button" id="done_vmbackup_other_settings" value="Done">
+    <div class="grid_container_left clear_both">
+      <div class="input_description"><input type="button" id="default_vmbackup_other_settings" name="#default" value="Default" title="Load defaults." formnovalidate></div>
+      <div class="grid_right_column buttons_div"><input type="button" id="apply_vmbackup_other_settings" name="#apply" value="Apply" disabled><input type="button" id="done_vmbackup_other_settings" value="Done" formnovalidate></div>
     </div>
   </form>
 </div>

@@ -10,7 +10,7 @@ Icon="clone"
 
 ?>
 
-<div style="width: 90%; float:left">
+<div class="wrapper_div">
   <p><u>Warning</u></p>
 	<p>The settings below can be dangerous or have unintended side effects if used improperly.
   <br>Many of them can result in corrupted backups, or no backups at all.
@@ -18,202 +18,203 @@ Icon="clone"
   <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
 </div>
 
-<div style="width:90%; float:left">
-  <form id="vmbackup_danger_zone_form" name="vmbackup_danger_zone" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
+<div id="vmbackup_danger_zone_div" class="wrapper_div">
+  <form id="vmbackup_danger_zone_form" name="vmbackup_danger_zone" autocomplete="off" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" id="vmbackup_danger_zone_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
     <input type="hidden" name="#arg[1]" value="update_user_script">
 
     <!-- danger zone -->
-    <div id="title" class="nocontrol" style="width:90%; clear:both; float:left">Danger Zone</div>
-    <div markdown="1" style="width:45%; clear:both; float:left">
+    <div id="title" class="nocontrol full_width_title">Danger Zone</div>
+    <div id="danger_zone_div" class="grid_container_left">
 
-      Number of compression threads:
-      : <select id="threads" name="threads" size="1">
+      <label name="threads_label" class="input_description">Number of compression threads:</label>
+      <div class="user_input_div"><select id="threads" name="threads" size="1">
+        <option value="0">auto</option>
         <?php
           $thread_count = cpu_thread_count();
-          for ($i = 0; $i <= $thread_count; $i++) {
+          for ($i = 1; $i <= $thread_count; $i++) {
         ?>
             <?=mk_option($conf_array['threads'], $i, $i);?>
           <?php
           }
           ?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to the number of threads you would like to use when compressing backups.</p>
         <ul>
           <li>Set to '0' to let the compression algorithm automatically choose the number of online processors.</li>
           <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
           <li>Default is '2'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Keep error log file?
-      : <select id="keep_error_log_file" name="keep_error_log_file" size="1">
+      <label name="keep_error_log_file_label" class="input_description">Keep error log file?</label>
+      <div class="user_input_div"><select id="keep_error_log_file" name="keep_error_log_file" size="1">
         <?=mk_option($conf_array['keep_error_log_file'], "0", "No");?>
         <?=mk_option($conf_array['keep_error_log_file'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to have error log file deleted after the backup has completed.</p>
         <ul>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Kill VMs if they can't be shutdown?
-      : <select id="kill_vm_if_cant_shutdown" name="kill_vm_if_cant_shutdown" size="1">
+      <label name="kill_vm_if_cant_shutdown_label" class="input_description">Kill VMs if they can't be shutdown?</label>
+      <div class="user_input_div"><select id="kill_vm_if_cant_shutdown" name="kill_vm_if_cant_shutdown" size="1">
         <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "0", "No");?>
         <?=mk_option($conf_array['kill_vm_if_cant_shutdown'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to kill VMs if they cannot be shutdown cleanly.</p>
         <ul>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Return VM to original state?
-      : <select id="set_vm_to_original_state" name="set_vm_to_original_state" size="1">
+      <label name="set_vm_to_original_state_label" class="input_description">Return VM to original state?</label>
+      <div class="user_input_div"><select id="set_vm_to_original_state" name="set_vm_to_original_state" size="1">
         <?=mk_option($conf_array['set_vm_to_original_state'], "0", "No");?>
         <?=mk_option($conf_array['set_vm_to_original_state'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to prevent VMs from being set back to their original state after backing up.</p>
         <ul>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Snapshot extension:
-      : <input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^[^., ]+([\w.-])+[^,. ]+$" required>
+      <label name="snapshot_extension_label" class="input_description">Snapshot extension:</label>
+      <div class="user_input_div"><input type="text" id="snapshot_extension" name="snapshot_extension" class="narrow" maxlength="50" value="<?=$conf_array['snapshot_extension'];?>" pattern="^[^., ]+([\w.-])+[^,. ]+$" required></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Change the extension used when creating snapshots.</p>
         <ul>
           <li>WARNING: Choosing an extension that is the same as one of your vdisks will cause an error.</li>
           <li>Default is 'snap'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Fallback to standard backups?
-      : <select id="snapshot_fallback" name="snapshot_fallback" size="1">
+      <label name="snapshot_fallback_label" class="input_description">Fallback to standard backups?</label>
+      <div class="user_input_div"><select id="snapshot_fallback" name="snapshot_fallback" size="1">
         <?=mk_option($conf_array['snapshot_fallback'], "0", "No");?>
         <?=mk_option($conf_array['snapshot_fallback'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to fallback to standard backup method if snapshot creation fails.</p>
         <ul>
           <li>This will act as though "Enable snapshots" was set to 'No' for just the VM with the failed snapshot.</li>
           <li>If a snapshot fails and this is enabled, VMs will be shutdown or paused based on standard backup settings.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Pause VMs instead of shutting down?
-      : <select id="pause_vms" name="pause_vms" size="1">
+      <label name="pause_vms_label" class="input_description">Pause VMs instead of shutting down?</label>
+      <div class="user_input_div"><select id="pause_vms" name="pause_vms" size="1">
         <?=mk_option($conf_array['pause_vms'], "0", "No");?>
         <?=mk_option($conf_array['pause_vms'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to pause VMs instead of shutting them down during standard backups.</p>
         <ul>
           <li>WARNING: This could result in unusable backups, but I have not thoroughly tested.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Backup configs?
-      : <select id="backup_xml" name="backup_xml" size="1">
+      <label name="backup_xml_label" class="input_description">Backup configs?</label>
+      <div class="user_input_div"><select id="backup_xml" name="backup_xml" size="1">
         <?=mk_option($conf_array['backup_xml'], "0", "No");?>
         <?=mk_option($conf_array['backup_xml'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to skip backing up of VM configuration.</p>
         <ul>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Backup nvram?
-      : <select id="backup_nvram" name="backup_nvram" size="1">
+      <label name="backup_nvram_label" class="input_description">Backup nvram?</label>
+      <div class="user_input_div"><select id="backup_nvram" name="backup_nvram" size="1">
         <?=mk_option($conf_array['backup_nvram'], "0", "No");?>
         <?=mk_option($conf_array['backup_nvram'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to skip backing up of VM nvram.</p>
         <ul>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
-      Backup vdisks?
-      : <select id="backup_vdisks" name="backup_vdisks" size="1">
+      <label name="backup_vdisks_label" class="input_description">Backup vdisks?</label>
+      <div class="user_input_div"><select id="backup_vdisks" name="backup_vdisks" size="1">
         <?=mk_option($conf_array['backup_vdisks'], "0", "No");?>
         <?=mk_option($conf_array['backup_vdisks'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' to skip backing up of VM vdisks.</p>
         <ul>
           <li>Setting to 'No' will automatically disable compression.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Start VMs after successful backup?
-      : <select id="start_vm_after_backup" name="start_vm_after_backup" size="1">
+      <label name="start_vm_after_backup_label" class="input_description">Start VMs after successful backup?</label>
+      <div class="user_input_div"><select id="start_vm_after_backup" name="start_vm_after_backup" size="1">
         <?=mk_option($conf_array['start_vm_after_backup'], "0", "No");?>
         <?=mk_option($conf_array['start_vm_after_backup'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to always start VMs after a successful backup.</p>
         <ul>
           <li>Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Start VMs after failed backup?
-      : <select id="start_vm_after_failure" name="start_vm_after_failure" size="1">
+      <label name="start_vm_after_failure_label" class="input_description">Start VMs after failed backup?</label>
+      <div class="user_input_div"><select id="start_vm_after_failure" name="start_vm_after_failure" size="1">
         <?=mk_option($conf_array['start_vm_after_failure'], "0", "No");?>
         <?=mk_option($conf_array['start_vm_after_failure'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' to always start VMs after a failed backup.</p>
         <ul>
           <li>Setting to 'Yes' will cause "Set VM to original state after backup" to be ignored.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Actually copy files?
-      : <select id="actually_copy_files" name="actually_copy_files" size="1">
+      <label name="actually_copy_files_label" class="input_description">Actually copy files?</label>
+      <div class="user_input_div"><select id="actually_copy_files" name="actually_copy_files" size="1">
         <?=mk_option($conf_array['actually_copy_files'], "0", "No");?>
         <?=mk_option($conf_array['actually_copy_files'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' if you would like to perform a dry-run backup.</p>
         <ul>
           <li>WARNING: Performing a Dry-run backup of an existing VM will still honor the chosen retention policy, which could cause backups to be removed.</li>
@@ -221,15 +222,15 @@ Icon="clone"
           <li>This will only use rsync to perform the dry-run.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
-      Allow simultaneous execution?
-      : <select id="allow_simultaneous_scripts" name="allow_simultaneous_scripts" size="1">
+      <label name="allow_simultaneous_scripts_label" class="input_description">Allow simultaneous execution?</label>
+      <div class="user_input_div"><select id="allow_simultaneous_scripts" name="allow_simultaneous_scripts" size="1">
         <?=mk_option($conf_array['allow_simultaneous_scripts'], "0", "No");?>
         <?=mk_option($conf_array['allow_simultaneous_scripts'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' if you would like to have multiple scripts able to be executed at the same time.</p>
         <ul>
           <li>When set to 'Yes', multiple configs will be able to run at the same time.</li>
@@ -238,46 +239,46 @@ Icon="clone"
           <li>A backup will not run if Fix Snapshots is running, and vice versa, regardless of this setting.</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
-      Require array to be started?
-      : <select id="arrayStarted" name="arrayStarted" size="1">
+      <label name="arrayStarted_label" class="input_description">Require array to be started?</label>
+      <div class="user_input_div"><select id="arrayStarted" name="arrayStarted" size="1">
         <?=mk_option($conf_array['arrayStarted'], "false", "No");?>
         <?=mk_option($conf_array['arrayStarted'], "true", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' if you would like the script to run even if the array is not started.</p>
         <ul>
           <li>Unless you are using unassigned devices to run your VMs and as your backup destination, this should be left as 'Yes'.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Prevent backups during parity?
-      : <select id="noParity" name="noParity" size="1">
+      <label name="noParity_label" class="input_description">Prevent backups during parity?</label>
+      <div class="user_input_div"><select id="noParity" name="noParity" size="1">
         <?=mk_option($conf_array['noParity'], "false", "No");?>
         <?=mk_option($conf_array['noParity'], "true", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'No' if you would like the script to run even if a parity check is in progress.</p>
         <ul>
           <li>Running during a parity check could cause significant slow-downs.</li>
           <li>It is highly recommended to leave this set to 'Yes', and just schedule backups when a parity check is not scheduled.</li>
           <li>Default is 'Yes'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Disable custom cron validation?
-      : <select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex();">
+      <label name="disable_cron_regex_label" class="input_description">Disable custom cron validation?</label>
+      <div class="user_input_div"><select id="disable_cron_regex" name="disable_cron_regex" size="1" onchange="toggle_cron_regex();">
         <?=mk_option($conf_array['disable_cron_regex'], "0", "No");?>
         <?=mk_option($conf_array['disable_cron_regex'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' if you would like to disable the regular expression for the custom cron text field.</p>
         <ul>
           <li>The regular expression used to validate the custom cron field is not perfect, so you may find yourself needing to disable it.</li>
@@ -285,37 +286,37 @@ Icon="clone"
           <li>Disable with care!</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
 
 
-      Disable restrictive validation?
-      : <select id="disable_restrictive_regex" name="disable_restrictive_regex" size="1" onchange="toggle_restrictive_regex();">
+      <label name="disable_restrictive_regex_label" class="input_description">Disable restrictive validation?</label>
+      <div class="user_input_div"><select id="disable_restrictive_regex" name="disable_restrictive_regex" size="1" onchange="toggle_restrictive_regex();">
         <?=mk_option($conf_array['disable_restrictive_regex'], "0", "No");?>
         <?=mk_option($conf_array['disable_restrictive_regex'], "1", "Yes");?>
-      </select>
+      </select></div>
 
-      <blockquote class="inline_help">
+      <span class="custom_inline_help">
         <p>Set to 'Yes' if you would like to disable the restrictive regular expressions used to validate many of the fields.</p>
         <ul>
           <li>The default regular expressions used to validate many of the fields are restricted to values that are considered reasonable.</li>
           <li>This does not remove validation completely, but instead removes many of the safety checks. Disable with care!</li>
           <li>Default is 'No'.</li>
         </ul>
-      </blockquote>
+      </span>
     </div>
 
-    <div markdown="1" style="width:50%; clear:both; float:left">
-     <input type="button" id="default_vmbackup_danger_zone" name="#default" value="Default" title="Load defaults." formnovalidate>
-      : <input type="button" id="apply_vmbackup_danger_zone" name="#apply" value="Apply"><input type="button" id="done_vmbackup_danger_zone" value="Done">
+    <div class="grid_container_left clear_both">
+      <div class="input_description"><input type="button" id="default_vmbackup_danger_zone" name="#default" value="Default" title="Load defaults." formnovalidate></div>
+      <div class="grid_right_column buttons_div"><input type="button" id="apply_vmbackup_danger_zone" name="#apply" value="Apply" disabled><input type="button" id="done_vmbackup_danger_zone" value="Done" formnovalidate></div>
     </div>
   </form>
-  <div markdown="1" style="width:40%; clear:right; float:left">
-    <form id="fix_snapshots_form" name="fix_snapshots_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+  <div class="buttons_right">
+    <form id="fix_snapshots_form" name="fix_snapshots_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
       <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
       <input type="hidden" name="#args[1]" value="fix_snapshots">
       <input type="button" id="fix_snapshots" name="#fix_snapshots" value="Fix Snapshots">
     </form>
-    <form id="abort_script_form" name="abort_script_form" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
+    <form id="abort_script_form" name="abort_script_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/functions.php" target="progressFrame" style="float:right">
       <input type="hidden" name="#script" value="/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh">
       <input type="hidden" name="#args[1]" value="abort_script">
       <input type="button" id="abort_script" name="#abort_script" value="Abort Script">
