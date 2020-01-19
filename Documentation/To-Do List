@@ -19,7 +19,19 @@
 #  - ability to perform different backup schemes, such as incremental.
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
-#  - handle parenthesis in paths/vm names. Especially when parsing vm-list.
+#  - show loading content in configs div while refreshing after add/remove/copy?
+#  - disable all controls during apply, and then re-enable. Or maybe just use swal popup. Possibly also disable all buttons?
+#  - check into high IOWAIT while running backup.
+#  - check into rsync process not ending.
+#  - change compression to be during copy stream.
+#  - handle parenthesis in paths/vm names. Especially when parsing vm-list. use JSON.
 #  - add restore functionality.
 #  - reorganize code for manageability.
 #  - adjust div loads to re-execute only relevant script blocks.
+#  - add sweet alert loading popups on ajax submits?
+#  - leave apply disabled until form changes.
+#  - change done button to reset when form changes.
+#  - add help to upload scripts and manage configs.
+#  - show error if form submit fails.
+#  - plugin error log file?
+#  - take user back to main tab when setting config to default.
