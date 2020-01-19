@@ -1,0 +1,184 @@
+
+
+/* set fileTree properties */
+.fileTree {
+  float:left;
+  width: 300px;
+  max-height: 150px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: absolute;
+  z-index: 100;
+  display: none;
+  color: initial;
+}
+
+/* set failed validation properties */
+input:invalid {
+  border-color: red;
+}
+
+/* set wrapper div class properties */
+.wrapper_div {
+  width:100%;
+  float:left;
+}
+
+/* set grid_container class properties */
+.grid_container {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 18px;
+  grid-row-gap: 12px;
+  padding-left: 12px;
+  width: 90%;
+  float: left;
+}
+
+/* set grid_container_left class properties */
+.grid_container_left {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 18px;
+  grid-row-gap: 12px;
+  padding-left: 12px;
+  width: 45%;
+  float: left;
+}
+
+/* set grid_container_right class properties */
+.grid_container_right {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-column-gap: 18px;
+  grid-row-gap: 12px;
+  padding-left: 12px;
+  width: 45%;
+  float: left;
+}
+
+/* set container_full class properties */
+.container_full {
+  width: 90%;
+  float:left;
+}
+
+/* set container_left class properties */
+.container_left {
+  width: 45%;
+  float: left;
+}
+/* set container_right class properties*/
+.container_right {
+  width: 45%;
+  float: left;
+}
+
+/* set half width title class properties */
+.half_width_title {
+  width: 45%;
+  float: left;
+}
+
+/* set full width title class properties */
+.full_width_title {
+  width: 90%;
+  float: left;
+}
+
+/* modify the existing ui-dropdownchecklist class properties */
+.ui-dropdownchecklist {
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+/* set input_description class properties */
+.input_description {
+  cursor: help;
+  min-width: max-content;
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+
+/* set user_input class properties */
+.user_input_div {
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+/* set inline_help class properties */
+.custom_inline_help {
+  background-color: #d9edf7;
+  color: #3a87ad;
+  border: 1px solid #bce8f1;
+  width: 90%;
+  margin: 10px auto;
+  text-align: left;
+  padding: 4px 20px;
+  box-sizing: border-box;
+  /* padding-left: 5%;
+  padding-right: 5%;
+  margin-left:5%;
+  margin-right: 5%; */
+  display: none; 
+  overflow: hidden;
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+.grid_left_column {
+  grid-column-start: 1;
+  grid-column-end: 2;
+}
+
+.grid_right_column {
+  grid-column-start: 2;
+  grid-column-end: 3;
+}
+
+.script_divs {
+  padding-left: 12px;
+}
+
+.script_textarea {
+  width:90%;
+  resize: vertical;
+}
+
+.selection_div {
+  width:25%;
+  max-height:400px;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  z-index:100
+}
+
+/* set buttons left class properties */
+.buttons_left {
+  width: 50%;
+  float: left;
+  /* clear: both; */
+}
+
+.buttons_div {
+  width: 188px;
+  text-align: center;
+}
+
+/* set buttons right class properties */
+.buttons_right {
+  width: 40%;
+  float: left;
+  /* clear:right; */
+}
+
+/* set clear class properties */
+.clear_left {
+  clear:left;
+}
+.clear_right {
+  clear:right;
+}
+.clear_both {
+  clear:both;
+}
