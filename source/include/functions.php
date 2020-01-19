@@ -366,6 +366,48 @@
     var_dump($result);
   }
 
+  function set_config_defaults($current_config) {
+    // plugin name.
+    $plugin = 'vmbackup';
+    // default files.
+    $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
+    $script_path = $plugin_source_path . '/scripts';
+    $commands_script_file = $script_path . '/commands.sh';
+    $default_conf_file = $plugin_source_path . '/default.cfg';
+    $default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
+    // user files.
+    $plugin_path = '/boot/config/plugins/' . $plugin;
+    $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
+
+    // finish creating variables based on current config.
+    if (!strcasecmp($current_config, "default") == 0) {
+      $configs_plugin_path = $plugin_path . '/configs';
+      $current_config_path = $configs_plugin_path . '/' . $current_config;
+      $user_script_file = $current_config_path . '/user-script.sh';
+      $user_conf_file = $current_config_path . '/user.cfg';
+    } else {
+      $user_script_file = $plugin_path . '/user-script.sh';
+      $user_conf_file = $plugin_path . '/user.cfg';
+    }
+
+    // replace the user config with the default config.
+    if (!copy($default_conf_file, $user_conf_file)) {
+      syslog(LOG_ALERT, "failed to reset user config file.");
+    } else {
+      // check to see if we are working with the default config.
+      if (strcasecmp($current_config, "default") == 0) {
+        // create a variable with the default fix snapshots script contents and user config file merged.
+        $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
+
+        // write script contents variable as the user fix snapshots script file.
+        file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+      }
+    }
+
+    // remove the cron job.
+    exec("$commands_script_file remove_cron_job ".escapeshellarg($current_config));
+  }
+
 
   // check for post commands.
   // if update_script_contents argument exists, then update the user script file.
@@ -380,6 +422,15 @@
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
   }
+
+  // if set_config_defaults argument exists, then reset the user script file.
+  if (isset($_POST['#set_config_defaults'])) {
+    if (isset($_POST['#current_config'])) {
+      $current_config = $_POST['#current_config'];
+      set_config_defaults($current_config);
+    }
+  }
+
   // if script argument exists, then run script with any additional arguments.
   if (isset($_POST['#script'])) {
     // get the script to be run.
