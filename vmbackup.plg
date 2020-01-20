@@ -165,7 +165,7 @@
     # update files and re-add missing cronjobs.
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file all
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script all
-    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh create_vm_lists
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh create_vm_lists rebuild_text_files
   </INLINE>
 </FILE>
 
