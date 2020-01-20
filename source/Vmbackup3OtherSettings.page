@@ -152,7 +152,7 @@ Icon="clone"
         <p>Set to '1' for the lowest compression level with the largest file sizes, but the highest speeds.
         <br>Set to '9' for the highest compression level with the smallest file sizes, but the lowest speeds.</p>
         <ul>
-          <li>Default is '9'.</li>
+          <li>Default is '6'.</li>
         </ul>
       </span>
 
