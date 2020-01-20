@@ -21,12 +21,15 @@
   }
 
   // function to update form inputs based on current config.
-  function update_form_config(current_config) {
-    if (current_config.toUpperCase() != "default".toUpperCase()) {
+  function update_form_config(config) {
+    if (config.trim().length === 0) {
+      config = get_cookie("current_config");
+    }
+    if (config.toUpperCase() != "default".toUpperCase()) {
       // change config file passed with form.
-      $("#vmbackup_settings_file").val("vmbackup/configs/" + current_config + "/user.cfg");
-      $("#vmbackup_other_settings_file").val("vmbackup/configs/" + current_config + "/user.cfg");
-      $("#vmbackup_danger_zone_file").val("vmbackup/configs/" + current_config + "/user.cfg");
+      $("#vmbackup_settings_file").val("vmbackup/configs/" + config + "/user.cfg");
+      $("#vmbackup_other_settings_file").val("vmbackup/configs/" + config + "/user.cfg");
+      $("#vmbackup_danger_zone_file").val("vmbackup/configs/" + config + "/user.cfg");
     } else {
       // change config file passed with form.
       $("#vmbackup_settings_file").val("vmbackup/user.cfg");
@@ -34,11 +37,11 @@
       $("#vmbackup_danger_zone_file").val("vmbackup/user.cfg");
     }
     // append current config to forms.
-    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
-    $("#backup_now_form").append('<input type="hidden" name="#args[2]" value="' + current_config + '">');
-    $("#upload_form").append('<input type="hidden" name="#current_config" value="' + current_config + '">');
-    $("#vmbackup_other_settings_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
-    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + current_config + '">');
+    $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[2]" value="' + config + '">');
+    $("#backup_now_form").append('<input type="hidden" name="#args[2]" value="' + config + '">');
+    $("#upload_form").append('<input type="hidden" name="#current_config" value="' + config + '">');
+    $("#vmbackup_other_settings_form").append('<input type="hidden" name="#arg[2]" value="' + config + '">');
+    $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + config + '">');
   }
 
   // function to set the width of the first grid columns based on content.
@@ -52,7 +55,7 @@
 
   // add custom click function to Settings tab.
   function tab_click_events() {
-    $("#tab1").on('click', function (e) {
+    $("#tab1").on('click', function () {
       set_width_vmbackup_settings();
       // refresh the form.
       if (refresh_settings) {
@@ -64,15 +67,31 @@
         //     $(this).html(s);
         //   }
         // });
-        set_variable_cookie("refresh_settings", false);
       }
     });
-    $("#tab3").on('click', function (e) {
+    $("#tab3").on('click', function () {
       set_width_vmbackup_other_settings();
     });
-    $("#tab4").on('click', function (e) {
+    $("#tab4").on('click', function () {
       set_width_vmbackup_danger_zone();
     });
+  }
+
+  // function to refresh all data tabs.
+  function refresh_data_tabs(attach_file_tree = false) {
+    update_current_config_var();
+    refresh_vmbackup_upload_scripts();
+    refresh_vmbackup_other_settings();
+    refresh_vmbackup_danger_zone();
+    refresh_vmbackup_settings(attach_file_tree);
+    // update form inputs based on current config.
+    update_form_config(current_config);
+  }
+
+  // update the config based on the cookie.
+  function update_current_config_var() {
+    current_config = get_cookie("current_config");
+    $("#current_config").val(current_config);
   }
 
   // function to hide/show inline help.
@@ -196,15 +215,14 @@
         allowOutsideClick: false
       });
     }
-    var $current_config = $("#current_config").children("option:selected").val();
-    set_variable_cookie("current_config", $current_config);
+    var config = $("#current_config").children("option:selected").val();
+    set_variable_cookie("current_config", config);
     // refresh page content.
+    refresh_data_tabs(false);
+    // refresh settings tab a second time to make sure that file tree is updated correctly.
     refresh_vmbackup_settings(false);
-    refresh_vmbackup_upload_scripts();
-    refresh_vmbackup_other_settings();
-    refresh_vmbackup_danger_zone();
     // update form inputs based on current config.
-    update_form_config($current_config);
+    // update_form_config(config);
     if (show_swal) {
       setTimeout(function() { swal.close(); }, 1000);
     }
@@ -263,8 +281,6 @@
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to abort scripts.
       swal({
         title: 'Reset to defaults?',
@@ -279,47 +295,34 @@
       },
         function (isConfirm) {
           if (isConfirm) {
-            // disable current_config to prevent submission with form.
-            change_prop("#current_config", "disabled", true);
             // reset to defaults.
             $.ajax({
-              url: 'include/functions.php',
+              url: '/plugins/vmbackup/include/functions.php',
               type: 'POST',
-              // dataType: "json",
               data: {
-                "set_config_defaults": "set_config_defaults",
-                "current_config": current_config
+                "#set_config_defaults": "set_config_defaults",
+                "#current_config": current_config
               }
             }).done(function () {
+              // build data object.
+              if (current_config == "default") {
+                var data = { "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh", "#args[1]": "create_vm_lists", "#args[2]": "rebuild_text_files" };
+              } else {
+                var data = { "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh", "#args[1]": "create_vm_lists" };
+              }
               // rebuild text files.
               $.ajax({
-                url: 'include/functions.php',
+                url: '/plugins/vmbackup/include/functions.php',
                 type: 'POST',
-                // dataType: "json",
-                data: {
-                  "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh",
-                  "#args[1]": "create_vm_lists",
-                  "#args[2]": "rebuild_text_files"
-                }
+                data: data
               }).done(function () {
-                // refresh the form.
+                // refresh all tabs.
+                refresh_data_tabs(false);
+                // refresh settings tab a second time to make sure that file tree is updated correctly.
                 refresh_vmbackup_settings(false);
-                // re-enable the current config drop-down.
-                change_prop("#current_config", "disabled", false);
                 swal.close();
               });
             });
-            // append input to form submission to force text files to be re-created.
-            // $("#vmbackup_settings_form").append('<input type="hidden" name="#arg[3]" value="rebuild_text_files">');
-            // submit the form with the clicked button appended.
-            // $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize() + "&" + clicked_button,
-            //   function () {
-            //     // refresh the form.
-            //     refresh_vmbackup_settings(false);
-            //     // re-enable the current config drop-down.
-            //     change_prop("#current_config", "disabled", false);
-            //     swal.close();
-            //   });
           }
         });
     });
@@ -573,6 +576,7 @@
   function refresh_vmbackup_settings(attach_file_tree = true){
     $("#vmbackup_settings_div").load(location.href + " #vmbackup_settings_div",
       function () {
+        update_current_config_var();
         configure_set_backup_location(attach_file_tree);
         configure_vms_to_backup();
         configure_vdisks_to_skip();
@@ -583,8 +587,7 @@
         set_vms_to_backup_lbl();
         assign_vmbackup_settings_functions();
         set_width_vmbackup_settings();
-        current_config = get_cookie("current_config");
-        $("#current_config").val(current_config);
+        // update form inputs based on current config.
         update_form_config(current_config);
       });
     // set refresh settings to false since it was just performed.
@@ -741,7 +744,7 @@
   }
 
   // function to refresh content for settings tab.
-  function refresh_vmbackup_upload_scripts(attach_file_tree = true) {
+  function refresh_vmbackup_upload_scripts() {
     $("#upload_form_div").load(location.href + " #upload_form_div",
       function () {
         assign_vmbackup_upload_scripts_functions();
@@ -841,8 +844,6 @@
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
-      // get button that was clicked so it can be passed with the form later.
-      var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to abort scripts.
       swal({
         title: 'Reset to defaults?',
@@ -857,13 +858,36 @@
       },
         function (isConfirm) {
           if (isConfirm) {
-            // submit the form with the clicked button appended.
-            $.post($("#vmbackup_other_settings_form").attr("action"), $("#vmbackup_other_settings_form").serialize() + "&" + clicked_button,
-              function () {
-                // refresh the form.
-                refresh_vmbackup_other_settings();
+            // reset to defaults.
+            $.ajax({
+              url: '/plugins/vmbackup/include/functions.php',
+              type: 'POST',
+              data: {
+                "#set_config_defaults": "set_config_defaults",
+                "#current_config": current_config
+              }
+            }).done(function () {
+              // build data object.
+              if (current_config == "default") {
+                var data = { "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh", "#args[1]": "create_vm_lists", "#args[2]": "rebuild_text_files" };
+              } else {
+                var data = { "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh", "#args[1]": "create_vm_lists" };
+              }
+              // rebuild text files.
+              $.ajax({
+                url: '/plugins/vmbackup/include/functions.php',
+                type: 'POST',
+                data: data
+              }).done(function () {
+                // refresh all tabs.
+                refresh_data_tabs(false);
+                // refresh settings tab a second time to make sure that file tree is updated correctly.
+                refresh_vmbackup_settings(false);
+                // switch to the main tab.
+                $("#tab1").trigger("click");
                 swal.close();
               });
+            });
           }
         });
     });
@@ -1019,8 +1043,6 @@
         // prevent normal form submission.
         e.preventDefault();
         e.stopPropagation();
-        // get button that was clicked so it can be passed with the form later.
-        var clicked_button = $(this).attr("name") + "=" + $(this).val();
         // ask if user is certain they want to abort scripts.
         swal({
           title: 'Reset to defaults?',
@@ -1035,13 +1057,36 @@
         },
           function (isConfirm) {
             if (isConfirm) {
-              // submit the form with the clicked button appended.
-              $.post($("#vmbackup_danger_zone_form").attr("action"), $("#vmbackup_danger_zone_form").serialize() + "&" + clicked_button,
-                function () {
-                  // refresh the form.
-                  refresh_vmbackup_danger_zone();
+              // reset to defaults.
+              $.ajax({
+                url: '/plugins/vmbackup/include/functions.php',
+                type: 'POST',
+                data: {
+                  "#set_config_defaults": "set_config_defaults",
+                  "#current_config": current_config
+                }
+              }).done(function () {
+                // build data object.
+                if (current_config == "default") {
+                  var data = { "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh", "#args[1]": "create_vm_lists", "#args[2]": "rebuild_text_files" };
+                } else {
+                  var data = { "#script": "/usr/local/emhttp/plugins/vmbackup/scripts/commands.sh", "#args[1]": "create_vm_lists" };
+                }
+                // rebuild text files.
+                $.ajax({
+                  url: '/plugins/vmbackup/include/functions.php',
+                  type: 'POST',
+                  data: data
+                }).done(function () {
+                  // refresh all tabs.
+                  refresh_data_tabs(false);
+                  // refresh settings tab a second time to make sure that file tree is updated correctly.
+                  refresh_vmbackup_settings(false);
+                  // switch to the main tab.
+                  $("#tab1").trigger("click");
                   swal.close();
                 });
+              });
             }
           });
       });
@@ -1176,7 +1221,7 @@
   }
 
   // function to refresh content for settings tab.
-  function refresh_vmbackup_danger_zone(attach_file_tree = true) {
+  function refresh_vmbackup_danger_zone() {
     $("#vmbackup_danger_zone_div").load(location.href + " #vmbackup_danger_zone_div",
       function () {
         assign_vmbackup_danger_zone_functions();
