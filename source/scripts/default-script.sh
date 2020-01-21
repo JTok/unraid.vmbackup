@@ -125,7 +125,7 @@ enable_reconstruct_write="no_config"
 # default is 3. higher values may produce smaller archives but are slower and use more CPU.
 zstd_level="no_config"
 
-# default is 2. set this to the desired number of compression worker threads, or 0 to auto detect (i.e. use all)
+# default is 2. set this to the desired number of compression worker threads. set to 0 to auto detect the number of physical cpu cores.
 zstd_threads="no_config"
 
 # default is 6. choose the compression level for pigz to use. set to 1 for the lowest compression level, but the highest speed, and 9 is the highest compression level, but the lowest speed.
