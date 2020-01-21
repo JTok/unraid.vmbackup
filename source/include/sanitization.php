@@ -1,7 +1,7 @@
 <?php
 
   /* vmbackup plugin
-    copyright 2019 JTok */
+    copyright JTok */
 
 
   // function to return sanitized config file contents, without writing it to a file.
@@ -40,6 +40,15 @@
 
     return $string;
   }
+
+  // function to set all line breaks to \n new lines.
+  function replace_line_breaks($string) {
+    $string = str_ireplace("\r\n", "\n", $string);
+    $string = str_ireplace("\r", "\n", $string);
+
+    return $string;
+  }
+
 
   // function to take comma separated list and turn it into an array.
   function make_comma_array($string) {

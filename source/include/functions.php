@@ -1,7 +1,7 @@
 <?php
 
   /* vmbackup plugin
-    copyright 2019 JTok */
+    copyright JTok */
 
 
   require_once '/usr/local/emhttp/plugins/vmbackup/include/sanitization.php';
@@ -36,10 +36,9 @@
   function update_user_conf_file($default_conf_file, $user_conf_file) {
     // see if user config file already exists.
     if (!is_file($user_conf_file)) {
-
       // if not, create it from the default config file.
       if (!copy($default_conf_file, $user_conf_file)) {
-        echo "failed to create user config file.\n";
+        syslog(LOG_ALERT, "failed to create user config file.");
       } else {
         // parse user config file.
         $conf_array = parse_ini_file($user_conf_file);
@@ -84,7 +83,7 @@
     $second_conf_array = parse_ini_file($second_conf_file);
 
     // get an array of the differences between the two configs.
-    $conf_diff = array_diff($first_conf_array, $second_conf_array);
+    $conf_diff = array_diff_assoc($first_conf_array, $second_conf_array);
 
     // if differences were found, continue.
     if (!empty($conf_diff)) {
@@ -129,15 +128,13 @@
 
     // for each key pair in the config array, replace the corresponding value in the script contents.
     foreach ($conf as $key => $value) {
-      // check if key is noParity.
-      if ($key == "noParity") {
-        if ($value == "false") {
-          // set noParity to false.
-          $script_contents = str_replace("#noParity=no_config", "#noParity=false", $script_contents);
-        } else {
-          // set noParity to true.
-          $script_contents = str_replace("#noParity=no_config", "#noParity=true", $script_contents);
-        }
+      // check if key is arrayStarted or noParity.
+      if ($key == "arrayStarted") {
+        // set arrayStarted value.
+        $script_contents = str_replace("#arrayStarted=no_config", "#arrayStarted=" . $value, $script_contents);
+      } elseif ($key == "noParity") {
+        // set noParity to value.
+        $script_contents = str_replace("#noParity=no_config", "#noParity=" . $value, $script_contents);
       } else {
         // remove whitespace from between comma separated values for script variable.
         $value = remove_list_whitespace($value);
@@ -153,6 +150,16 @@
     return $script_contents;
   }
 
+  // function to update just special variables in a script without writing the file.
+  function update_special_variables($script_file, $conf_file) {
+    // get the script contents.
+    $script_contents = file_get_contents($script_file);
+    // validate the script contents and update any config variables.
+    $script_contents = validate_script($script_contents, $conf_file);
+
+    // return the updated contents.
+    return $script_contents;
+  }
 
   // function to create an array of padded numbers as the key with un-padded values.
   function create_number_array($start_number, $finish_number, $padding_depth = "0") {
@@ -180,9 +187,22 @@
   }
 
   // function to get special commented variables from the top of a file.
-  function get_special_variables($file, $num_lines = 10) {
-    // read the file into an array.
-    $file_contents_array = file($file);
+  function get_special_variables($contents, $num_lines = 10, $is_file = true) {
+    // check to see if the passed contents are a file.
+    if ($is_file == true) {
+      // if so, read the file into an array.
+      $file_contents_array = file($contents);
+    } elseif ($is_file == false) {
+      // check to see if the variable is a string or an array.
+      if (gettype($contents) == "array") {
+        // if it is an array, copy it to file_contents_array.
+        $file_contents_array = $contents;
+      } elseif (gettype($contents) == "string") {
+        // if it is a string, explode it into an array using newline.
+        $file_contents_array = explode("\n", $contents);
+      }
+    }
+
     // determine the number of lines to read from the top of the file.
     if (count($file_contents_array) >= $num_lines) {
       $num_lines = $num_lines;
@@ -215,6 +235,117 @@
     return $special_variables;
   }
 
+  // function to prepend string to a file.
+  function prepend_string($string, $contents, $is_file = true) {
+    if ($is_file == true) {
+      $file = $contents;
+      $context = stream_context_create();
+      $open_file = fopen($file, 'r', 1, $context);
+
+      $temp_filename = tempnam(sys_get_temp_dir(), 'php_prepend_');
+      file_put_contents($temp_filename, $string);
+      file_put_contents($temp_filename, $open_file, FILE_APPEND);
+
+      fclose($open_file);
+      unlink($file);
+      rename($temp_filename, $file);
+    } elseif ($is_file == false) {
+      // check to see if the variable is a string or an array.
+      if (gettype($contents) == "array") {
+        // if it is an array, copy it to contents_array.
+        $array_unshift($contents, $string);
+        return $contents;
+      } elseif (gettype($contents) == "string") {
+        // if it is a string, explode it into an array using newline.
+        $contents = $string . "\n" . $contents;
+        return $contents;
+      }
+    }
+  }
+
+  // function to verify directory exists and is writeable.
+  function verify_dir($path) {
+    // see if directory or file already exists with a given path.
+    if (!file_exists($path)) {
+      mkdir($path, 0755, true);
+    }
+    // verify that the path is a directory.
+    if (!is_dir($path)) {
+      syslog(LOG_INFO, "$path is not a directory.");
+      return false;
+    }
+    // verify that the directory is writable.
+    if (!is_writeable($path)) {
+      syslog(LOG_INFO, "Could not write to $path.");
+      return false;
+    }
+    // if we have made it to the end without an error, return true.
+    return true;
+  }
+
+  // function to verify directory is empty.
+  function is_empty_dir($path) {
+    // make the path is a directory.
+    if(is_dir($path)){
+      // use scandir to get the contents of the directory and array_diff to filter out . and ..
+      $list = array_diff(scandir($path), array('..', '.'));
+      // check to see if anything was found.
+      if(empty($list)){
+        return true;
+      } else{
+        return false;
+      }
+    } else {
+      syslog(LOG_INFO, "$path is not a directory.");
+      return false;
+    }
+  }
+
+  // function to remove all contents from directory and, optionally, remove the directory.
+  function remove_dir($path, $keep_folder = false) {
+    // verify path is valid.
+    if (empty($path) || !file_exists($path)) {
+      // the path does not exist.  
+      return true;
+    } elseif (is_file($path) || is_link($path)) {
+      // delete the file or directory. 
+      return @unlink($path);
+    }
+
+    // use recursive iterators to delete all children.
+    $files = new \RecursiveIteratorIterator(
+      new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+      \RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($files as $fileinfo) {
+      $action = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+      if (!@$action($fileinfo->getRealPath())) {
+        return false;
+      }
+    }
+
+    // check if the folder should be removed, and if so, remove it. return true/false based on result.
+    return (!$keep_folder ? @rmdir($path) : true);
+  }
+
+  // function to get number of CPU cores using php
+  function cpu_thread_count() {
+    # make sure we can read cpuinfo.
+    if (is_readable("/proc/cpuinfo")) {
+      # get cpu file contents and count the number of times the substring "processor" appears.
+      $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
+      $thread_count = substr_count($cpuinfo_contents, "processor");
+      # if get core count is greater than 0 return it. otherwise return 2 so that at least 2 threads can run.
+      if ($thread_count > 0) {
+        return $thread_count;
+      } else {
+        return 2;
+      }
+    }
+  }
+
+
   // function to send a post command to another php page.
   function send_post($url, $data) {
 
@@ -235,6 +366,48 @@
     var_dump($result);
   }
 
+  function set_config_defaults($current_config) {
+    // plugin name.
+    $plugin = 'vmbackup';
+    // default files.
+    $plugin_source_path = '/usr/local/emhttp/plugins/' . $plugin;
+    $script_path = $plugin_source_path . '/scripts';
+    $commands_script_file = $script_path . '/commands.sh';
+    $default_conf_file = $plugin_source_path . '/default.cfg';
+    $default_fix_snapshots_file = $script_path. '/default-fix-snapshots.sh';
+    // user files.
+    $plugin_path = '/boot/config/plugins/' . $plugin;
+    $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
+
+    // finish creating variables based on current config.
+    if (!strcasecmp($current_config, "default") == 0) {
+      $configs_plugin_path = $plugin_path . '/configs';
+      $current_config_path = $configs_plugin_path . '/' . $current_config;
+      $user_script_file = $current_config_path . '/user-script.sh';
+      $user_conf_file = $current_config_path . '/user.cfg';
+    } else {
+      $user_script_file = $plugin_path . '/user-script.sh';
+      $user_conf_file = $plugin_path . '/user.cfg';
+    }
+
+    // replace the user config with the default config.
+    if (!copy($default_conf_file, $user_conf_file)) {
+      syslog(LOG_ALERT, "failed to reset user config file.");
+    } else {
+      // check to see if we are working with the default config.
+      if (strcasecmp($current_config, "default") == 0) {
+        // create a variable with the default fix snapshots script contents and user config file merged.
+        $snapshot_script_contents = update_script_contents($default_fix_snapshots_file, $user_conf_file);
+
+        // write script contents variable as the user fix snapshots script file.
+        file_put_contents($user_fix_snapshots_file, $snapshot_script_contents);
+      }
+    }
+
+    // remove the cron job.
+    exec("$commands_script_file remove_cron_job ".escapeshellarg($current_config));
+  }
+
 
   // check for post commands.
   // if update_script_contents argument exists, then update the user script file.
@@ -249,6 +422,15 @@
     // write script contents variable as the user script file.
     file_put_contents($user_script_file, $script_contents);
   }
+
+  // if set_config_defaults argument exists, then reset the user script file.
+  if (isset($_POST['#set_config_defaults'])) {
+    if (isset($_POST['#current_config'])) {
+      $current_config = $_POST['#current_config'];
+      set_config_defaults($current_config);
+    }
+  }
+
   // if script argument exists, then run script with any additional arguments.
   if (isset($_POST['#script'])) {
     // get the script to be run.
@@ -291,5 +473,17 @@
 
     // create or update the user config file as necessary.
     update_user_conf_file($default_conf_file, $user_conf_file);
+  }
+  // if first argument is update special variables, then update the special variables.
+  if ($argv[1] == "update_special_variables") {
+    // create variables for passed parameters.
+    $script_file = $argv[2];
+    $conf_file = $argv[3];
+
+    // get a string containing the script contents merged with the config file.
+    $script_contents = update_special_variables($script_file, $conf_file);
+
+    // write user script contents variable as the user script file.
+    file_put_contents($script_file, $script_contents);
   }
 ?>

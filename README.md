@@ -4,11 +4,15 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.1.9 - 2019/12/31
+v0.2.0 - 2020/01/21
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
+This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
+This plugin installs [pigz](https://zlib.net/pigz/) to allow for multi-threaded gzip compression.
 
-Currently the plugin is in beta. Most of the features have been implemented. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
+Currently the plugin is in beta. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
+
+This plugin does use cookies to allow user settings to persist across page refreshes. They do not do anything else! They expire as soon as unRAID browser window is closed.
 
 ## Important
 
@@ -93,6 +97,16 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - "Backup Now" button runs a backup using current settings. It will automatically apply changes before it starts.
 
+### Upload Scripts
+
+#### Pre-Script
+
+- Option to create a pre-script that will run before the backup script.
+
+#### Post-Script
+
+- Option to create a post-script that will run after the backup script.
+
 ### Other Settings
 
 #### Logging
@@ -119,6 +133,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 #### Advanced Features
 
+- Option to choose a compression level.
+
 - Option to timestamp backups.
 
 - Option to compare files and retry backup in the event of failure.
@@ -138,6 +154,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Change the number of seconds to wait between checks to see if a VM is shut down.
 
 #### Danger Zone
+
+- Option to choose how many threads are used for compression.
 
 - Option to keep log files from backups with errors.
 
@@ -169,6 +187,10 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
   - Dry-run backups will still create empty files in your backup directory.
 
+- Option to allow multiple configs to run simultaneously.
+
+  - Does not allow the same config to run more than once.
+
 - Option to allow backups to run during a parity check. This could cause significant slowdowns.
 
 - Disable validation for the custom cron text box.
@@ -178,6 +200,24 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - "Abort Script" button will abort any running scripts. This may cause major issues. Use with caution!
 
 - "Fix Snapshots" button to fix stuck snapshots that weren't removed. This could cause more issues than it fixes. Use with caution!
+
+### Manage Configs
+
+#### Add Config
+
+- Option to create a separate config with its own settings and pre/post scripts.
+
+#### Rename/Delete Configs
+
+- Gives the ability to manage user created configs.
+
+  - Option to rename an existing config.
+
+  - Option to copy an existing config.
+
+    - The copy will have its schedule disabled by default.
+
+  - Option to remove existing configs.
 
 ##### Disclaimer
 

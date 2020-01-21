@@ -1,5 +1,21 @@
 ## Change Log ##
 
+# v0.2.0 - 2020/01/21
+# The Resistance
+#
+# - fixed new config options not always getting added to user config.
+# - fixed parenthesis in vm names.
+# - added ability to run pre and post scripts.
+# - added option to run backup without array started.
+# - added confirmation dialogs to destructive or dangerous buttons.
+# - added support for multiple configs/schedules.
+# - added option to allow multiple configs to run simultaneously.
+# - added option to set compression level.
+# - added option to set the number of threads used during compression.
+# - changed compression program from gzip to pigz to support multi-threading.
+# - changed alert dialogs to use sweet alerts.
+# - updated help for custom cron.
+
 # v0.1.9 - 2019/12/31
 # Flame Broiled
 #

@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2019.12.31">
-<!ENTITY tag        "v0.1.9">
+<!ENTITY version    "2020.01.21">
+<!ENTITY tag        "v0.2.0">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -14,7 +14,9 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "96683cf8f13efb24969118f5a5ffb634">
+<!ENTITY pigz       "pigz-2.3-x86_64-1_slonly">
+<!ENTITY PIGZMD5    "843accfc6dce4393f4c43c8d8e4eb0cb">
+<!ENTITY MD5        "f453c657d931c32c912584f60fae68bb">
 ]>
 
 <PLUGIN name="&name;"
@@ -28,6 +30,22 @@
 
 <CHANGES>
 ##&name;
+
+### v0.2.0 - 2020/01/21
+**The Resistance**
+
+- fixed new config options not always getting added to user config.
+- fixed parenthesis in vm names.
+- added ability to run pre and post scripts.
+- added option to run backup without array started.
+- added confirmation dialogs to destructive or dangerous buttons.
+- added support for multiple configs/schedules.
+- added option to allow multiple configs to run simultaneously.
+- added option to set compression level.
+- added option to set the number of threads used during compression.
+- changed compression program from gzip to pigz to support multi-threading.
+- changed alert dialogs to use sweet alerts.
+- updated help for custom cron.
 
 ### v0.1.9 - 2019/12/31
 **Flame Broiled**
@@ -96,8 +114,15 @@
     # remove plugin files from emhttp.
     rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
 
+    # remove old txt and json files.
+    rm -rf /boot/config/plugins/&name;/*.txt 2>/dev/null
+    rm -rf /boot/config/plugins/&name;/*.json 2>/dev/null
+
     # remove xmlstarlet.
     removepkg xmlstarlet* 2>/dev/null
+
+    # remove pigz.
+    removepkg pigz* 2>/dev/null
   </INLINE>
 </FILE>
 
@@ -110,6 +135,13 @@
   <MD5>&XMLMD5;</MD5>
 </FILE>
 
+<!--
+  pigz package file.
+-->
+<FILE Name="&packages;/&pigz;.txz" Run="upgradepkg --install-new">
+  <URL>"&gitURL;/packages/&pigz;.txz"</URL>
+  <MD5>&PIGZMD5;</MD5>
+</FILE>
 
 <!--
   plugin package file.
@@ -135,9 +167,13 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file
-    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script
-    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh create_vm_lists
+    # remove legacy default cronjob.
+    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
+    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
+    # update files and re-add missing cronjobs.
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file all
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script all
+    /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh create_vm_lists rebuild_text_files
   </INLINE>
 </FILE>
 
@@ -194,6 +230,9 @@
 
     # remove xmlstarlet.
     removepkg &xmlstarlet;
+
+    # remove pigz.
+    removepkg &pigz;
 
     # remove plugin.
     removepkg &name;-&tag;

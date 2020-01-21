@@ -1,0 +1,42 @@
+Menu="Vmbackup:2"
+Title="Upload Scripts"
+Icon="clone"
+---
+
+<?php
+
+  /* vmbackup plugin
+    copyright JTok */
+
+?>
+
+
+<div id="upload_form_div" class="wrapper_div">
+  <form id="upload_form" name="upload_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/upload.php" target="progressFrame">
+
+    <div id="scripts_div" class="container_full">
+      <!-- pre-script -->
+      <div id="title" class="nocontrol">Pre-Script</div>
+
+      <div id="pre_script_div" name="pre_script_div" class="script_divs clear_both">
+        <label>Paste a pre-script:</label>
+        <div id="pre_script_textarea_div" name="pre_script_textarea_div" class="clear_both">
+          <textarea id="pre_script_textarea" name="pre_script_textarea" rows="40" wrap="off" placeholder="Paste your pre-script here." spellcheck="false" class="script_textarea"><?php if (is_file($pre_script_file)) { $pre_script_contents = file_get_contents($pre_script_file); echo $pre_script_contents; } ?></textarea>
+        </div>
+        <input type="button" id="submit_pre_script" name="#submit_pre_script" value="Submit Pre-Script"><input type="button" id="remove_pre_script" name="#remove_pre_script" value="Remove Pre-Script">
+      </div>
+
+      <!-- post-script -->
+      <div id="title" class="nocontrol">Post-Script</div>
+
+      <div id="post_script_div" name="post_script_div" class="script_divs clear_both">
+        <label>Paste a post-script:</label>
+        <div id="post_script_textarea_div" name="post_script_textarea_div" class="clear_both">
+          <textarea id="post_script_textarea" name="post_script_textarea" rows="40" wrap="off" placeholder="Paste your post-script here." spellcheck="false" class="script_textarea"><?php if (is_file($post_script_file)) { $post_script_contents = file_get_contents($post_script_file); echo $post_script_contents; } ?></textarea>
+        </div>
+        <input type="button" id="submit_post_script" name="#submit_post_script" value="Submit Post-Script"><input type="button" id="remove_post_script" name="#remove_post_script" value="Remove Post-Script">
+      </div>
+
+    </div>
+  </form>
+</div>

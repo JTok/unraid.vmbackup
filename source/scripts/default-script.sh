@@ -1,8 +1,8 @@
 #!/bin/bash
 #backgroundOnly=true
-#arrayStarted=true
+#arrayStarted=no_config
 #noParity=no_config
-#version=v1.2.4 - 2019/12/30
+#version=v0.2.0 - 2020/01/21
 
 # based on unraid-vmbackup script version:
 # v1.2.3 - 2019/12/24
@@ -114,6 +114,12 @@ vms_to_backup_running="no_config"
 # default is 0. set to 1 to have reconstruct write (a.k.a. turbo write) enabled during the backup and then disabled after the backup completes.
 # NOTE: may break auto functionality when it is implemented. do not use if reconstruct write is already enabled. backups may run faster with this enabled.
 enable_reconstruct_write="no_config"
+
+# default is 9. set to 1 for the lowest compression level, but the highest speed, and 9 is the highest compression level, but the lowest speed.
+compression_level="no_config"
+
+# default is 2. choose the number of threads for pigz to use. set to 0 to let pigz automatically choose the number of online processors.
+threads="no_config"
 
 # default is 0. set this to 1 to compare files after copy and run rsync in the event of failure. could add significant amount of time depending on the size of vms.
 compare_files="no_config"
@@ -2315,7 +2321,25 @@ only_send_error_notifications="no_config"
             fi
 
             # backup files based off of backup file list.
-            (cd "$backup_location/$vm/" && tar zcvSf "$backup_location/$vm/$vm.tar.gz" -C "$backup_location/$vm/" -T "$backup_file_list")
+            # build tar command.
+            tar_cmd=()
+            tar_cmd=(tar cvSf)
+            tar_cmd+=(-)
+            tar_cmd+=(-C)
+            tar_cmd+=("$backup_location/$vm/")
+            tar_cmd+=(-T)
+            tar_cmd+=("$backup_file_list")
+
+            # build pigz command.
+            pigz_cmd=()
+            pigz_cmd=(pigz)
+            pigz_cmd+=(-"$compression_level")
+            if [[ "$threads" -ne 0 ]]; then
+              pigz_cmd+=(-p "$threads")
+            fi
+
+            # execute commands together to compress files
+            (cd "$backup_location/$vm/" && "${tar_cmd[@]}" | "${pigz_cmd[@]}" > "$backup_location/$vm/$vm.tar.gz")
 
             # remove backup file list.
             log_message "information: removing backup file list at $backup_file_list."
@@ -2379,7 +2403,25 @@ only_send_error_notifications="no_config"
           fi
 
           # backup files based off of backup file list.
-          (cd "$backup_location/$vm/" && tar zcvSf "$backup_location/$vm/$timestamp$vm.tar.gz" -C "$backup_location/$vm/" -T "$backup_file_list")
+          # build tar command.
+          tar_cmd=()
+          tar_cmd=(tar cvSf)
+          tar_cmd+=(-)
+          tar_cmd+=(-C)
+          tar_cmd+=("$backup_location/$vm/")
+          tar_cmd+=(-T)
+          tar_cmd+=("$backup_file_list")
+
+          # build pigz command.
+          pigz_cmd=()
+          pigz_cmd=(pigz)
+          pigz_cmd+=(-"$compression_level")
+          if [[ "$threads" -ne 0 ]]; then
+            pigz_cmd+=(-p "$threads")
+          fi
+
+          # execute commands together to compress files
+          (cd "$backup_location/$vm/" && "${tar_cmd[@]}" | "${pigz_cmd[@]}" > "$backup_location/$vm/$timestamp$vm.tar.gz")
 
           # remove backup file list.
           log_message "information: removing backup file list at $backup_file_list."

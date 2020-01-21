@@ -1,7 +1,7 @@
 #!/bin/bash
-#arrayStarted=true
+#arrayStarted=no_config
 #noParity=no_config
-#version=v1.0.2 - 2019/12/30
+#version=v1.1.0 - 2020/01/03
 
 snapshot_extension="no_config"
 
