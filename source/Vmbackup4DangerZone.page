@@ -28,6 +28,29 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Danger Zone</div>
     <div id="danger_zone_div" class="grid_container_left">
 
+      <label name="zstd_threads_label" class="input_description">Number of Zstandard compression threads:</label>
+      <div class="user_input_div"><select id="zstd_threads" name="zstd_threads" size="1">
+        <option value="0">auto</option>
+        <?php
+          $thread_count = cpu_thread_count(false);
+          for ($i = 1; $i <= $thread_count; $i++) {
+        ?>
+            <?=mk_option($conf_array['zstd_threads'], $i, $i);?>
+          <?php
+          }
+          ?>
+      </select></div>
+
+      <span class="custom_inline_help">
+        <p>Set to the number of threads you would like to use when compressing backups.</p>
+        <ul>
+          <li>Set to 'auto' to let the compression algorithm automatically detect the number of physical CPU cores.</li>
+          <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
+          <li>Default is '2'.</li>
+        </ul>
+      </span>
+
+
       <label name="pigz_threads_label" class="input_description">Number of legacy compression threads:</label>
       <div class="user_input_div"><select id="pigz_threads" name="pigz_threads" size="1">
         <option value="0">auto</option>
@@ -42,9 +65,9 @@ Icon="clone"
       </select></div>
 
       <span class="custom_inline_help">
-        <p>Set to the number of threads you would like to use when compressing backups.</p>
+        <p>Set to the number of threads you would like to use when using legacy compression.</p>
         <ul>
-          <li>Set to '0' to let the compression algorithm automatically choose the number of online processors.</li>
+          <li>Set to 'auto' to let the compression algorithm automatically choose the number of online processors.</li>
           <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
           <li>Default is '2'.</li>
         </ul>

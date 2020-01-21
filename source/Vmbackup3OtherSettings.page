@@ -136,6 +136,28 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Advanced Features</div>
     <div id="advanced_features" class="grid_container_left">
 
+      <label name="zstd_level_label" class="input_description">Zstandard compression level?</label>
+      <div class="user_input_div"><select id="zstd_level" name="zstd_level" size="1">
+        <?php
+          $zstd_level = create_number_array(1,19);
+          foreach($zstd_level as $key => $value) {
+        ?>
+            <?=mk_option($conf_array['zstd_level'], $value, $key);?>
+          <?php
+          }
+          ?>
+      </select></div>
+
+      <span class="custom_inline_help">
+        <p>Set to '1' for the lowest compression level with the largest file sizes, but the highest speeds.
+        <br>Set to '19' for the highest compression level with the smallest file sizes, but the lowest speeds.</p>
+        <ul>
+          <li>WARNING: Setting to numbers over 8 can be significantly slower, and may not produce meaningfully smaller backups.</li>
+          <li>Default is '3'.</li>
+        </ul>
+      </span>
+
+
       <label name="pigz_level_label" class="input_description">Legacy compression level?</label>
       <div class="user_input_div"><select id="pigz_level" name="pigz_level" size="1">
         <?php

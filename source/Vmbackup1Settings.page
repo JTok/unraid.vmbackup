@@ -166,6 +166,8 @@ Icon="clone"
     backup_frequency();
     // set the label for vms_to_backup based on backup_all_vms.
     set_vms_to_backup_lbl();
+    // set the disabled state for compression drop downs.
+    set_compression_drop_down_states();
     // assign functions to element events.
     assign_functions();
     // set default cookies.
@@ -431,6 +433,24 @@ Icon="clone"
         </ul>
       </span>
 
+
+      <label name="inline_zstd_compress_label" class="input_description">Use Zstandard compression?</label>
+      <div class="user_input_div"><select id="inline_zstd_compress" name="inline_zstd_compress" size="1">
+        <?=mk_option($conf_array['inline_zstd_compress'], "0", "No");?>
+        <?=mk_option($conf_array['inline_zstd_compress'], "1", "Yes");?>
+      </select></div>
+
+      <span name="inline_zstd_compress_help" class="custom_inline_help">
+        <p>Set to 'Yes' to compress backups using inline Zstandard compression.</p>
+        <ul>
+          <li>IMPORTANT: This can add to the amount of time the backup process takes depending on your hardware and configuration.</li>
+          <li>Uses Zstandard for multi-threaded compression.</li>
+          <li>Cannot be used with legacy compression.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </span>
+
+
       <label name="pigz_compress_label" class="input_description">Use legacy gzip compression?</label>
       <div class="user_input_div"><select id="pigz_compress" name="pigz_compress" size="1">
         <?=mk_option($conf_array['pigz_compress'], "0", "No");?>
@@ -445,9 +465,11 @@ Icon="clone"
           <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
           <li>Uses pigz for multi-threaded compression.</li>
           <li>Compression uses tar.gz for sparse file compatibility.</li>
+          <li>Cannot be used with Zstandard compression.</li>
           <li>Default is 'No'.</li>
         </ul>
       </span>
+
 
       <label name="enable_reconstruct_write_label" class="input_description">Enable reconstruct write?</label>
       <div class="user_input_div"><select id="enable_reconstruct_write" name="enable_reconstruct_write" size="1">
