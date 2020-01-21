@@ -5,7 +5,7 @@
 #version=v0.2.0 - 2020/01/21
 
 # based on unraid-vmbackup script version:
-# v1.2.3 - 2019/12/24
+# v1.3.1 - 2020/01/21
 
 #### DISCLAIMER ####
 # Use at your own risk. This is a work-in-progress and provided as is.
@@ -65,7 +65,17 @@ number_of_days_to_keep_backups="no_config"
 # WARNING: If VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
 number_of_backups_to_keep="no_config"
 
+# default is 0. set this to 1 if you would like to perform inline zstd compression.  This overrides the "compress_backups" and "compare_files" options.
+inline_zstd_compress="no_config"
+
+# default is 3. higher values may produce smaller archives but are slower and use more CPU.
+zstd_level="no_config"
+
+# default is 2. set this to the desired number of compression worker threads, or 0 to auto detect (i.e. use all)
+zstd_threads="no_config"
+
 # default is 0. set this to 1 if you would like to compress backups. This can add a significant amount of time to the backup process. uses tar.gz for sparse file compatibility.
+# this is the legacy setting for compression.
 # WARNING: do not turn on if you already have uncompressed backups. You will need to move or delete uncompressed backups before using. this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
 compress_backups="no_config"
 
@@ -84,6 +94,9 @@ number_of_log_files_to_keep="no_config"
 
 # default is "logs". set to "" to put in root of backups folder. set to "logs/<subfolder>" to keep logs separate if running multiple versions of this script.
 log_file_subfolder="no_config"
+
+# default is 0. create a vm specific log in each vm's subfolder using the same retention policy as the vm's backups.
+enable_vm_log_file="no_config"
 
 # default is 1. set to 0 to prevent notification system from being used. Script failures that occur before logging can start, and before this variable is validated will still be sent.
 send_notifications="no_config"
@@ -115,11 +128,11 @@ vms_to_backup_running="no_config"
 # NOTE: may break auto functionality when it is implemented. do not use if reconstruct write is already enabled. backups may run faster with this enabled.
 enable_reconstruct_write="no_config"
 
-# default is 9. set to 1 for the lowest compression level, but the highest speed, and 9 is the highest compression level, but the lowest speed.
+# default is 6. set to 1 for the lowest compression level, but the highest speed, and 9 is the highest compression level, but the lowest speed.
 compression_level="no_config"
 
 # default is 2. choose the number of threads for pigz to use. set to 0 to let pigz automatically choose the number of online processors.
-threads="no_config"
+compression_threads="no_config"
 
 # default is 0. set this to 1 to compare files after copy and run rsync in the event of failure. could add significant amount of time depending on the size of vms.
 compare_files="no_config"
@@ -190,6 +203,12 @@ only_send_error_notifications="no_config"
       "standard")
         # perform standard rsync.
         rsync -av"$rsync_dry_run_option" "$source" "$destination"
+        local copy_result="$?"
+        ;;
+
+      "inline_zstd_compress")
+        # perform inline zstd compression (with sparse file support).
+        zstd -$zstd_level -T$zstd_threads --sparse "$source" -o "$destination"
         local copy_result="$?"
         ;;
 
@@ -277,8 +296,13 @@ only_send_error_notifications="no_config"
     fi
     local force_notification="$4"
 
-    # add the message to the log file.
-    echo "$(date '+%Y-%m-%d %H:%M') $message" | tee -a "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup.log"
+    # add the message to the main log file.
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $message" | tee -a "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup.log"
+
+    # add the message to the vm specific log file if enabled.
+    if [[ -n "$vm_log_file" ]] && [ "$enable_vm_log_file" -eq 1 ]; then
+      echo "$(date '+%Y-%m-%d %H:%M:%S') $message" >> "$vm_log_file"
+    fi
 
     # check to see if the message is an error message.
     if [ "$is_error" -eq 1 ]; then
@@ -288,14 +312,14 @@ only_send_error_notifications="no_config"
 
       # send a notification if they are enabled.
       if [ "$send_notifications" -eq 1 ] || [ "$force_notification" == "force_notification" ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -s "unRAID VM Backup script" -d "$description" -i "$importance" -m "$(date '+%Y-%m-%d %H:%M') $message"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -s "unRAID VM Backup script" -d "$description" -i "$importance" -m "$(date '+%Y-%m-%d %H:%M:%S') $message"
       fi
     fi
 
     # send a detailed notification if it is enabled and if they should be used.
     if [ "$enable_detailed_notifications" -eq 1 ] && [ "$detailed_notifications" -eq 1 ]; then
       if [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-        /usr/local/emhttp/plugins/dynamix/scripts/notify -s "unRAID VM Backup script" -d "$description" -i "$importance" -m "$(date '+%Y-%m-%d %H:%M') $message"
+        /usr/local/emhttp/plugins/dynamix/scripts/notify -s "unRAID VM Backup script" -d "$description" -i "$importance" -m "$(date '+%Y-%m-%d %H:%M:%S') $message"
       fi
     fi
   }
@@ -309,11 +333,11 @@ only_send_error_notifications="no_config"
     local importance="$3"
 
     # show the message in the log.
-    echo "$(date '+%Y-%m-%d %H:%M') $message"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') $message"
 
     # send message notification.
     if [[ -n "$description" ]] && [[ -n "$importance" ]]; then
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -s "unRAID VM Backup script" -d "$description" -i "$importance" -m "$(date '+%Y-%m-%d %H:%M') $message"
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -s "unRAID VM Backup script" -d "$description" -i "$importance" -m "$(date '+%Y-%m-%d %H:%M:%S') $message"
     fi
   }
 
@@ -677,46 +701,40 @@ only_send_error_notifications="no_config"
               log_message "information: unable to perform snapshot for disk $disk on $vm. falling back to traditional backup. use_snapshots is $use_snapshots. vm_state is $vm_state. vdisk_type is ${vdisk_types[$disk]}."
             fi
 
+            local dest_disk="$backup_location/$vm/$new_disk"
+
+            if [ "$timestamp_files" -eq 1 ] || [ "$number_of_backups_to_keep" -ne 1 ]; then
+              # if timestamps are enabled or more than one backup is being kept, add a timestamp to the destination filename.
+              dest_disk="$backup_location/$vm/$timestamp$new_disk"
+            fi
+
             # copy or pretend to copy the vdisk to the backup location specified by the user.
-            # check if only one non-timestamped backup is being kept. if so, perform cp -f without a timestamp. if not, continue as normal.
-            if [ "$timestamp_files" -eq 0 ]  && [ "$number_of_backups_to_keep" -eq 1 ]; then
-              copy_file "$disk" "$backup_location/$vm/$new_disk" "$rsync_dry_run_option" "sparse" "$rsync_only"
-
-              # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
-              touch -d "now" "$backup_location/$vm/$new_disk"
-
-              # run compare function. compare will not run if compare_files is disabled.
-              run_compare "$disk" "$backup_location/$vm/$new_disk" "vdisk"
-
+            if [ "$inline_zstd_compress" -eq 1 ]; then
+              # if inline_zstd_compress is enabled, add ".zst" to the destination filename, and don't run the comparison.
+              dest_disk+=".zst"
+              copy_file "$disk" "$dest_disk" "$rsync_dry_run_option" "inline_zstd_compress" "$rsync_only"
             else
 
-              # check to see if an existing backup was already copied. if so, use rsync. if not, use cp.
-              if [ ! -f "$backup_location/$vm/$timestamp$new_disk" ]; then
-                copy_file "$disk" "$backup_location/$vm/$timestamp$new_disk" "$rsync_dry_run_option" "sparse" "$rsync_only"
-
-                # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
-                touch -d "now" "$backup_location/$vm/$timestamp$new_disk"
-
+              if [ -f "$dest_disk" ]; then
+                # if there is an existing backup, use rsync to just copy the changes (i.e. delta_sync).
+                copy_file "$disk" "$dest_disk" "$rsync_dry_run_option" "inplace" "$rsync_only"
               else
-
-                # use rsync because delta_sync was enabled.
-                copy_file "$disk" "$backup_location/$vm/$timestamp$new_disk" "$rsync_dry_run_option" "inplace" "$rsync_only"
-
-                # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
-                touch -d "now" "$backup_location/$vm/$timestamp$new_disk"
+                # otherwise, copy the whole file (with sparse support)
+                copy_file "$disk" "$dest_disk" "$rsync_dry_run_option" "sparse" "$rsync_only"
               fi
 
               # run compare function. compare will not run if compare_files is disabled.
-              run_compare "$disk" "$backup_location/$vm/$timestamp$new_disk" "vdisk"
+              run_compare "$disk" "$dest_disk" "vdisk"
             fi
+
+            # make sure the copy has the current date/time for the modified attribute so that removing old backups by date will work.
+            touch -d "now" "$dest_disk"
 
             # send a message to the user based on whether there was an actual copy or a dry-run.
             if [ "$actually_copy_files" -eq 0 ]; then
-              log_message "information: dry-run backup of $new_disk vdisk to $backup_location/$vm/$timestamp$new_disk complete."
-
+              log_message "information: dry-run backup of $disk vdisk to $dest_disk complete."
             else
-
-              log_message "information: backup of $new_disk vdisk to $backup_location/$vm/$timestamp$new_disk complete."
+              log_message "information: backup of $disk vdisk to $dest_disk complete."
             fi
 
             # check to see if snapshot was created.
@@ -766,20 +784,25 @@ only_send_error_notifications="no_config"
     for extension in "${vdisk_extensions[@]}"
     do
 
+      local _ext="$extension"
+      if [ "$inline_zstd_compress" -eq 1 ]; then
+        _ext+=".zst"
+      fi
+
       # check to see if find command is empty.
       if [ ${#vdisk_extensions_find_cmd[@]} -eq 0 ]; then
 
-        # build intial find command.
+        # build initial find command.
         vdisk_extensions_find_cmd=(find)
         vdisk_extensions_find_cmd+=("$search_directory")
         vdisk_extensions_find_cmd+=(-type f)
         vdisk_extensions_find_cmd+=(\()
-        vdisk_extensions_find_cmd+=(-name '*.'"$extension")
+        vdisk_extensions_find_cmd+=(-name '*.'"$_ext")
 
       else
 
         # add additional extensions to find command.
-        vdisk_extensions_find_cmd+=(-or -name '*.'"$extension")
+        vdisk_extensions_find_cmd+=(-or -name '*.'"$_ext")
       fi
     done
 
@@ -831,6 +854,51 @@ only_send_error_notifications="no_config"
 
     # add delete command to remove command.
     remove_old_files_cmd+=(-delete)
+  }
+
+  # remove old files
+  remove_old_files () {
+
+    # assign arguments to local variables for readability.
+    local -n _find_cmd=$1
+    local _type="$2"
+
+    # create variable equal to number_of_days_to_keep_backups plus one to make sure that there are files younger than the cutoff date.
+    local _days_plus_one=$((number_of_days_to_keep_backups + 1))
+    local _days_to_mins=$((24*60))
+
+    local _deleted_files
+    if [[ -n $("${_find_cmd[@]}" -mmin -$((_days_plus_one*_days_to_mins))) ]]; then
+      _deleted_files=$("${_find_cmd[@]}" -mmin +$((number_of_days_to_keep_backups*_days_to_mins)) -delete -print)
+    fi
+    if [[ -n "$_deleted_files" ]]; then
+      for _deleted_file in $_deleted_files
+      do
+        log_message "information: $_deleted_file $_type file." "script removing $_type file" "normal"
+      done
+    else
+      log_message "information: did not find any $_type files to remove." "script removing $_type file" "normal"
+    fi
+  }
+
+  # remove over limit files
+  remove_over_limit_files () {
+
+    # assign arguments to local variables for readability.
+    local -n _find_cmd=$1
+    local _number_of_files_to_keep="$2"
+    local _type="$3"
+
+    local _deleted_files
+    _deleted_files=$("${_find_cmd[@]}" -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$((_number_of_files_to_keep + 1)) | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
+    if [[ -n "$_deleted_files" ]]; then
+      for _deleted_file in $_deleted_files
+      do
+        log_message "information: $_deleted_file $_type file." "script removing $_type file" "normal"
+      done
+    else
+      log_message "information: did not find any $_type files to remove." "script removing $_type file" "normal"
+    fi
   }
 
   # prepare vm for backup.
@@ -1220,6 +1288,27 @@ only_send_error_notifications="no_config"
 
   fi
 
+  # check to see if vm specific log files are enabled. if yes, continue. if no, continue. if input invalid, exit.
+  if [[ "$enable_vm_log_file" =~ ^(0|1)$ ]]; then
+
+    if [ "$enable_vm_log_file" -eq 0 ]; then
+
+      log_message "information: enable_vm_log_file is $enable_vm_log_file. vm specific logs will not be created."
+
+    elif  [ "$enable_vm_log_file" -eq 1 ]; then
+
+      log_message "information: enable_vm_log_file is $enable_vm_log_file. vm specific logs will be created."
+
+    fi
+
+  else
+
+    log_message "failure: enable_vm_log_file is $enable_vm_log_file. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+
+    exit 1
+
+  fi
+
   # check to see if all vms should be backed up. if yes, continue. if no, continue. if input invalid, exit.
   if [[ "$backup_all_vms" =~ ^(0|1)$ ]]; then
 
@@ -1374,27 +1463,60 @@ only_send_error_notifications="no_config"
   fi
 
 
-  # check to see if backups should be compressed. if yes, continue. if no, continue. if input invalid, exit.
-  if [[ "$compress_backups" =~ ^(0|1)$ ]]; then
+  # check to see if vdisks should be inline compressed.
+  if [[ ! "$inline_zstd_compress" =~ ^(0|1)$ ]]; then
+    log_message "failure: inline_zstd_compress is $inline_zstd_compress. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+    exit 1
+  elif [ "$inline_zstd_compress" -eq 0 ]; then
+    log_message "information: inline_zstd_compress is $inline_zstd_compress. vdisk images will not be inline compressed."
+  elif [ "$inline_zstd_compress" -eq 1 ]; then
+    log_message "information: inline_zstd_compress is $inline_zstd_compress. vdisk images will be inline compressed but will not be compared afterwards or post compressed."
+  fi
 
-    if [ "$compress_backups" -eq 0 ]; then
+  # if inline_zstd_compress is enabled, check to see if zstd_level and zstd_threads are valid and in range.
+  if [ "$inline_zstd_compress" -eq 1 ]; then
 
-      log_message "information: compress_backups is $compress_backups. backups will not be compressed."
-
-    elif [ "$compress_backups" -eq 1 ]; then
-
-      log_message "information: compress_backups is $compress_backups. backups will be compressed."
-
+    # check to see if zstd_level is valid and in range.
+    if [[ ! "$zstd_level" =~ ^[0-9]+$ ]]; then
+      log_message "failure: zstd_level is $zstd_level. this is not a valid format. expecting a number between [1 - 19]. exiting." "script failed" "alert"
+      exit 1
+    elif [ "$zstd_level" -lt 1 ] || [ "$zstd_level" -gt 19 ] ; then
+      log_message "failure: zstd_level is $zstd_level. expecting a number between [1 - 19]. exiting." "script failed" "alert"
+      exit 1
+    elif [ "$zstd_level" -gt 8 ] ; then
+      log_message "warning: zstd_level is $zstd_level. this will be slower and may not produce meaningfully smaller backup images."
+    else
+      log_message "information: zstd_level is $zstd_level."
     fi
 
-  else
-
-    log_message "failure: compress_backups is $compress_backups. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
-
-    exit 1
+    # check to see if zstd_threads is valid and in range.
+    if [[ ! "$zstd_threads" =~ ^[0-9]+$ ]]; then
+      log_message "failure: zstd_threads is $zstd_threads. this is not a valid format. expecting a number between [0 - 200]. exiting." "script failed" "alert"
+      exit 1
+    elif [ "$zstd_threads" -lt 0 ] || [ "$zstd_threads" -gt 200 ] ; then
+      log_message "failure: zstd_threads is $zstd_threads. expecting a number between [0 - 200]. exiting." "script failed" "alert"
+      exit 1
+    elif [ "$zstd_threads" -gt 4 ] ; then
+      log_message "warning: zstd_threads is $zstd_threads. this is a lot of threads to use for compression."
+    elif [ "$zstd_threads" -eq 0 ] ; then
+      log_message "information: zstd_threads is $zstd_threads. the actual number of threads will be auto determined."
+    else
+      log_message "information: zstd_threads is $zstd_threads."
+    fi
 
   fi
 
+  # if inline_zstd_compress is disabled, check to see if backups should be post compressed.
+  if [ "$inline_zstd_compress" -ne 1 ]; then
+    if [[ ! "$compress_backups" =~ ^(0|1)$ ]]; then
+      log_message "failure: compress_backups is $compress_backups. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+      exit 1
+    elif [ "$compress_backups" -eq 0 ]; then
+      log_message "information: compress_backups is $compress_backups. backups will not be post compressed."
+    elif [ "$compress_backups" -eq 1 ]; then
+      log_message "information: compress_backups is $compress_backups. backups will be post compressed."
+    fi
+  fi
 
   #### advanced variables ####
 
@@ -1518,28 +1640,17 @@ only_send_error_notifications="no_config"
 
   fi
 
-
-  # check to see if files should be compared after backup. if yes, continue. if no, continue. if input invalid, exit.
-  if [[ "$compare_files" =~ ^(0|1)$ ]]; then
-
-    if [ "$compare_files" -eq 0 ]; then
-
+  # if inline_zstd_compress is disabled, check to see if files should be compared after backup.
+  if [ "$inline_zstd_compress" -ne 1 ]; then
+    if [[ ! "$compare_files" =~ ^(0|1)$ ]]; then
+      log_message "failure: compare_files is $compare_files. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+      exit 1
+    elif [ "$compare_files" -eq 0 ]; then
       log_message "information: compare_files is $compare_files. files will not be compared after backups."
-
     elif [ "$compare_files" -eq 1 ]; then
-
       log_message "information: compare_files is $compare_files. files will be compared after backups."
-
     fi
-
-  else
-
-    log_message "failure: compare_files is $compare_files. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
-
-    exit 1
-
   fi
-
 
   # check to see if config should be backed up. if yes, continue. if no, continue. if input invalid, exit.
   if [[ "$backup_xml" =~ ^(0|1)$ ]]; then
@@ -1996,6 +2107,9 @@ only_send_error_notifications="no_config"
 
     fi
 
+    if [ "$enable_vm_log_file" -eq 1 ]; then
+      vm_log_file="$backup_location/$vm/$timestamp""unraid-vmbackup.log"
+    fi
 
     # see if vdisks should be backed up, if the number of backups is more than 1, if snapshots are being used, and if delta sync is enabled.
     if [ "$backup_vdisks" -eq 1 ] && [ "$number_of_backups_to_keep" -ne 1 ] && [ "$use_snapshots" -ne 1 ] && [ "$disable_delta_sync" -ne 1 ]; then
@@ -2211,7 +2325,7 @@ only_send_error_notifications="no_config"
       fi
 
       # check to see if backup files should be compressed.
-      if [ "$compress_backups" -eq 1 ]; then
+      if [ "$compress_backups" -eq 1 ] && [ "$inline_zstd_compress" -ne 1 ]; then
 
         # check if only one non-timestamped backup is being kept. if so, perform compression without a timestamp. if not, continue as normal.
         if [ "$timestamp_files" -eq 0 ]  && [ "$number_of_backups_to_keep" -eq 1 ]; then
@@ -2334,8 +2448,8 @@ only_send_error_notifications="no_config"
             pigz_cmd=()
             pigz_cmd=(pigz)
             pigz_cmd+=(-"$compression_level")
-            if [[ "$threads" -ne 0 ]]; then
-              pigz_cmd+=(-p "$threads")
+            if [[ "$compression_threads" -ne 0 ]]; then
+              pigz_cmd+=(-p "$compression_threads")
             fi
 
             # execute commands together to compress files
@@ -2416,8 +2530,8 @@ only_send_error_notifications="no_config"
           pigz_cmd=()
           pigz_cmd=(pigz)
           pigz_cmd+=(-"$compression_level")
-          if [[ "$threads" -ne 0 ]]; then
-            pigz_cmd+=(-p "$threads")
+          if [[ "$compression_threads" -ne 0 ]]; then
+            pigz_cmd+=(-p "$compression_threads")
           fi
 
           # execute commands together to compress files
@@ -2513,146 +2627,34 @@ only_send_error_notifications="no_config"
 
       log_message "information: cleaning out backups older than $number_of_days_to_keep_backups days in location ONLY if newer files exist in $backup_location/$vm/" "script removing old backups" "normal"
 
-      # create variable equal to number_of_days_to_keep_backups plus one to make sure that there are files younger than the cutoff date.
-      days_plus_one=$((number_of_days_to_keep_backups + 1))
 
-      for j in $backup_location/$vm/
+      # remove old config files if backup_xml is 1.
+      if [ "$backup_xml" -eq 1 ]; then
+        find_cmd=(find "$backup_location/$vm/" -type f -name '*.xml')
+        remove_old_files find_cmd "config"
+      fi
 
-      do
+      # remove old nvram files if backup_nvram is 1.
+      if [ "$backup_nvram" -eq 1 ]; then
+        find_cmd=(find "$backup_location/$vm/" -type f -name '*.'"$nvram_extension")
+        remove_old_files find_cmd "nvram"
+      fi
 
-        # remove old config files if backup_xml is 1.
-        if [ "$backup_xml" -eq 1 ] && [[ -n $(find "$j" -type f \( -name '*.xml' \) -mmin -$((days_plus_one*24*60))) ]]; then
+      # remove old vdisk image files (including inline zstd compressed ones) if backup_vdisks is 1.
+      if [ "$backup_vdisks" -eq 1 ]; then
+        build_vdisk_extensions_find_cmd "$backup_location/$vm/"
+        remove_old_files vdisk_extensions_find_cmd "vdisk image"
+      fi
 
-          if [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
+      # remove old tarballs if compress_backups is 1.
+      if [ "$compress_backups" -eq 1 ]; then
+        find_cmd=(find "$backup_location/$vm/" -type f -name '*.tar.gz')
+        remove_old_files find_cmd "tarball"
+      fi
 
-            deleted_files=$(find "$j" -type f \( -name '*.xml' \) -mmin +$((number_of_days_to_keep_backups*24*60)) -delete -print)
-
-            if [[ -n "$deleted_files" ]]; then
-        
-              for deleted_file in $deleted_files
-
-              do
-
-                log_message "information: $deleted_file." "script removing xmls" "normal"
-
-              done
-
-            else
-
-              log_message "information: did not find any config files to remove." "script removing xmls" "normal"
-
-            fi
-
-          else
-
-            find "$j" -type f \( -name '*.xml' \) -mmin +$((number_of_days_to_keep_backups*24*60)) -delete
-
-          fi
-
-        fi
-
-        # remove old nvram files if backup_nvram is 1.
-        if [ "$backup_nvram" -eq 1 ] && [[ -n $(find "$j" -type f \( -name '*.'"$nvram_extension" \) -mmin -$((days_plus_one*24*60))) ]]; then
-
-          if [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-            deleted_files=$(find "$j" -type f \( -name '*.'"$nvram_extension" \) -mmin +$((number_of_days_to_keep_backups*24*60)) -delete -print)
-
-            if [[ -n "$deleted_files" ]]; then
-        
-              for deleted_file in $deleted_files
-
-              do
-
-                log_message "information: $deleted_file." "script removing nvrams" "normal"
-
-              done
-
-            else
-
-              log_message "information: did not find any nvram files to remove." "script removing nvrams" "normal"
-
-            fi
-
-          else
-
-            find "$j" -type f \( -name '*.'"$nvram_extension" \) -mmin +$((number_of_days_to_keep_backups*24*60)) -delete
-
-          fi
-
-        fi
-
-        # remove old images if backup_vdisks is 1.
-        if [ "$backup_vdisks" -eq 1 ]; then
-
-          # build vdisk_extensions_find_cmd.
-          build_vdisk_extensions_find_cmd "$j"
-
-          # remove old images.
-          if [[ -n $("${vdisk_extensions_find_cmd[@]}" -mmin -$((days_plus_one*24*60))) ]]; then
-
-            if [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-              deleted_files=$("${vdisk_extensions_find_cmd[@]}" -mmin +$((number_of_days_to_keep_backups*14*60)) -delete -print)
-
-              if [[ -n "$deleted_files" ]]; then
-          
-                for deleted_file in $deleted_files
-
-                do
-
-                  log_message "information: $deleted_file." "script removing vdisks" "normal"
-
-                done
-
-              else
-
-                log_message "information: did not find any image files to remove." "script removing vdisks" "normal"
-
-              fi
-
-            else
-            
-              "${vdisk_extensions_find_cmd[@]}" -mmin +$((number_of_days_to_keep_backups*14*60)) -delete
-            
-            fi
-
-          fi
-
-        fi
-
-        # remove old tarballs if compress_backups is 1.
-        if [ "$compress_backups" -eq 1 ] && [[ -n $(find "$j" -type f \( -name '*.tar.gz' \) -mmin -$((days_plus_one*24*60))) ]]; then
-          
-          if [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-            deleted_files=$(find "$j" -type f \( -name '*.tar.gz' \) -mmin +$((number_of_days_to_keep_backups*24*60)) -delete -print)
-
-            if [[ -n "$deleted_files" ]]; then
-        
-              for deleted_file in $deleted_files
-
-              do
-
-                log_message "information: $deleted_file." "script removing tarballs" "normal"
-
-              done
-
-            else
-
-              log_message "information: did not find any compressed files to remove." "script removing tarballs" "normal"
-
-            fi
-
-          else
-
-            find "$j" -type f \( -name '*.tar.gz' \) -mmin +$((number_of_days_to_keep_backups*24*60)) -delete
-
-          fi
-
-        fi
-
-      done
+      # remove old vm log files
+      find_cmd=(find "$backup_location/$vm/" -type f -name '*unraid-vmbackup.log')
+      remove_old_files find_cmd "vm log"
 
     fi
 
@@ -2665,93 +2667,16 @@ only_send_error_notifications="no_config"
 
       log_message "information: cleaning out backups over $number_of_backups_to_keep in location $backup_location/$vm/" "script removing old backups" "normal"
 
-      # create variable equal to number_of_backups_to_keep plus one to make sure that the correct number of files are kept.
-      backups_plus_one=$((number_of_backups_to_keep + 1))
-      
       # remove config files that are over the limit if backup_xml is 1.
-      if [ "$backup_xml" -eq 1 ] && [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-        deleted_files=$(find "$backup_location/$vm/"*.xml -type f -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$backups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-        if [[ -n "$deleted_files" ]]; then
-        
-          for deleted_file in $deleted_files
-
-          do
-
-            log_message "information: $deleted_file." "script removing xmls" "normal"
-
-          done
-
-        else
-
-          log_message "information: did not find any config files to remove." "script removing xmls" "normal"
-
-        fi
-
-      elif [ "$backup_xml" -eq 1 ]; then
-
-        deleted_files=$(find "$backup_location/$vm/"*.xml -type f -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$backups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-        if [[ -n "$deleted_files" ]]; then
-        
-          for deleted_file in $deleted_files
-
-          do
-
-            log_message "information: $deleted_file."
-
-          done
-
-        else
-
-          log_message "information: did not find any config files to remove."
-
-        fi
-
+      if [ "$backup_xml" -eq 1 ]; then
+        find_cmd=(find "$backup_location/$vm/" -type f -name '*.xml')
+        remove_over_limit_files find_cmd "$number_of_backups_to_keep" "config"
       fi
 
       # remove nvram files that are over the limit if backup_nvram is 1.
-      if [ "$backup_nvram" -eq 1 ] && [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-        deleted_files=$(find "$backup_location/$vm/"*."$nvram_extension" -type f -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$backups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-        if [[ -n "$deleted_files" ]]; then
-        
-          for deleted_file in $deleted_files
-
-          do
-
-            log_message "information: $deleted_file." "script removing nvrams" "normal"
-
-          done
-
-        else
-
-          log_message "information: did not find any nvram files to remove." "script removing nvrams" "normal"
-
-        fi
-
-      elif [ "$backup_nvram" -eq 1 ]; then
-
-        deleted_files=$(find "$backup_location/$vm/"*."$nvram_extension" -type f -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$backups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-        if [[ -n "$deleted_files" ]]; then
-        
-          for deleted_file in $deleted_files
-
-          do
-
-            log_message "information: $deleted_file."
-
-          done
-
-        else
-
-          log_message "information: did not find any nvram files to remove."
-
-        fi
-      
+      if [ "$backup_nvram" -eq 1 ]; then
+        find_cmd=(find "$backup_location/$vm/" -type f -name '*.'"$nvram_extension")
+        remove_over_limit_files find_cmd "$number_of_backups_to_keep" "nvram"
       fi
 
       # remove image files that are over the limit if backup_vdisks is 1.
@@ -2762,159 +2687,64 @@ only_send_error_notifications="no_config"
 
         # find each vdisk extension and use it to build a regular expression to get a vdisk's trailing number.
         for extension in "${vdisk_extensions[@]}"
-
         do
 
-          # check to see if regular expression is empty.
+          # if empty, build initial regular expression, otherwise append to it
           if [[ -z "$vdisknumberextregex" ]]; then
-
-            # build intial regular expression.
             vdisknumberextregex='[0-9]+\.('
-            vdisknumberextregex="${vdisknumberextregex}$extension"
-
+            vdisknumberextregex+="$extension"
           else
-
-            # add additional extensions to regular expression.
-            vdisknumberextregex="${vdisknumberextregex}|$extension"
-
+            vdisknumberextregex+="|$extension"
           fi
-          
+
+          if [ "$inline_zstd_compress" -eq 1 ]; then
+            vdisknumberextregex+=".zst"
+          fi
         done
 
         # put closing parenthesis on regular expression.
-        vdisknumberextregex="${vdisknumberextregex})"
-
-        vdisknumberonlyregex="[0-9]+"
+        vdisknumberextregex+=")"
 
         # get number of vdisks
+        vdisknumberonlyregex="[0-9]+"
         for imagefilename in "$backup_location/$vm/"*
-
         do
-
           # get highest number from vdisk count
           if [[ $imagefilename =~ $vdisknumberextregex ]]; then
-
             imagefilenamenumberext=${BASH_REMATCH[0]}
-            
             if [[ $imagefilenamenumberext =~ $vdisknumberonlyregex ]]; then
-
               vdisk_numberonly=${BASH_REMATCH[0]}
-
             fi
-
           fi
-
           if [[ "$numberofvdisks" =~ ^[0-9]+$ ]] && [[ "$vdisk_numberonly" =~ ^[0-9]+$ ]]; then
-
             if [ "$numberofvdisks" -lt "$vdisk_numberonly" ]; then
-
               numberofvdisks="$vdisk_numberonly"
-
             fi
-
           fi
-
         done
 
-        # create variable equal to number_of_backups_to_keep, times the number of vdisks, plus one; to make sure that the correct number of files are kept.
-        vdiskbackups_plus_one=$(((number_of_backups_to_keep * numberofvdisks) + 1))
+        # create variable equal to number_of_backups_to_keep, times the number of vdisks, to make sure that the correct number of files are kept.
+        number_of_files_to_keep=$((number_of_backups_to_keep * numberofvdisks))
 
-        # build vdisk_extensions_find_cmd.
         build_vdisk_extensions_find_cmd "$backup_location/$vm/"
-
-        # add printf to find command.
-        vdisk_extensions_find_cmd+=(-printf '%T@\t%p\n')
-
-        # remove image files that are over the limit.
-        if [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-          deleted_files=$("${vdisk_extensions_find_cmd[@]}" | sort -t $'\t' -gr | tail -n +$vdiskbackups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-          if [[ -n "$deleted_files" ]]; then
-          
-            for deleted_file in $deleted_files
-
-            do
-
-              log_message "information: $deleted_file." "script removing vdisks" "normal"
-
-            done
-
-          else
-
-            log_message "information: did not find any image files to remove." "script removing vdisks" "normal"
-
-          fi
-
-        else
-
-          deleted_files=$("${vdisk_extensions_find_cmd[@]}" | sort -t $'\t' -gr | tail -n +$vdiskbackups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-          if [[ -n "$deleted_files" ]]; then
-          
-            for deleted_file in $deleted_files
-
-            do
-
-              log_message "information: $deleted_file."
-
-            done
-
-          else
-
-            log_message "information: did not find any image files to remove."
-
-          fi
-
-        fi
-
+        remove_over_limit_files vdisk_extensions_find_cmd "$number_of_files_to_keep" "vdisk image"
       fi
 
-      # remove tar.gz files that are over the limit if compress_backups is 1.
-      if [ "$compress_backups" -eq 1 ] && [ "$detailed_notifications" -eq 1 ] && [ "$send_notifications" -eq 1 ] && [ "$only_send_error_notifications" -eq 0 ]; then
-
-        deleted_files=$(find "$backup_location/$vm/"*.tar.gz -type f -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$backups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-        if [[ -n "$deleted_files" ]]; then
-        
-          for deleted_file in $deleted_files
-
-          do
-
-            log_message "information: $deleted_file." "script removing tarballs" "normal"
-
-          done
-
-        else
-
-          log_message "information: did not find any compressed files to remove." "script removing tarballs" "normal"
-
-        fi
-
-      elif [ "$compress_backups" -eq 1 ]; then
-
-        deleted_files=$(find "$backup_location/$vm/"*.tar.gz -type f -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$backups_plus_one | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
-
-        if [[ -n "$deleted_files" ]]; then
-        
-          for deleted_file in $deleted_files
-
-          do
-
-            log_message "information: $deleted_file."
-
-          done
-
-        else
-
-          log_message "information: did not find any compressed files to remove."
-
-        fi
-
+      # remove tarball files that are over the limit if compress_backups is 1.
+      if [ "$compress_backups" -eq 1 ]; then
+        find_cmd=(find "$backup_location/$vm/" -type f -name '*.tar.gz')
+        remove_over_limit_files find_cmd "$number_of_backups_to_keep" "tarball"
       fi
+
+      # remove vm log files that are over the limit
+      # shellcheck disable=SC2034
+      find_cmd=(find "$backup_location/$vm/" -type f -name '*unraid-vmbackup.log')
+      remove_over_limit_files find_cmd "$number_of_backups_to_keep" "vm log"
 
     fi
 
+    unset vm_log_file
+    
     # delete the working copy of the config.
     log_message "information: removing local $vm.xml."
     rm -fv "$vm.xml"
@@ -3076,7 +2906,7 @@ only_send_error_notifications="no_config"
 
     if [ "$errors" -eq 1 ] && [ "$keep_error_log_file" -eq 1 ]; then
     
-      echo "$(date '+%Y-%m-%d %H:%M') warning: removing log file." | tee -a "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup_error.log"
+      echo "$(date '+%Y-%m-%d %H:%M:%S') warning: removing log file." | tee -a "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup_error.log"
 
       rm -fv "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup.log"
 
@@ -3118,7 +2948,7 @@ only_send_error_notifications="no_config"
 
   if [ "$errors" -eq 1 ] && [ "$keep_error_log_file" -eq 1 ]; then
 
-    echo "$(date '+%Y-%m-%d %H:%M') Stop logging to error log file."  | tee -a "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup_error.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Stop logging to error log file."  | tee -a "$backup_location/$log_file_subfolder$timestamp""unraid-vmbackup_error.log"
 
   fi
 
@@ -3127,11 +2957,11 @@ only_send_error_notifications="no_config"
 
     if [ "$errors" -eq 1 ]; then
 
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "unraid-vmbackup_error" -s "unRAID VM Backup script" -d "script finished with errors" -i "alert" -m "$(date '+%Y-%m-%d %H:%M') warning: unRAID VM Backup script finished with errors. See log files in $backup_location/$log_file_subfolder for details."
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "unraid-vmbackup_error" -s "unRAID VM Backup script" -d "script finished with errors" -i "alert" -m "$(date '+%Y-%m-%d %H:%M:%S') warning: unRAID VM Backup script finished with errors. See log files in $backup_location/$log_file_subfolder for details."
 
     elif [ "$only_send_error_notifications" -eq 0 ]; then
 
-      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "unraid-vmbackup_finished" -s "unRAID VM Backup script" -d "script finished" -i "normal" -m "$(date '+%Y-%m-%d %H:%M') information: unRAID VM Backup script finished. See log files in $backup_location/$log_file_subfolder for details."
+      /usr/local/emhttp/plugins/dynamix/scripts/notify -e "unraid-vmbackup_finished" -s "unRAID VM Backup script" -d "script finished" -i "normal" -m "$(date '+%Y-%m-%d %H:%M:%S') information: unRAID VM Backup script finished. See log files in $backup_location/$log_file_subfolder for details."
 
     fi
 
