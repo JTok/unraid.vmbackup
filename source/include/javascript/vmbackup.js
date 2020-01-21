@@ -20,6 +20,24 @@
     add_validation_events('snapshot_extension', 'Please enter a valid extension. Cannot be blank.');
   }
 
+  // set the disabled state for compression drop downs.
+  function set_compression_drop_down_states() {
+    if ($("#pigz_compress").val() == "0") {
+      change_prop("#pigz_level", "disabled", true);
+      change_prop("#pigz_threads", "disabled", true);
+    } else {
+      change_prop("#pigz_level", "disabled", false);
+      change_prop("#pigz_threads", "disabled", false);
+    }
+    if ($("#inline_zstd_compress").val() == "0") {
+      change_prop("#zstd_level", "disabled", true);
+      change_prop("#zstd_threads", "disabled", true);
+    } else {
+      change_prop("#zstd_level", "disabled", false);
+      change_prop("#zstd_threads", "disabled", false);
+    }
+  }
+
   // function to update form inputs based on current config.
   function update_form_config(config) {
     if (config.trim().length === 0) {
@@ -107,6 +125,7 @@
     vmbackup_settings_form_input_change();
     vmbackup_other_settings_form_input_change();
     vmbackup_danger_zone_form_input_change();
+    compression_type_change();
     current_config_change();
     // tab click events.
     tab_click_events();
@@ -193,6 +212,22 @@
       change_attr("#minute", "disabled", false);
       change_attr("#custom", "disabled", true);
     }
+  }
+
+  // set the change event for compression types.
+  function compression_type_change() {
+    $("#inline_zstd_compress").on("change", function () {
+      if ($("#inline_zstd_compress").val() == "1") {
+        $("#pigz_compress").val("0");
+        set_compression_drop_down_states();
+      }
+    });
+    $("#pigz_compress").on("change", function () {
+      if ($("#pigz_compress").val() == "1") {
+        $("#inline_zstd_compress").val("0");
+        set_compression_drop_down_states();
+      }
+    });
   }
 
   // set the change event for current_config.
@@ -596,6 +631,7 @@
   function assign_vmbackup_settings_functions() {
     // monitor form input changes.
     vmbackup_settings_form_input_change();
+    compression_type_change();
     current_config_change();
     // monitor specific Vmbackup1Settings inputs for changes and click events.
     vdisk_extensions_to_skip_change();
@@ -934,6 +970,7 @@
     $("#vmbackup_other_settings_div").load(location.href + " #vmbackup_other_settings_div",
       function () {
         assign_vmbackup_other_settings_functions();
+        set_compression_drop_down_states();
         set_width_vmbackup_other_settings();
       });
     // disable the apply button.
@@ -1223,6 +1260,7 @@
     $("#vmbackup_danger_zone_div").load(location.href + " #vmbackup_danger_zone_div",
       function () {
         assign_vmbackup_danger_zone_functions();
+        set_compression_drop_down_states();
         set_width_vmbackup_danger_zone();
       });
     // disable the apply button.
