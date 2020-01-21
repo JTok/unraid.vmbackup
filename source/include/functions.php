@@ -80,18 +80,21 @@
 
   // function to replace legacy variables from past versions of the plugin.
   function replace_legacy_variables($conf_array) {
+    // update new variables with values from legacy variables before removal.
     if (strcasecmp($conf_array["pigz_compress"], $conf_array["compress_backups"])) {
       $conf_array["pigz_compress"] = $conf_array["compress_backups"];
-      unset($conf_array["compress_backups"]);
     }
     if (strcasecmp($conf_array["pigz_level"], $conf_array["compression_level"])) {
       $conf_array["pigz_level"] = $conf_array["compression_level"];
-      unset($conf_array["compression_level"]);
     }
     if (strcasecmp($conf_array["pigz_threads"], $conf_array["threads"])) {
       $conf_array["pigz_threads"] = $conf_array["threads"];
-      unset($conf_array["threads"]);
     }
+    // remove legacy variables.
+    unset($conf_array["compress_backups"]);
+    unset($conf_array["compression_level"]);
+    unset($conf_array["threads"]);
+
     // return updated config array.
     return $conf_array;
   }
@@ -352,32 +355,31 @@
 
   // function to get number of CPU cores using php
   function cpu_thread_count($include_smt = true) {
-    // make sure we can read cpuinfo.
-    // if (is_readable("/proc/cpuinfo")) {
-      // get the cpu core count from nproc.
-      exec("nproc --all", $thread_output);
-      $thread_count = $thread_output[0];
-      if (!is_int($thread_count)) {
-        $thread_count = 0;
-      }
+    // get the cpu core count from nproc.
+    exec("nproc --all", $thread_output);
+    $thread_count = trim($thread_output[0]);
+    if (!ctype_digit($thread_count)) {
+      $thread_count = 0;
+    } else {
+      // cast thread_count as int.
+      $thread_count = intval($thread_count);
+    }
 
-      if (!$include_smt) {
-        exec("cat /sys/devices/system/cpu/smt/active", $smt_output);
-        if ($smt_output[0] == "1") {
-          $thread_count = intdiv($thread_count, 2);
-        }
+    // if smt should not be included in the thread count, check to see if it is enabled.
+    if (!$include_smt) {
+      exec("cat /sys/devices/system/cpu/smt/active", $smt_output);
+      if ($smt_output[0] == "1") {
+        // if smt is enabled, divide the number of threads found by 2.
+        $thread_count = intdiv($thread_count, 2);
       }
+    }
 
-      // get cpu file contents and count the number of times the substring "processor" appears.
-      // $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
-      // $thread_count = substr_count($cpuinfo_contents, "processor");
-      // if get core count is greater than 0 return it. otherwise return 2 so that at least 2 threads can run.
-      if ($thread_count > 0) {
-        return $thread_count;
-      } else {
-        return 2;
-      }
-    // }
+    // if the core count is greater than 0 return it. otherwise return 2 so that at least 2 threads can run.
+    if ($thread_count > 0) {
+      return $thread_count;
+    } else {
+      return 2;
+    }
   }
 
 
