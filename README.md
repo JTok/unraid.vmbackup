@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.1.9 - 2019/12/31
+v0.2.0 - 2020/01/21
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
@@ -133,6 +133,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 #### Advanced Features
 
+- Option to choose a compression level.
+
 - Option to timestamp backups.
 
 - Option to compare files and retry backup in the event of failure.
@@ -152,6 +154,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Change the number of seconds to wait between checks to see if a VM is shut down.
 
 #### Danger Zone
+
+- Option to choose how many threads are used for compression.
 
 - Option to keep log files from backups with errors.
 
