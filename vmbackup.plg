@@ -110,6 +110,10 @@
     # remove plugin files from emhttp.
     rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
 
+    # remove old txt and json files.
+    rm -rf /boot/config/plugins/&name;/*.txt 2>/dev/null
+    rm -rf /boot/config/plugins/&name;/*.json 2>/dev/null
+
     # remove xmlstarlet.
     removepkg xmlstarlet* 2>/dev/null
 
