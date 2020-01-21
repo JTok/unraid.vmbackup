@@ -531,11 +531,16 @@
     # create vm list text file.
     printf "%s\n" "${vm_list[@]}" > "$vm_list_file"
 
+    json_string="{ "
     # create vm vdisk list text file.
     for key in "${vdisk_list_sort[@]}"
-    do 
-      printf "%s\n" "$key=\"${vdisk_list[$key]}\"" >> "$vdisk_list_file"
+    do
+      json_string+="\"$key\": \"${vdisk_list[$key]}\","
+      #printf "%s\n" "$key=\"${vdisk_list[$key]}\"" >> "$vdisk_list_file"
     done
+    json_string=${json_string%","}
+    json_string+=" }"
+    printf "%s" "$json_string" > "$vdisk_list_file"
 
     # create vdisk paths list text file.
     printf "%s\n" "${tmp_vdisk_list[@]}" > "$vdisk_path_list_file"
