@@ -88,6 +88,9 @@ Icon="clone"
 
   // create text files containing a list of vms and a list of vdisks respectively.
   exec("$commands_script_file create_vm_lists");
+
+  // create php variable for json file contents.
+  $vdisk_list_json_contents = file_get_contents($vdisk_list);
 ?>
 
 <!-- import stylesheets -->
@@ -107,7 +110,7 @@ Icon="clone"
   var rebuild_text_files = false;
   var refresh_settings = false;
   var current_config = "default";
-
+  var vdisk_list_json = <?php echo $vdisk_list_json_contents; ?>;
 
   // function to prepare form for submission.
   function prepare_form(form) {
@@ -149,6 +152,19 @@ Icon="clone"
 
   // document ready function.
   $(function() {
+    // console.log(vdisk_list_json)
+    // for (var key in vdisk_list_json) {
+    //   if (vdisk_list_json.hasOwnProperty(key)) {
+    //     var val = vdisk_list_json[key];
+    //     console.log(key + " = " + val);
+    //   }
+    // }
+    for (var path in vdisk_list_json) {
+      if (vdisk_list_json.hasOwnProperty(path)) {
+        $("#vdisks_to_skip").text(vdisk_list_json[path]);
+        $("#vdisks_to_skip").val(path);
+      }
+    }
     // set the width of the first grid column based on content.
     set_width();
     // set up inline help toggle handler.
