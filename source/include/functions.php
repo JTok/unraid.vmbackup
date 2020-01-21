@@ -58,6 +58,9 @@
         $default_conf_array = parse_ini_file("$default_conf_file");
         $user_conf_array["version"] = $default_conf_array["version"];
 
+        // update legacy variables.
+        $user_conf_array = replace_legacy_variables($user_conf_array);
+
         // create user config file contents from updated user config array.
         $user_conf_contents = create_ini_file($user_conf_array);
 
@@ -70,6 +73,24 @@
         // if file version is the same, create user config array from file.
         $conf_array = parse_ini_file($user_conf_file);
       }
+    }
+    // return updated config array.
+    return $conf_array;
+  }
+
+  // function to replace legacy variables from past versions of the plugin.
+  function replace_legacy_variables($conf_array) {
+    if (strcasecmp($conf_array["pigz_compress"], $conf_array["compress_backups"])) {
+      $conf_array["pigz_compress"] = $conf_array["compress_backups"];
+      unset($conf_array["compress_backups"]);
+    }
+    if (strcasecmp($conf_array["pigz_level"], $conf_array["compression_level"])) {
+      $conf_array["pigz_level"] = $conf_array["compression_level"];
+      unset($conf_array["compression_level"]);
+    }
+    if (strcasecmp($conf_array["pigz_threads"], $conf_array["threads"])) {
+      $conf_array["pigz_threads"] = $conf_array["threads"];
+      unset($conf_array["threads"]);
     }
     // return updated config array.
     return $conf_array;
@@ -330,19 +351,33 @@
   }
 
   // function to get number of CPU cores using php
-  function cpu_thread_count() {
-    # make sure we can read cpuinfo.
-    if (is_readable("/proc/cpuinfo")) {
-      # get cpu file contents and count the number of times the substring "processor" appears.
-      $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
-      $thread_count = substr_count($cpuinfo_contents, "processor");
-      # if get core count is greater than 0 return it. otherwise return 2 so that at least 2 threads can run.
+  function cpu_thread_count($include_smt = true) {
+    // make sure we can read cpuinfo.
+    // if (is_readable("/proc/cpuinfo")) {
+      // get the cpu core count from nproc.
+      exec("nproc --all", $thread_output);
+      $thread_count = $thread_output[0];
+      if (!is_int($thread_count)) {
+        $thread_count = 0;
+      }
+
+      if (!$include_smt) {
+        exec("cat /sys/devices/system/cpu/smt/active", $smt_output);
+        if ($smt_output[0] == "1") {
+          $thread_count = intdiv($thread_count, 2);
+        }
+      }
+
+      // get cpu file contents and count the number of times the substring "processor" appears.
+      // $cpuinfo_contents = file_get_contents("/proc/cpuinfo");
+      // $thread_count = substr_count($cpuinfo_contents, "processor");
+      // if get core count is greater than 0 return it. otherwise return 2 so that at least 2 threads can run.
       if ($thread_count > 0) {
         return $thread_count;
       } else {
         return 2;
       }
-    }
+    // }
   }
 
 
