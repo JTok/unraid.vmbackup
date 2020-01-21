@@ -315,7 +315,7 @@
   create_vm_lists() {
     # create local variables.
     local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
-    local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.txt"
+    local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.json"
     local vdisk_path_list_file="/boot/config/plugins/vmbackup/vdisk-path-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local user_prefix="/mnt/user/domains/"
