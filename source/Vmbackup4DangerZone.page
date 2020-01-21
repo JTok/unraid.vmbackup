@@ -28,14 +28,14 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Danger Zone</div>
     <div id="danger_zone_div" class="grid_container_left">
 
-      <label name="threads_label" class="input_description">Number of compression threads:</label>
-      <div class="user_input_div"><select id="threads" name="threads" size="1">
+      <label name="pigz_threads_label" class="input_description">Number of legacy compression threads:</label>
+      <div class="user_input_div"><select id="pigz_threads" name="pigz_threads" size="1">
         <option value="0">auto</option>
         <?php
           $thread_count = cpu_thread_count();
           for ($i = 1; $i <= $thread_count; $i++) {
         ?>
-            <?=mk_option($conf_array['threads'], $i, $i);?>
+            <?=mk_option($conf_array['pigz_threads'], $i, $i);?>
           <?php
           }
           ?>

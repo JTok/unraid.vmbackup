@@ -136,13 +136,13 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Advanced Features</div>
     <div id="advanced_features" class="grid_container_left">
 
-      <label name="compression_level_label" class="input_description">Compression level?</label>
-      <div class="user_input_div"><select id="compression_level" name="compression_level" size="1">
+      <label name="pigz_level_label" class="input_description">Legacy compression level?</label>
+      <div class="user_input_div"><select id="pigz_level" name="pigz_level" size="1">
         <?php
-          $compression_level = create_number_array(1,9);
-          foreach($compression_level as $key => $value) {
+          $pigz_level = create_number_array(1,9);
+          foreach($pigz_level as $key => $value) {
         ?>
-            <?=mk_option($conf_array['compression_level'], $value, $key);?>
+            <?=mk_option($conf_array['pigz_level'], $value, $key);?>
           <?php
           }
           ?>
