@@ -231,6 +231,9 @@
     # remove xmlstarlet.
     removepkg &xmlstarlet;
 
+    # remove pigz.
+    removepkg &pigz;
+
     # remove plugin.
     removepkg &name;-&tag;
 
