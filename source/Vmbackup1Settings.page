@@ -443,6 +443,7 @@ Icon="clone"
       <span name="inline_zstd_compress_help" class="custom_inline_help">
         <p>Set to 'Yes' to compress backups using inline Zstandard compression.</p>
         <ul>
+          <li>WARNING: If turned on and there are already uncompressed or legacy compression backups, you will need to manually remove old versions of those backups until they are gone.</li>
           <li>IMPORTANT: This can add to the amount of time the backup process takes depending on your hardware and configuration.</li>
           <li>Uses Zstandard for multi-threaded compression.</li>
           <li>Cannot be used with legacy compression.</li>
