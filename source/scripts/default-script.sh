@@ -2,7 +2,7 @@
 #backgroundOnly=true
 #arrayStarted=no_config
 #noParity=no_config
-#version=v0.2.0 - 2020/01/21
+#version=v0.2.1 - development
 
 # based on unraid-vmbackup script version:
 # v1.3.1 - 2020/01/21
@@ -65,19 +65,13 @@ number_of_days_to_keep_backups="no_config"
 # WARNING: If VM has multiple vdisks, then they must end in sequential numbers in order to be correctly backed up (i.e. vdisk1.img, vdisk2.img, etc.).
 number_of_backups_to_keep="no_config"
 
-# default is 0. set this to 1 if you would like to perform inline zstd compression.  This overrides the "compress_backups" and "compare_files" options.
+# default is 0. set this to 1 if you would like to perform inline zstd compression.  This overrides the "pigz_compress" and "compare_files" options.
 inline_zstd_compress="no_config"
-
-# default is 3. higher values may produce smaller archives but are slower and use more CPU.
-zstd_level="no_config"
-
-# default is 2. set this to the desired number of compression worker threads, or 0 to auto detect (i.e. use all)
-zstd_threads="no_config"
 
 # default is 0. set this to 1 if you would like to compress backups. This can add a significant amount of time to the backup process. uses tar.gz for sparse file compatibility.
 # this is the legacy setting for compression.
 # WARNING: do not turn on if you already have uncompressed backups. You will need to move or delete uncompressed backups before using. this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
-compress_backups="no_config"
+pigz_compress="no_config"
 
 # default is 1. set this to 0 if you would like to have backups without a timestamp. Timestamps are dropped only when number_of_backups_to_keep is equal to 1.
 timestamp_files="no_config"
@@ -128,11 +122,19 @@ vms_to_backup_running="no_config"
 # NOTE: may break auto functionality when it is implemented. do not use if reconstruct write is already enabled. backups may run faster with this enabled.
 enable_reconstruct_write="no_config"
 
-# default is 6. set to 1 for the lowest compression level, but the highest speed, and 9 is the highest compression level, but the lowest speed.
-compression_level="no_config"
+# default is 3. higher values may produce smaller archives but are slower and use more CPU.
+zstd_level="no_config"
+
+# default is 2. set this to the desired number of compression worker threads, or 0 to auto detect (i.e. use all)
+zstd_threads="no_config"
+
+# default is 6. choose the compression level for pigz to use. set to 1 for the lowest compression level, but the highest speed, and 9 is the highest compression level, but the lowest speed.
+# this is the legacy setting for compression.
+pigz_level="no_config"
 
 # default is 2. choose the number of threads for pigz to use. set to 0 to let pigz automatically choose the number of online processors.
-compression_threads="no_config"
+# this is the legacy setting for compression.
+pigz_threads="no_config"
 
 # default is 0. set this to 1 to compare files after copy and run rsync in the event of failure. could add significant amount of time depending on the size of vms.
 compare_files="no_config"
@@ -1508,13 +1510,13 @@ only_send_error_notifications="no_config"
 
   # if inline_zstd_compress is disabled, check to see if backups should be post compressed.
   if [ "$inline_zstd_compress" -ne 1 ]; then
-    if [[ ! "$compress_backups" =~ ^(0|1)$ ]]; then
-      log_message "failure: compress_backups is $compress_backups. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+    if [[ ! "$pigz_compress" =~ ^(0|1)$ ]]; then
+      log_message "failure: pigz_compress is $pigz_compress. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
       exit 1
-    elif [ "$compress_backups" -eq 0 ]; then
-      log_message "information: compress_backups is $compress_backups. backups will not be post compressed."
-    elif [ "$compress_backups" -eq 1 ]; then
-      log_message "information: compress_backups is $compress_backups. backups will be post compressed."
+    elif [ "$pigz_compress" -eq 0 ]; then
+      log_message "information: pigz_compress is $pigz_compress. backups will not be post compressed."
+    elif [ "$pigz_compress" -eq 1 ]; then
+      log_message "information: pigz_compress is $pigz_compress. backups will be post compressed."
     fi
   fi
 
@@ -1703,7 +1705,7 @@ only_send_error_notifications="no_config"
 
       log_message "warning: backup_vdisks is $backup_vdisks. vms will not have their vdisks backed up. compression will be set to off."
 
-      compress_backups="0"
+      pigz_compress="0"
 
     elif [ "$backup_vdisks" -eq 1 ]; then
 
@@ -2325,7 +2327,7 @@ only_send_error_notifications="no_config"
       fi
 
       # check to see if backup files should be compressed.
-      if [ "$compress_backups" -eq 1 ] && [ "$inline_zstd_compress" -ne 1 ]; then
+      if [ "$pigz_compress" -eq 1 ] && [ "$inline_zstd_compress" -ne 1 ]; then
 
         # check if only one non-timestamped backup is being kept. if so, perform compression without a timestamp. if not, continue as normal.
         if [ "$timestamp_files" -eq 0 ]  && [ "$number_of_backups_to_keep" -eq 1 ]; then
@@ -2447,9 +2449,9 @@ only_send_error_notifications="no_config"
             # build pigz command.
             pigz_cmd=()
             pigz_cmd=(pigz)
-            pigz_cmd+=(-"$compression_level")
-            if [[ "$compression_threads" -ne 0 ]]; then
-              pigz_cmd+=(-p "$compression_threads")
+            pigz_cmd+=(-"$pigz_level")
+            if [[ "$pigz_threads" -ne 0 ]]; then
+              pigz_cmd+=(-p "$pigz_threads")
             fi
 
             # execute commands together to compress files
@@ -2529,9 +2531,9 @@ only_send_error_notifications="no_config"
           # build pigz command.
           pigz_cmd=()
           pigz_cmd=(pigz)
-          pigz_cmd+=(-"$compression_level")
-          if [[ "$compression_threads" -ne 0 ]]; then
-            pigz_cmd+=(-p "$compression_threads")
+          pigz_cmd+=(-"$pigz_level")
+          if [[ "$pigz_threads" -ne 0 ]]; then
+            pigz_cmd+=(-p "$pigz_threads")
           fi
 
           # execute commands together to compress files
@@ -2646,8 +2648,8 @@ only_send_error_notifications="no_config"
         remove_old_files vdisk_extensions_find_cmd "vdisk image"
       fi
 
-      # remove old tarballs if compress_backups is 1.
-      if [ "$compress_backups" -eq 1 ]; then
+      # remove old tarballs if pigz_compress is 1.
+      if [ "$pigz_compress" -eq 1 ]; then
         find_cmd=(find "$backup_location/$vm/" -type f -name '*.tar.gz')
         remove_old_files find_cmd "tarball"
       fi
@@ -2730,8 +2732,8 @@ only_send_error_notifications="no_config"
         remove_over_limit_files vdisk_extensions_find_cmd "$number_of_files_to_keep" "vdisk image"
       fi
 
-      # remove tarball files that are over the limit if compress_backups is 1.
-      if [ "$compress_backups" -eq 1 ]; then
+      # remove tarball files that are over the limit if pigz_compress is 1.
+      if [ "$pigz_compress" -eq 1 ]; then
         find_cmd=(find "$backup_location/$vm/" -type f -name '*.tar.gz')
         remove_over_limit_files find_cmd "$number_of_backups_to_keep" "tarball"
       fi
