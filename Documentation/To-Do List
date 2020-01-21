@@ -26,12 +26,6 @@
 #  - change compression to be during copy stream.
 #  - handle parenthesis in paths/vm names. Especially when parsing vm-list. use JSON.
 #  - add restore functionality.
-#  - reorganize code for manageability.
-#  - adjust div loads to re-execute only relevant script blocks.
-#  - add sweet alert loading popups on ajax submits?
-#  - leave apply disabled until form changes.
-#  - change done button to reset when form changes.
 #  - add help to upload scripts and manage configs.
 #  - show error if form submit fails.
 #  - plugin error log file?
-#  - take user back to main tab when setting config to default.
