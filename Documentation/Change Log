@@ -4,6 +4,7 @@
 # The Resistance
 #
 # - fixed new config options not always getting added to user config.
+# - fixed parenthesis in vm names.
 # - added ability to run pre and post scripts.
 # - added option to run backup without array started.
 # - added confirmation dialogs to destructive or dangerous buttons.
