@@ -4,8 +4,7 @@
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings.
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
-#  - move some of the settings alerts to php form validation instead.
-#  - set up separate css stylesheets.
+#  - move some of the settings alerts to html form validation instead.
 #  - add compression algorithm choices lbzip2 and zstnd?
 #  - update script to use xmlstarlet.
 #  - re-add vms_to_backup_running to danger zone.
@@ -20,11 +19,9 @@
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
 #  - show loading content in configs div while refreshing after add/remove/copy?
-#  - disable all controls during apply, and then re-enable. Or maybe just use swal popup. Possibly also disable all buttons?
 #  - check into high IOWAIT while running backup.
 #  - check into rsync process not ending.
 #  - change compression to be during copy stream.
-#  - handle parenthesis in paths/vm names. Especially when parsing vm-list. use JSON.
 #  - add restore functionality.
 #  - add help to upload scripts and manage configs.
 #  - show error if form submit fails.
