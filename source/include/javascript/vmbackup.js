@@ -444,17 +444,15 @@
             $.post($("#vmbackup_settings_form").attr("action"), $("#vmbackup_settings_form").serialize(),
               function () {
                 // submit the second form to actually perform the backup.
-                $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize(),
-                  function () {
-                    // check to see if the Settings tab should be refreshed.
-                    if (refresh_settings) {
-                      refresh_vmbackup_settings(false);
-                      set_variable_cookie("refresh_settings", false);
-                    }
-                    // make sure done button value is done.
-                    $("#done_vmbackup_settings").val("Done");
-                    swal.close();
-                  });
+                $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
+                // check to see if the Settings tab should be refreshed.
+                if (refresh_settings) {
+                  refresh_vmbackup_settings(false);
+                  set_variable_cookie("refresh_settings", false);
+                }
+                // make sure done button value is done.
+                $("#done_vmbackup_settings").val("Done");
+                setTimeout(function () { swal.close(); }, 1000);
               });
           }
         });
