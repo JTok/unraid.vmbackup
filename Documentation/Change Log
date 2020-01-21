@@ -7,6 +7,7 @@
 # - added seconds to logs.
 # - added option to use zstandard compression.
 # - added option to create a vm specific log in each vm's subfolder.
+# - updated method used to determine cpu thread count.
 
 # v0.2.0 - 2020/01/21
 # The Resistance
