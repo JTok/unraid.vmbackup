@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2020.01.08">
+<!ENTITY version    "2020.01.21">
 <!ENTITY tag        "v0.2.0">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
@@ -16,7 +16,7 @@
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
 <!ENTITY pigz       "pigz-2.3-x86_64-1_slonly">
 <!ENTITY PIGZMD5    "843accfc6dce4393f4c43c8d8e4eb0cb">
-<!ENTITY MD5        "32cb02dccb5e8d547b4afa5f4055957f">
+<!ENTITY MD5        "6afb470e8e73e00676df9c2cdbe222b5">
 ]>
 
 <PLUGIN name="&name;"
@@ -31,15 +31,19 @@
 <CHANGES>
 ##&name;
 
-### v0.2.0 - Development
+### v0.2.0 - 2020/01/21
 **The Resistance**
 
 - fixed new config options not always getting added to user config.
+- fixed parenthesis in vm names.
 - added ability to run pre and post scripts.
 - added option to run backup without array started.
 - added confirmation dialogs to destructive or dangerous buttons.
 - added support for multiple configs/schedules.
 - added option to allow multiple configs to run simultaneously.
+- added option to set compression level.
+- added option to set the number of threads used during compression.
+- changed compression program from gzip to pigz to support multi-threading.
 - changed alert dialogs to use sweet alerts.
 - updated help for custom cron.
 
