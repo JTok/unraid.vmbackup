@@ -421,6 +421,8 @@
       if ($("#done_vmbackup_settings").val() == "Reset") {
         // refresh the form.
         refresh_vmbackup_settings(false);
+        // set the disabled state for compression drop downs.
+        set_compression_drop_down_states();
       } else {
         // perform normal done action.
         done();
