@@ -182,3 +182,14 @@ input:invalid {
 .clear_both {
   clear:both;
 }
+
+/* set properties for text fields */
+.important_info {
+  color: #e22828;
+  text-decoration: underline;
+}
+
+.config_text {
+  color: #e22828;
+  font-size: small;
+}
