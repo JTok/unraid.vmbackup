@@ -88,9 +88,11 @@
       }
     });
     $("#tab3").on('click', function () {
+      set_compression_drop_down_states();
       set_width_vmbackup_other_settings();
     });
     $("#tab4").on('click', function () {
+      set_compression_drop_down_states();
       set_width_vmbackup_danger_zone();
     });
   }
