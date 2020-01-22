@@ -19,10 +19,10 @@
 #  - show error if form submit fails.
 #  - plugin error log file?
 #  - backup configs? will require validation system.
+#  - toggle help based on master toggle.
 #  - ability to perform different backup schemes, such as incremental.
 #  - ability to have a detailed summary emailed.
 #  - check into rsync process not ending.
 #  - check into high IOWAIT while running backup.
-#  - add restore functionality.
 #  - add help to upload scripts and manage configs.
-#  - toggle help based on master toggle.
+#  - add restore functionality.
