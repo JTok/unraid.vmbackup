@@ -25,4 +25,5 @@
 #  - check into rsync process not ending.
 #  - check into high IOWAIT while running backup.
 #  - add help to upload scripts and manage configs.
+#  - phase out enable backup drop-down. Possibly move current config to that location?
 #  - add restore functionality.
