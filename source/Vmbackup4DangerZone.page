@@ -11,7 +11,7 @@ Icon="clone"
 ?>
 
 <div class="wrapper_div">
-  <p><u>Warning</u></p>
+  <span class="important_info"><p>Warning</p></span>
 	<p>The settings below can be dangerous or have unintended side effects if used improperly.
   <br>Many of them can result in corrupted backups, or no backups at all.
   <br>It is recommended not to change these settings.

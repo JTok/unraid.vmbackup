@@ -11,7 +11,7 @@ Icon="clone"
 ?>
 
 <div class="wrapper_div">
-  <p><u>Instructions</u></p>
+  <span class="important_info"><p>Instructions</p></span>
 	<p>This tab is where you manage your configs. The 'default' is the current config when no other configs are available.
   <br>The default config cannot be renamed, copied, or removed; so it will not show up here.
   <br>To change the settings for a config, go to the 'Settings' tab and select the config you want to edit from the 'Current Config' drop down box.
