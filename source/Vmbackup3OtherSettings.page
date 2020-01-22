@@ -68,7 +68,7 @@ Icon="clone"
       </span>
 
 
-      <label name="enable_vm_log_file_label" class="input_description">Keep log file?</label>
+      <label name="enable_vm_log_file_label" class="input_description">Enable per VM logs?</label>
       <div class="user_input_div"><select id="enable_vm_log_file" name="enable_vm_log_file" size="1">
         <?=mk_option($conf_array['enable_vm_log_file'], "0", "No");?>
         <?=mk_option($conf_array['enable_vm_log_file'], "1", "Yes");?>
@@ -152,7 +152,7 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Advanced Features</div>
     <div id="advanced_features" class="grid_container_left">
 
-      <label name="zstd_level_label" class="input_description">Zstandard compression level?</label>
+      <label name="zstd_level_label" class="input_description">Zstandard compression level:</label>
       <div class="user_input_div"><select id="zstd_level" name="zstd_level" size="1">
         <?php
           $zstd_level = create_number_array(1,19);
@@ -174,7 +174,7 @@ Icon="clone"
       </span>
 
 
-      <label name="pigz_level_label" class="input_description">Legacy compression level?</label>
+      <label name="pigz_level_label" class="input_description">Legacy compression level:</label>
       <div class="user_input_div"><select id="pigz_level" name="pigz_level" size="1">
         <?php
           $pigz_level = create_number_array(1,9);
