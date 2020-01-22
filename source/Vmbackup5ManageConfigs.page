@@ -10,6 +10,20 @@ Icon="clone"
 
 ?>
 
+<div class="wrapper_div">
+  <p><u>Instructions</u></p>
+	<p>This tab is where you manage your configs. The 'default' config cannot be renamed, copied, or removed; so it will not show up here.
+  <br>To change the settings for a config, go to the 'Settings' tab and select the config you want to edit from the 'Current Config' drop down box.
+  <br>
+  <ul>
+    <li>Create a config using the textbox in the 'Add Config' section.</li>
+    <li>Rename, copy, or remove the config using the 'Rename/Delete Configs' section.</li>
+    <li>To edit the config, go to the 'Settings' tab and choose it from the 'Current Config' dropdown box.</li>
+    <li>Make changes to the selected config like normal. Don't forget to apply your changes.</li>
+    <li>Return to the 'Settings' tab to select a different config to edit.</li>
+  </ul>
+  </p>
+</div>
 
 <div id="manage_configs_div" class="wrapper_div">
   <form id="manage_configs_form" name="manage_configs_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/configs.php" target="progressFrame">
