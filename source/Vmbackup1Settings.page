@@ -186,6 +186,31 @@ Icon="clone"
 </script>
 
 <div id="vmbackup_settings_div" class="wrapper_div">
+
+  <div class="wrapper_div">
+    <div id="current_config_div" class="grid_container_left">
+      <label name="current_config_label" class="input_description config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config" name="current_config" size="1">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select></div>
+
+      <span name="current_config_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
+    </div>
+  </div>
+
   <form id="vmbackup_settings_form" name="vmbackup_settings" autocomplete="off" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" id="vmbackup_settings_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
@@ -491,29 +516,9 @@ Icon="clone"
     </div>
 
     <div id="advanced_message_div" class="container_left" style="padding-bottom:12px">
+      <span class="important_info"><p>Note</p></span>
       <p>When configuring Advanced Settings, be sure to review the help.
       <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
-    </div>
-    <div id="current_config_div" class="grid_container_left">
-      <label name="current_config_label" class="input_description">Current config:</label>
-      <div class="user_input_div"><select id="current_config" name="current_config" size="1">
-        <option value="default">default</option>
-        <?php
-          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
-          foreach ($configs as $config_path) {
-            $config = basename($config_path)?>
-            <option value="<?= $config ?>"><?= $config ?></option>
-        <?php
-          } ?>
-      </select></div>
-
-      <span name="current_config_help" class="custom_inline_help">
-        <p>Select a config to edit.</p>
-        <ul>
-          <li>To add a config, go to the Manage Configs tab.</li>
-          <li>Default is 'default'.</li>
-        </ul>
-      </span>
     </div>
 
     <div id="buttons_left_div" class="grid_container_left clear_both">
