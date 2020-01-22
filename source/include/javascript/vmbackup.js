@@ -219,14 +219,14 @@
     $("#inline_zstd_compress").on("change", function () {
       if ($("#inline_zstd_compress").val() == "1") {
         $("#pigz_compress").val("0");
-        set_compression_drop_down_states();
       }
+      set_compression_drop_down_states();
     });
     $("#pigz_compress").on("change", function () {
       if ($("#pigz_compress").val() == "1") {
         $("#inline_zstd_compress").val("0");
-        set_compression_drop_down_states();
       }
+      set_compression_drop_down_states();
     });
   }
 
