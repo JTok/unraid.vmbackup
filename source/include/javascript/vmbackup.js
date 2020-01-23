@@ -139,9 +139,9 @@
     show_log_click();
     backup_now_click();
     // monitor specific Vmbackup2UploadScripts inputs for changes and click events.
-    submit_pre_script_click();
+    save_pre_script_click();
     remove_pre_script_click();
-    submit_post_script_click();
+    save_post_script_click();
     remove_post_script_click();
     // monitor specific VmBackup3OtherSettings inputs for changes and click events.
     default_vmbackup_other_settings_click();
@@ -650,8 +650,8 @@
 
 /** start functions for Vmbackup2UploadScripts **/
   /* add click events to script buttons*/
-  function submit_pre_script_click() {
-    $("#submit_pre_script").on("click", function (e) {
+  function save_pre_script_click() {
+    $("#save_pre_script").on("click", function (e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
@@ -715,8 +715,8 @@
         });
     });
   }
-  function submit_post_script_click() {
-    $("#submit_post_script").on("click", function (e) {
+  function save_post_script_click() {
+    $("#save_post_script").on("click", function (e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
@@ -792,9 +792,9 @@
   // function assigns actions to forms for changes and add click events.
   function assign_vmbackup_upload_scripts_functions() {
     // monitor specific Vmbackup2UploadScripts inputs for changes and click events.
-    submit_pre_script_click();
+    save_pre_script_click();
     remove_pre_script_click();
-    submit_post_script_click();
+    save_post_script_click();
     remove_post_script_click();
   }
 /** end functions for Vmbackup2UploadScripts **/

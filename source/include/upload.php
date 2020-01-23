@@ -38,7 +38,7 @@
   }
 
   // if submit pre-script, then update pre-script.
-  if (isset($_POST['#submit_pre_script']) && (isset($_POST['pre_script_textarea']))) {
+  if (isset($_POST['#save_pre_script']) && (isset($_POST['pre_script_textarea']))) {
     // check that the root folder we want to write to exists and is writeable.
     if (!verify_dir($current_config_path)) {
       syslog(LOG_INFO, "Could not verify $current_config_path. Cannot create pre-script.");
@@ -61,7 +61,7 @@
     }
   }
   // if submit post-script, then update post-script.
-  if (isset($_POST['#submit_post_script']) && (isset($_POST['post_script_textarea']))) {
+  if (isset($_POST['#save_post_script']) && (isset($_POST['post_script_textarea']))) {
     // check that the root folder we want to write to exists and is writeable.
     if (!verify_dir($current_config_path)) {
       syslog(LOG_INFO, "Could not verify $current_config_path. Cannot create post-script.");
