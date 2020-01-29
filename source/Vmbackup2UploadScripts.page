@@ -10,8 +10,33 @@ Icon="clone"
 
 ?>
 
-
 <div id="upload_form_div" class="wrapper_div">
+
+  <!-- current config -->
+  <div class="wrapper_div">
+    <div id="current_config_upload_scripts_div" class="grid_container_left pad_config_top">
+      <label name="current_config_upload_scripts_label" class="input_description config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config_upload_scripts" name="current_config_upload_scripts" size="1">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select></div>
+
+      <span name="current_config_upload_scripts_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
+    </div>
+  </div>
+
   <form id="upload_form" name="upload_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/upload.php" target="progressFrame">
 
     <div id="scripts_div" class="container_full">

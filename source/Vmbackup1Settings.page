@@ -178,8 +178,8 @@ Icon="clone"
     rebuild_text_files = (get_cookie("rebuild_text_files") === "true");
     refresh_settings = (get_cookie("refresh_settings") === "true");
     current_config = get_cookie("current_config");
-    // set the current config based on the cookie.
-    $("#current_config").val(current_config);
+    // set the current configs based on the cookie.
+    set_current_config_values(current_config);
     // append current config to forms.
     update_form_config(current_config);
   });
@@ -187,10 +187,11 @@ Icon="clone"
 
 <div id="vmbackup_settings_div" class="wrapper_div">
 
+  <!-- current config -->
   <div class="wrapper_div">
-    <div id="current_config_div" class="grid_container_left">
-      <label name="current_config_label" class="input_description config_text">Currently editing config:</label>
-      <div class="user_input_div"><select id="current_config" name="current_config" size="1">
+    <div id="current_config_settings_div" class="grid_container_left">
+      <label name="current_config_settings_label" class="input_description config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config_settings" name="current_config_settings" size="1">
         <option value="default">default</option>
         <?php
           $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
@@ -201,7 +202,7 @@ Icon="clone"
           } ?>
       </select></div>
 
-      <span name="current_config_help" class="custom_inline_help">
+      <span name="current_config_settings_help" class="custom_inline_help">
         <p>Select a config to edit.</p>
         <ul>
           <li>To add a config, go to the Manage Configs tab.</li>
