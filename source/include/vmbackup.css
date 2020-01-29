@@ -183,6 +183,11 @@ input:invalid {
   clear:both;
 }
 
+/* pad config top */
+.pad_config_top {
+  margin-top: 13px;
+}
+
 /* set properties for text fields */
 .important_info {
   color: #e22828;
