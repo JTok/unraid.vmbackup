@@ -42,14 +42,14 @@ Icon="clone"
     <span class="important_info"><p>Instructions</p></span>
     <p>This tab is where you manage your configs. The 'default' is the current config when no other configs are available.
     <br>The default config cannot be renamed, copied, or removed; so it will not show up here.
-    <br>To change the settings for a config, go to the 'Settings' tab and select the config you want to edit from the 'Current Config' drop down box.
+    <br>To change the settings for a config, select the config you want to edit from the 'Current Config' drop down box at the top any tab.
     <br>
     <ul>
       <li>Create a config using the textbox in the 'Add Config' section.</li>
       <li>Rename, copy, or remove the config using the 'Rename/Delete Configs' section.</li>
-      <li>To edit the config, go to the 'Settings' tab and choose it from the 'Current Config' dropdown box.</li>
+      <li>To edit the config, choose it from the 'Current Config' dropdown box at the top of any tab.</li>
       <li>Make changes to the selected config like normal. Don't forget to apply your changes.</li>
-      <li>Return to the 'Settings' tab to select a different config to edit.</li>
+      <li>Change the drop down box at the top of a tab to select a different config to edit.</li>
     </ul>
     </p>
   </div>
