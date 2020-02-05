@@ -15,7 +15,7 @@ Icon="clone"
   <!-- current config -->
   <div class="wrapper_div">
     <div id="current_config_manage_configs_div" class="grid_container_left pad_config_top">
-      <label name="current_config_manage_configs_label" class="input_description config_text">Currently editing config:</label>
+      <label name="current_config_manage_configs_label" class="config_label config_text">Currently editing config:</label>
       <div class="user_input_div"><select id="current_config_manage_configs" name="current_config_manage_configs" size="1">
         <option value="default">default</option>
         <?php
@@ -56,7 +56,7 @@ Icon="clone"
 
   <form id="manage_configs_form" name="manage_configs_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/configs.php" target="progressFrame">
 
-    <div class="container_left">
+    <div class="container_full">
       <!-- add config -->
       <div id="title" class="nocontrol full_width_title">Add Config</div>
 
@@ -64,15 +64,17 @@ Icon="clone"
         <label>Choose a config name:</label>
         <div class="clear_both"><input type="text" class="narrow" id="add_config" name="add_config" maxlength="100" pattern="^[^\/\. ](([\w.-]+)( [\w.-]+)*)+$"></div>
       </div>
-      <input type="button" id="add_config_button" name="#add_config_button" value="Add Config">
+      <div id="add_config_button_div" name="add_config_button_div" class="clear_both">
+        <input type="button" id="add_config_button" name="#add_config_button" value="Add Config">
+      </div>
 
       <!-- rename/delete configs -->
-      <div id="title" class="nocontrol">Rename/Delete Configs</div>
-      <div id="manage_configs_div" name="manage_configs_div" class="clear_both">
+      <div id="title" class="nocontrol full_width_title">Rename/Delete Configs</div>
+      <div id="rename_delete_configs_div" name="rename_delete_configs_div" class="clear_both">
         <label>Select a config:</label>
         <div id="select_configs_div" name="select_configs_div" class="selection_div clear_both"></div>
       </div>
-      <div id="button_div" name="button_div" class="clear_both">
+      <div id="manage_configs_button_div" name="manage_configs_button_div" class="clear_both">
         <input type="button" id="rename_config_button" name="#rename_config_button" value="Rename Config"><input type="button" id="copy_config_button" name="#copy_config_button" value="Copy Config"><input type="button" id="remove_configs_button" name="#remove_configs_button" value="Remove Configs">
       </div>
     </div>
