@@ -16,7 +16,7 @@
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
 <!ENTITY pigz       "pigz-2.3-x86_64-1_slonly">
 <!ENTITY PIGZMD5    "843accfc6dce4393f4c43c8d8e4eb0cb">
-<!ENTITY MD5        "b57994e084b641611088372e87cd0c59">
+<!ENTITY MD5        "9ae902df5eec6359732d36f4ca1bf2f3">
 ]>
 
 <PLUGIN name="&name;"
