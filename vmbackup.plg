@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2020.02.05">
+<!ENTITY version    "2020.02.05a">
 <!ENTITY tag        "v0.2.1">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
@@ -16,7 +16,7 @@
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
 <!ENTITY pigz       "pigz-2.3-x86_64-1_slonly">
 <!ENTITY PIGZMD5    "843accfc6dce4393f4c43c8d8e4eb0cb">
-<!ENTITY MD5        "9ae902df5eec6359732d36f4ca1bf2f3">
+<!ENTITY MD5        "4460cfb5f7a9d6f741589aab058a31dc">
 ]>
 
 <PLUGIN name="&name;"
