@@ -86,6 +86,9 @@ Icon="clone"
     }
   }
 
+  // clear restore files.
+  // clear_restore_files();
+
   // create text files containing a list of vms and a list of vdisks respectively.
   exec("$commands_script_file create_vm_lists");
 ?>
@@ -155,11 +158,14 @@ Icon="clone"
     //configure dropdown checklists.
     configure_vdisks_to_skip();
     configure_vms_to_backup();
+    configure_select_files();
     // set the regex pattern each element should use.
     toggle_cron_regex();
     toggle_restrictive_regex();
     // build config selection.
     build_configs_file_tree();
+    // build backup selection.
+    build_backups_file_tree();
     // set the validation for each element.
     set_validation();
     // set the initial attributes for cron controls.
@@ -190,7 +196,7 @@ Icon="clone"
   <!-- current config -->
   <div class="wrapper_div">
     <div id="current_config_settings_div" class="grid_container_left">
-      <label name="current_config_settings_label" class="input_description config_text">Currently editing config:</label>
+      <label name="current_config_settings_label" class="config_label config_text">Currently editing config:</label>
       <div class="user_input_div"><select id="current_config_settings" name="current_config_settings" size="1">
         <option value="default">default</option>
         <?php
