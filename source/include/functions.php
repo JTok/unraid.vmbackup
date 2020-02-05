@@ -446,13 +446,6 @@
   }
 
 
-  function clear_restore_files() {
-    if (is_file('/tmp/vmbackup/files/restore_files.txt')) {
-      unlink('/tmp/vmbackup/files/restore_files.txt');
-    }
-  }
-
-
   // check for post commands.
   // if update_script_contents argument exists, then update the user script file.
   if (isset($_POST['#update_script_contents'])) {
