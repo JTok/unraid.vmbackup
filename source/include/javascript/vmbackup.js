@@ -45,6 +45,7 @@
     $("#current_config_other_settings").val(config);
     $("#current_config_danger_zone").val(config);
     $("#current_config_manage_configs").val(config);
+    $("#current_config_restore").val(config);
   }
 
   // function to update form inputs based on current config.
@@ -101,6 +102,7 @@
     current_config_other_settings_change();
     current_config_danger_zone_change();
     current_config_manage_configs_change();
+    current_config_restore_change();
   }
 
   // function to set the width of the first grid columns based on content.
@@ -110,6 +112,7 @@
     set_width_vmbackup_other_settings(false);
     set_width_vmbackup_danger_zone(false);
     set_width_vmbackup_manage_configs(false);
+    set_width_vmbackup_restore(false);
     set_width_configs();
   }
 
@@ -121,6 +124,7 @@
     // widths.push($("#current_config_other_settings_div .input_description").width());
     // widths.push($("#current_config_danger_zone_div .input_description").width());
     // widths.push($("#current_config_manage_configs_div .input_description").width());
+    // widths.push($("#current_config_restore_div .input_description").width());
 
     // get the largest width from the array.
     // var max_width = Math.max.apply(null, widths);
@@ -133,6 +137,7 @@
     $("#current_config_other_settings_div .input_description").css({ "width": 0 });
     $("#current_config_danger_zone_div .input_description").css({ "width": 0 });
     $("#current_config_manage_configs_div .input_description").css({ "width": 0 });
+    $("#current_config_restore_div .input_description").css({ "width": 0 });
   }
 
   /* assign event handlers to element events. */
@@ -158,7 +163,7 @@
       set_compression_drop_down_states();
       set_width_vmbackup_other_settings();
     });
-    // add custom click function Danger Zone tab.
+    // add custom click function to Danger Zone tab.
     $("#tab4").on('click', function () {
       set_compression_drop_down_states();
       set_width_vmbackup_danger_zone();
@@ -171,6 +176,8 @@
     refresh_vmbackup_upload_scripts(update_current_config);
     refresh_vmbackup_other_settings(update_current_config);
     refresh_vmbackup_danger_zone(update_current_config);
+    refresh_vmbackup_manage_configs(update_current_config);
+    refresh_vmbackup_restore(update_current_config);
     refresh_vmbackup_settings(attach_file_tree, update_current_config);
     update_current_config_var();
     // update form inputs based on current config.
@@ -194,6 +201,7 @@
     toggle_inline_help_vmbackup_other_settings();
     toggle_inline_help_vmbackup_danger_zone();
     toggle_inline_help_vmbackup_manage_configs();
+    toggle_inline_help_vmbackup_restore();
   }
 
   // function assigns actions to forms for changes and add click events.
@@ -237,6 +245,9 @@
     rename_config_button_click();
     copy_config_button_click();
     remove_configs_button_click();
+    // monitor specific Vmbackup6Restore inputs for changes and click events.
+    current_config_restore_change();
+    select_folder_change();
   }
 /** end functions for Vmbackup all pages **/
 
@@ -672,6 +683,7 @@
       $('#current_config_other_settings').append('<option value="' + new_config + '">' + new_config + '</option>');
       $('#current_config_danger_zone').append('<option value="' + new_config + '">' + new_config + '</option>');
       $('#current_config_manage_configs').append('<option value="' + new_config + '">' + new_config + '</option>');
+      $('#current_config_restore').append('<option value="' + new_config + '">' + new_config + '</option>');
     }
   }
 
@@ -684,6 +696,7 @@
       $("#current_config_other_settings option[value='" + old_config + "']").remove();
       $("#current_config_danger_zone option[value='" + old_config + "']").remove();
       $("#current_config_manage_configs option[value='" + old_config + "']").remove();
+      $("#current_config_restore option[value='" + old_config + "']").remove();
     }
   }
 
@@ -707,6 +720,7 @@
       sort_configs("current_config_other_settings");
       sort_configs("current_config_danger_zone");
       sort_configs("current_config_manage_configs");
+      sort_configs("current_config_restore");
     }
   }
 
@@ -1944,8 +1958,8 @@
       e.preventDefault();
       $(this).nextAll('.custom_inline_help:first').toggle('slow');
     });
-    $('#manage_configs_div').off('click', '#manage_configs_div .input_description');
-    $('#manage_configs_div').on('click', '#manage_configs_div .input_description', function (e) {
+    $('#manage_configs_div').off('click', '#rename_delete_configs_div .input_description');
+    $('#manage_configs_div').on('click', '#rename_delete_configs_div .input_description', function (e) {
       e.preventDefault();
       $(this).nextAll('.custom_inline_help:first').toggle('slow');
     });
@@ -1962,3 +1976,114 @@
     remove_configs_button_click();
   }
 /** end functions for Vmbackup5ManageConfigs **/
+
+
+/** start functions for Vmbackup6Restore **/
+  // build config selection.
+  function build_backups_file_tree() {
+    $("#select_folder").fileTreeAttach();
+    // $("#select_files_div").fileTree({
+    //   root: "/mnt/users/Backups/vmbackups/",
+    //   multiSelect: true,
+    //   filter: "HIDE_FILES_FILTER",
+    //   folderEvent: "nothing"
+    // });
+  }
+
+  // set the change event for current_config.
+  function current_config_restore_change() {
+    $("#current_config_restore").on("change", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var config = $("#current_config_restore").children("option:selected").val();
+      config_changed(config, true);
+    });
+  }
+
+  // set the change event for folder selection.
+  function select_folder_change() {
+    $("#select_folder").on("change", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      // make folder list
+      $.ajax({
+        url: '/plugins/vmbackup/include/restore.php',
+        type: 'POST',
+        data: {
+          "#set_folder": $("#select_folder").val()
+        }
+      }).done(function () {
+        $("#select_files_div").load(location.href + " #select_files_div", function () {
+          configure_select_files();
+        });
+      });
+    });
+  }
+
+  function configure_select_files() {
+    $("#select_files").dropdownchecklist({ emptyText: 'None', width: 166, explicitClose: '...close' });
+  }
+
+  // function to refresh content for settings tab.
+  function refresh_vmbackup_restore(update_current_config = true) {
+    $("#restore_div").load(location.href + " #restore_div",
+      function () {
+        if (update_current_config) {
+          update_current_config_var();
+        }
+        configure_select_files();
+        build_backups_file_tree();
+        assign_vmbackup_restore_functions();
+        set_width_vmbackup_restore();
+      });
+    // set select_files to empty if no folder is selected.
+    if ($("#select_folder").val() == "") {
+      $("#select_files").empty();
+    }
+  }
+
+  // set the width of the first grid column based on content.
+  function set_width_vmbackup_restore(set_config_width = true) {
+    // get an array of all element widths using the supplied selector.
+    var widths = $("#current_config_restore_div .input_description").map(function () {
+      return $(this).width();
+    }).get();
+
+    // get the largest width from the array.
+    var max_width = Math.max.apply(null, widths);
+
+    // set each element to the max width using the supplied selector.
+    $("#current_config_restore_div .input_description").css({ "width": max_width });
+
+    // set config dropdown width for consistency.
+    if (set_config_width) {
+      set_width_configs();
+    }
+  }
+
+  // function to hide/show inline help.
+  function toggle_inline_help_vmbackup_restore() {
+    $('#restore_div').off('click', '#current_config_restore_div .input_description');
+    $('#restore_div').on('click', '#current_config_restore_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+    $('#restore_div').off('click', '#select_folder_div .input_description');
+    $('#restore_div').on('click', '#select_folder_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+    $('#restore_div').off('click', '#select_files_div .input_description');
+    $('#restore_div').on('click', '#select_files_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+  }
+
+  // function assigns actions to forms for changes and add click events.
+  function assign_vmbackup_restore_functions() {
+    // monitor form input changes.
+    current_config_restore_change();
+    select_folder_change();
+  }
+/** end functions for Vmbackup6Restore **/
