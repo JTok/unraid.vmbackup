@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2020.01.29">
+<!ENTITY version    "2020.02.05">
 <!ENTITY tag        "v0.2.1">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
@@ -31,7 +31,7 @@
 <CHANGES>
 ##&name;
 
-### v0.2.1 - development
+### v0.2.1 - 2020/02/05
 **Pika Pika**
 
 - merged changes from unraid-vmbackup script v1.3.1.

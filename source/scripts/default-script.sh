@@ -2,7 +2,7 @@
 #backgroundOnly=true
 #arrayStarted=no_config
 #noParity=no_config
-#version=v0.2.1 - 2020/01/29
+#version=v0.2.1 - 2020/02/05
 
 # based on unraid-vmbackup script version:
 # v1.3.1 - 2020/01/21

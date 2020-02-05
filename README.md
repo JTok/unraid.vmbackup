@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.2.1 - 2020/01/29
+v0.2.1 - 2020/02/05
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
