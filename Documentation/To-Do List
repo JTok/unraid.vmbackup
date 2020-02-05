@@ -25,4 +25,7 @@
 #  - check into rsync process not ending.
 #  - check into high IOWAIT while running backup.
 #  - add help to upload scripts and manage configs.
+#  - move txt files from usb drive to /tmp.
+#  - fix config drop-down help.
 #  - add restore functionality.
+#  - verify at least one box is checked.
