@@ -190,7 +190,7 @@ Icon="clone"
   <!-- current config -->
   <div class="wrapper_div">
     <div id="current_config_settings_div" class="grid_container_left">
-      <label name="current_config_settings_label" class="config_label config_text">Currently editing config:</label>
+      <label name="current_config_settings_label" class="input_description config_text">Currently editing config:</label>
       <div class="user_input_div"><select id="current_config_settings" name="current_config_settings" size="1">
         <option value="default">default</option>
         <?php
