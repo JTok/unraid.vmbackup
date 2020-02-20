@@ -15,6 +15,7 @@
 #  - alert when choosing options that may require additional configuration (like enabling snapshots)?
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
+#  - ability to backup passthrough disks.
 #  - show loading content in configs div while refreshing after add/remove/copy?
 #  - show error if form submit fails.
 #  - plugin error log file?
