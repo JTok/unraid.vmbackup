@@ -3,9 +3,9 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2020.02.05a">
+<!ENTITY version    "2020.02.20">
 <!ENTITY tag        "v0.2.1">
-<!ENTITY branch     "development">
+<!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
@@ -16,7 +16,7 @@
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
 <!ENTITY pigz       "pigz-2.3-x86_64-1_slonly">
 <!ENTITY PIGZMD5    "843accfc6dce4393f4c43c8d8e4eb0cb">
-<!ENTITY MD5        "4460cfb5f7a9d6f741589aab058a31dc">
+<!ENTITY MD5        "bc5d96bdc0a1c11278736d411b6218b9">
 ]>
 
 <PLUGIN name="&name;"
@@ -31,7 +31,7 @@
 <CHANGES>
 ##&name;
 
-### v0.2.1 - 2020/02/05
+### v0.2.1 - 2020/02/20
 **Pika Pika**
 
 - merged changes from unraid-vmbackup script v1.3.1.
