@@ -5,7 +5,6 @@
 #  - ignore/change number of backups to keep and number of days to keep backups warnings.
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
 #  - move some of the settings alerts to html form validation instead.
-#  - add compression algorithm choices lbzip2 and zstnd?
 #  - update script to use xmlstarlet.
 #  - re-add vms_to_backup_running to danger zone.
 #  - create more advanced regex for custom cron.
@@ -13,16 +12,22 @@
 #  - disable backup now and fix snapshots buttons while their scripts are running?
 #  - update readme to include more explanation, as well as field names.
 #  - update default config comments and variable ordering to match default script.
-#  - ability to have a detailed summary emailed.
 #  - alert when choosing options that may require additional configuration (like enabling snapshots)?
-#  - ability to perform different backup schemes, such as incremental.
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
 #  - show loading content in configs div while refreshing after add/remove/copy?
-#  - check into high IOWAIT while running backup.
-#  - check into rsync process not ending.
-#  - change compression to be during copy stream.
-#  - add restore functionality.
-#  - add help to upload scripts and manage configs.
 #  - show error if form submit fails.
 #  - plugin error log file?
+#  - backup configs? will require validation system.
+#  - toggle help based on master toggle.
+#  - ability to perform different backup schemes, such as incremental.
+#  - ability to have a detailed summary emailed.
+#  - check into rsync process not ending.
+#  - check into high IOWAIT while running backup.
+#  - add help to upload scripts and manage configs.
+#  - move txt files from usb drive to /tmp.
+#  - fix config drop-down help.
+#  - add restore functionality.
+#  - verify at least one box is checked.
+#  - add option to allow any extra files inside a vm path to be backed up.
+#  - move backups to subfolder.

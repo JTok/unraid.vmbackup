@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2020.01.21">
-<!ENTITY tag        "v0.2.0">
+<!ENTITY version    "2020.02.20">
+<!ENTITY tag        "v0.2.1">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -16,7 +16,7 @@
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
 <!ENTITY pigz       "pigz-2.3-x86_64-1_slonly">
 <!ENTITY PIGZMD5    "843accfc6dce4393f4c43c8d8e4eb0cb">
-<!ENTITY MD5        "f453c657d931c32c912584f60fae68bb">
+<!ENTITY MD5        "bc5d96bdc0a1c11278736d411b6218b9">
 ]>
 
 <PLUGIN name="&name;"
@@ -30,6 +30,16 @@
 
 <CHANGES>
 ##&name;
+
+### v0.2.1 - 2020/02/20
+**Pika Pika**
+
+- merged changes from unraid-vmbackup script v1.3.1.
+- added seconds to logs.
+- added option to use zstandard compression.
+- added option to create a vm specific log in each vm's subfolder.
+- added config drop-down selection to the top of each tab.
+- updated method used to determine cpu thread count.
 
 ### v0.2.0 - 2020/01/21
 **The Resistance**
@@ -146,8 +156,8 @@
 <!--
   plugin package file.
 -->
-<FILE Name="/boot/config/plugins/&name;/&name;-&tag;.txz" Run="upgradepkg --install-new">
-  <URL>&gitURL;/&name;-&tag;.txz</URL>
+<FILE Name="/boot/config/plugins/&name;/&name;-&tag;-&version;.txz" Run="upgradepkg --install-new">
+  <URL>&gitURL;/&name;-&tag;-&version;.txz</URL>
   <MD5>&MD5;</MD5>
 </FILE>
 
@@ -184,6 +194,7 @@
   <INLINE>
     find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
     find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
+    find &packages;/ -type f -iname "pigz*.txz" ! -iname "&pigz;.txz" -delete
   </INLINE>
 </FILE>
 

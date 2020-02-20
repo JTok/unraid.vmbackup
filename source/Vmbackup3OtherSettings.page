@@ -10,15 +10,42 @@ Icon="clone"
 
 ?>
 
-<div class="wrapper_div">
-  <p><u>Warning</u></p>
-	<p>The settings below could have unintended side effects if used improperly.
-  <br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
-  <br>It is recommended not to change these settings.
-  <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
-</div>
-
 <div id="vmbackup_other_settings_div" class="wrapper_div">
+
+  <!-- current config -->
+  <div class="wrapper_div">
+    <div id="current_config_other_settings_div" class="grid_container_left pad_config_top">
+      <label name="current_config_other_settings_label" class="config_label config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config_other_settings" name="current_config_other_settings" size="1">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select></div>
+
+      <span name="current_config_other_settings_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
+    </div>
+  </div>
+
+  <!-- warning -->
+  <div class="wrapper_div">
+    <span class="important_info"><p>Warning</p></span>
+    <p>The settings below could have unintended side effects if used improperly.
+    <br>They should not be able to result in corrupt backups, but some settings could cause backups to be skipped in specific situations.
+    <br>It is recommended not to change these settings.
+    <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
+  </div>
+
   <form id="vmbackup_other_settings_form" name="vmbackup_other_settings" autocomplete="off" method="POST" action="/update.php" target="progressFrame">
     <input type="hidden" id="vmbackup_other_settings_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
@@ -55,6 +82,18 @@ Icon="clone"
       </span>
 
 
+      <label name="number_of_error_log_files_to_keep_label" class="input_description">Number of error log files to keep:</label>
+      <div class="user_input_div"><input type="text" id="number_of_error_log_files_to_keep" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$" required></div>
+
+      <span class="custom_inline_help">
+        <p>Set this to the number of error log files that should be kept.
+        <br>'0' means infinitely.</p>
+        <ul>
+          <li>Default is '10'.</li>
+        </ul>
+      </span>
+
+
       <label name="log_file_subfolder_label" class="input_description">Log file subfolder:</label>
       <div class="user_input_div"><input type="text" id="log_file_subfolder" name="log_file_subfolder" class="narrow" maxlength="100" value="<?=$conf_array['log_file_subfolder'];?>" pattern="^[^\/ ](([\w.-]+)( [\w.-]+)*)*(\/(([\w.-]+)( [\w.-]+)*)*)*$"></div>
 
@@ -68,14 +107,18 @@ Icon="clone"
       </span>
 
 
-      <label name="number_of_error_log_files_to_keep_label" class="input_description">Number of error log files to keep:</label>
-      <div class="user_input_div"><input type="text" id="number_of_error_log_files_to_keep" name="number_of_error_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_error_log_files_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$" required></div>
+      <label name="enable_vm_log_file_label" class="input_description">Enable per VM logs?</label>
+      <div class="user_input_div"><select id="enable_vm_log_file" name="enable_vm_log_file" size="1">
+        <?=mk_option($conf_array['enable_vm_log_file'], "0", "No");?>
+        <?=mk_option($conf_array['enable_vm_log_file'], "1", "Yes");?>
+      </select></div>
 
       <span class="custom_inline_help">
-        <p>Set this to the number of error log files that should be kept.
-        <br>'0' means infinitely.</p>
+        <p>Set to 'Yes' to have VM specific log files created in each VM's backup subfolder.</p>
         <ul>
-          <li>Default is '10'.</li>
+          <li>This is independent of other log settings.</li>
+          <li>This uses the same retention policy as the VM's backups.</li>
+          <li>Default is 'No'.</li>
         </ul>
       </span>
     </div>
@@ -136,13 +179,35 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Advanced Features</div>
     <div id="advanced_features" class="grid_container_left">
 
-      <label name="compression_level_label" class="input_description">Compression level?</label>
-      <div class="user_input_div"><select id="compression_level" name="compression_level" size="1">
+      <label name="zstd_level_label" class="input_description">Zstandard compression level:</label>
+      <div class="user_input_div"><select id="zstd_level" name="zstd_level" size="1">
         <?php
-          $compression_level = create_number_array(1,9);
-          foreach($compression_level as $key => $value) {
+          $zstd_level = create_number_array(1,19);
+          foreach($zstd_level as $key => $value) {
         ?>
-            <?=mk_option($conf_array['compression_level'], $value, $key);?>
+            <?=mk_option($conf_array['zstd_level'], $value, $key);?>
+          <?php
+          }
+          ?>
+      </select></div>
+
+      <span class="custom_inline_help">
+        <p>Set to '1' for the lowest compression level with the largest file sizes, but the highest speeds.
+        <br>Set to '19' for the highest compression level with the smallest file sizes, but the lowest speeds.</p>
+        <ul>
+          <li>WARNING: Setting to numbers over 8 can be significantly slower, and may not produce meaningfully smaller backups.</li>
+          <li>Default is '3'.</li>
+        </ul>
+      </span>
+
+
+      <label name="pigz_level_label" class="input_description">Legacy compression level:</label>
+      <div class="user_input_div"><select id="pigz_level" name="pigz_level" size="1">
+        <?php
+          $pigz_level = create_number_array(1,9);
+          foreach($pigz_level as $key => $value) {
+        ?>
+            <?=mk_option($conf_array['pigz_level'], $value, $key);?>
           <?php
           }
           ?>

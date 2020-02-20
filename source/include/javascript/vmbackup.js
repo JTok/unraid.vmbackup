@@ -20,6 +20,33 @@
     add_validation_events('snapshot_extension', 'Please enter a valid extension. Cannot be blank.');
   }
 
+  // set the disabled state for compression drop downs.
+  function set_compression_drop_down_states() {
+    if ($("#pigz_compress").val() == "0") {
+      change_prop("#pigz_level", "disabled", true);
+      change_prop("#pigz_threads", "disabled", true);
+    } else {
+      change_prop("#pigz_level", "disabled", false);
+      change_prop("#pigz_threads", "disabled", false);
+    }
+    if ($("#inline_zstd_compress").val() == "0") {
+      change_prop("#zstd_level", "disabled", true);
+      change_prop("#zstd_threads", "disabled", true);
+    } else {
+      change_prop("#zstd_level", "disabled", false);
+      change_prop("#zstd_threads", "disabled", false);
+    }
+  }
+
+  // function to set all the config drop-down values based on the passed config.
+  function set_current_config_values(config) {
+    $("#current_config_settings").val(config);
+    $("#current_config_upload_scripts").val(config);
+    $("#current_config_other_settings").val(config);
+    $("#current_config_danger_zone").val(config);
+    $("#current_config_manage_configs").val(config);
+  }
+
   // function to update form inputs based on current config.
   function update_form_config(config) {
     if (config.trim().length === 0) {
@@ -44,11 +71,68 @@
     $("#vmbackup_danger_zone_form").append('<input type="hidden" name="#arg[2]" value="' + config + '">');
   }
 
+  // function to set the current config.
+  function config_changed(config, show_swal = false) {
+    if (show_swal) {
+      swal({
+        title: 'Changing configs...',
+        type: "info",
+        showCancelButton: false,
+        showConfirmButton: false,
+        allowOutsideClick: false
+      });
+    }
+    set_variable_cookie("current_config", config);
+    // refresh page content.
+    refresh_data_tabs(false, true);
+    // refresh settings tab a second time to make sure that file tree is updated correctly.
+    refresh_vmbackup_settings(false, true);
+    // update form inputs based on current config.
+    set_variable_cookie("refresh_settings", true);
+    if (show_swal) {
+      setTimeout(function () { swal.close(); }, 1000);
+    }
+  }
+
+  // set the change event for current_config.
+  function current_config_change() {
+    current_config_settings_change();
+    current_config_upload_scripts_change(); 
+    current_config_other_settings_change();
+    current_config_danger_zone_change();
+    current_config_manage_configs_change();
+  }
+
   // function to set the width of the first grid columns based on content.
   function set_width() {
-    set_width_vmbackup_settings();
-    set_width_vmbackup_other_settings();
-    set_width_vmbackup_danger_zone();
+    set_width_vmbackup_settings(false);
+    set_width_vmbackup_upload_scripts(false);
+    set_width_vmbackup_other_settings(false);
+    set_width_vmbackup_danger_zone(false);
+    set_width_vmbackup_manage_configs(false);
+    set_width_configs();
+  }
+
+  // function to set the width of all the config drop downs based on their content.
+  function set_width_configs() {
+    // var widths = [];
+    // widths.push($("#current_config_settings_div .input_description").width());
+    // widths.push($("#current_config_upload_scripts_div .input_description").width());
+    // widths.push($("#current_config_other_settings_div .input_description").width());
+    // widths.push($("#current_config_danger_zone_div .input_description").width());
+    // widths.push($("#current_config_manage_configs_div .input_description").width());
+
+    // get the largest width from the array.
+    // var max_width = Math.max.apply(null, widths);
+    // var max_width = $("#current_config_settings_div .input_description").width();
+    // console.log("config width", max_width);
+
+    // set each element to the max width using the supplied selector.
+    $("#current_config_settings_div .input_description").css({ "width": 0 });
+    $("#current_config_upload_scripts_div .input_description").css({ "width": 0 });
+    $("#current_config_other_settings_div .input_description").css({ "width": 0 });
+    $("#current_config_danger_zone_div .input_description").css({ "width": 0 });
+    $("#current_config_manage_configs_div .input_description").css({ "width": 0 });
   }
 
   /* assign event handlers to element events. */
@@ -59,7 +143,7 @@
       set_width_vmbackup_settings();
       // refresh the form.
       if (refresh_settings) {
-        refresh_vmbackup_settings(false);
+        refresh_vmbackup_settings(false, true);
         // $.ajax({
         //   url: "",
         //   context: document.body,
@@ -69,36 +153,48 @@
         // });
       }
     });
+    // add custom click function to Other Settings tab.
     $("#tab3").on('click', function () {
+      set_compression_drop_down_states();
       set_width_vmbackup_other_settings();
     });
+    // add custom click function to Danger Zone tab.
     $("#tab4").on('click', function () {
+      set_compression_drop_down_states();
       set_width_vmbackup_danger_zone();
     });
   }
 
   // function to refresh all data tabs.
-  function refresh_data_tabs(attach_file_tree = false) {
+  function refresh_data_tabs(attach_file_tree = false, update_current_config = false) {
+    // update_current_config_var();
+    refresh_vmbackup_upload_scripts(update_current_config);
+    refresh_vmbackup_other_settings(update_current_config);
+    refresh_vmbackup_danger_zone(update_current_config);
+    refresh_vmbackup_manage_configs(update_current_config);
+    refresh_vmbackup_settings(attach_file_tree, update_current_config);
     update_current_config_var();
-    refresh_vmbackup_upload_scripts();
-    refresh_vmbackup_other_settings();
-    refresh_vmbackup_danger_zone();
-    refresh_vmbackup_settings(attach_file_tree);
     // update form inputs based on current config.
     update_form_config(current_config);
   }
 
   // update the config based on the cookie.
-  function update_current_config_var() {
-    current_config = get_cookie("current_config");
-    $("#current_config").val(current_config);
+  function update_current_config_var(config = null) {
+    if (config) {
+      set_current_config_values(config);
+    } else {
+      current_config = get_cookie("current_config");
+      set_current_config_values(current_config);
+    }
   }
 
   // function to hide/show inline help.
   function toggle_inline_help() {
     toggle_inline_help_vmbackup_settings();
+    toggle_inline_help_vmbackup_upload_scripts();
     toggle_inline_help_vmbackup_other_settings();
     toggle_inline_help_vmbackup_danger_zone();
+    toggle_inline_help_vmbackup_manage_configs();
   }
 
   // function assigns actions to forms for changes and add click events.
@@ -107,6 +203,9 @@
     vmbackup_settings_form_input_change();
     vmbackup_other_settings_form_input_change();
     vmbackup_danger_zone_form_input_change();
+    // handle compression type changes.
+    compression_type_change();
+    // handle current config changes.
     current_config_change();
     // tab click events.
     tab_click_events();
@@ -118,9 +217,9 @@
     show_log_click();
     backup_now_click();
     // monitor specific Vmbackup2UploadScripts inputs for changes and click events.
-    submit_pre_script_click();
+    save_pre_script_click();
     remove_pre_script_click();
-    submit_post_script_click();
+    save_post_script_click();
     remove_post_script_click();
     // monitor specific VmBackup3OtherSettings inputs for changes and click events.
     default_vmbackup_other_settings_click();
@@ -195,41 +294,34 @@
     }
   }
 
-  // set the change event for current_config.
-  function current_config_change() {
-    $("#current_config").on("change", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      config_changed(true);
+  // set the change event for compression types.
+  function compression_type_change() {
+    $("#inline_zstd_compress").on("change", function () {
+      if ($("#inline_zstd_compress").val() == "1") {
+        $("#pigz_compress").val("0");
+      }
+      set_compression_drop_down_states();
+    });
+    $("#pigz_compress").on("change", function () {
+      if ($("#pigz_compress").val() == "1") {
+        $("#inline_zstd_compress").val("0");
+      }
+      set_compression_drop_down_states();
     });
   }
 
-  // function to set the current config.
-  function config_changed(show_swal = false) {
-    if (show_swal) {
-      swal({
-        title: 'Changing configs...',
-        type: "info",
-        showCancelButton: false,
-        showConfirmButton: false,
-        allowOutsideClick: false
-      });
-    }
-    var config = $("#current_config").children("option:selected").val();
-    set_variable_cookie("current_config", config);
-    // refresh page content.
-    refresh_data_tabs(false);
-    // refresh settings tab a second time to make sure that file tree is updated correctly.
-    refresh_vmbackup_settings(false);
-    // update form inputs based on current config.
-    // update_form_config(config);
-    if (show_swal) {
-      setTimeout(function() { swal.close(); }, 1000);
-    }
+  // set the change event for current_config.
+  function current_config_settings_change() {
+    $("#current_config_settings").on("change", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var config = $("#current_config_settings").children("option:selected").val();
+      config_changed(config, true);
+    });
   }
 
   // set the width of the first grid column based on content.
-  function set_width_vmbackup_settings() {
+  function set_width_vmbackup_settings(set_config_width = true) {
     // get an array of all element widths using the supplied selector.
     var widths = $("#vmbackup_settings_div .input_description").map(function () {
       return $(this).width();
@@ -240,10 +332,20 @@
 
     // set each element to the max width using the supplied selector.
     $("#vmbackup_settings_div .input_description").css({ "width": max_width });
+
+    // set config dropdown width for consistency.
+    if (set_config_width) {
+      set_width_configs();
+    }
   }
 
   // function to hide/show inline help.
   function toggle_inline_help_vmbackup_settings() {
+    $('#vmbackup_settings_div').off('click', '#current_config_settings_div .input_description');
+    $('#vmbackup_settings_div').on('click', '#current_config_settings_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
     $('#vmbackup_settings_div').off('click', '#basic_settings_div .input_description');
     $('#vmbackup_settings_div').on('click', '#basic_settings_div .input_description', function (e) {
       e.preventDefault();
@@ -256,11 +358,6 @@
     });
     $('#vmbackup_settings_div').off('click', '#advanced_settings .input_description');
     $('#vmbackup_settings_div').on('click', '#advanced_settings .input_description', function (e) {
-      e.preventDefault();
-      $(this).nextAll('.custom_inline_help:first').toggle('slow');
-    });
-    $('#vmbackup_settings_div').off('click', '#current_config_div .input_description');
-    $('#vmbackup_settings_div').on('click', '#current_config_div .input_description', function (e) {
       e.preventDefault();
       $(this).nextAll('.custom_inline_help:first').toggle('slow');
     });
@@ -319,7 +416,7 @@
                 // refresh all tabs.
                 refresh_data_tabs(false);
                 // refresh settings tab a second time to make sure that file tree is updated correctly.
-                refresh_vmbackup_settings(false);
+                refresh_vmbackup_settings(false, false);
                 swal.close();
               });
             });
@@ -354,7 +451,7 @@
       var vmbackup_settings_form = document.getElementById("vmbackup_settings_form");
       prepare_form(vmbackup_settings_form);
       // disable current_config to prevent submission with form.
-      change_prop("#current_config", "disabled", true);
+      change_prop("#current_config_settings", "disabled", true);
       // check to see if text files should be rebuilt.
       if (rebuild_text_files) {
         // append input to form submission to force text files to be re-created.
@@ -367,12 +464,12 @@
           // check to see if the Settings tab should be refreshed.
           if (refresh_settings) {
             // refresh settings.
-            refresh_vmbackup_settings(false);
+            refresh_vmbackup_settings(false, true);
           }
           // make sure done button value is done.
           $("#done_vmbackup_settings").val("Done");
           // re-enable the current config drop-down.
-          change_prop("#current_config", "disabled", false);
+          change_prop("#current_config_settings", "disabled", false);
         });
     });
   }
@@ -385,7 +482,9 @@
       e.stopPropagation();
       if ($("#done_vmbackup_settings").val() == "Reset") {
         // refresh the form.
-        refresh_vmbackup_settings(false);
+        refresh_vmbackup_settings(false, true);
+        // set the disabled state for compression drop downs.
+        set_compression_drop_down_states();
       } else {
         // perform normal done action.
         done();
@@ -447,7 +546,7 @@
                 $.post($("#backup_now_form").attr("action"), $("#backup_now_form").serialize());
                 // check to see if the Settings tab should be refreshed.
                 if (refresh_settings) {
-                  refresh_vmbackup_settings(false);
+                  refresh_vmbackup_settings(false, true);
                   set_variable_cookie("refresh_settings", false);
                 }
                 // make sure done button value is done.
@@ -466,7 +565,7 @@
     // add new change event handlers for inputs.
     $("#vmbackup_settings_div :input").on("change", function () {
       // check to see if the element is current_config.
-      if ($(this).attr("id") == "current_config") {
+      if ($(this).attr("id") == "current_config_settings") {
         // if so, disable the apply button.
         change_prop("#apply_vmbackup_settings", "disabled", true);
       } else {
@@ -488,7 +587,7 @@
         // check if the button value is Reset.
         if ($("#done_vmbackup_settings").val() == "Reset") {
           // if so, refresh the form.
-          refresh_vmbackup_settings(false);
+          refresh_vmbackup_settings(false, true);
         } else {
           // perform normal done action.
           done();
@@ -530,51 +629,101 @@
     $("#vdisks_to_skip").dropdownchecklist({ emptyText: 'None', width: 166, explicitClose: '...close' });
   }
 
-  // rebuild the current_config dropdown list.
-  function rebuild_current_config(new_config, old_config, use_new_config = false) {
-    // get the current config element.
-    var current_config_select = $('#current_config');
+  // rebuild the current_config dropdown lists.
+  function rebuild_current_configs(new_config, old_config, use_new_config = false, element_id = "all") {
     // get the currently selected config.
-    var selected_config = current_config_select.val();
+    var selected_config = get_cookie("current_config");
+
     // append the new config to the element.
     if (new_config.length > 0) {
-      $('#current_config').append('<option value="' + new_config + '">' + new_config + '</option>');
+      append_new_config(element_id, new_config);
     }
+
     // remove the old config from the element.
     if (old_config.length > 0) {
-      $("#current_config option[value='" + old_config + "']").remove();
+      // if the config about to be removed is the currently selected config, change to default.
+      if (old_config == selected_config) {
+        selected_config = "default";
+      }
+      remove_old_config(element_id, old_config);
     }
+
     // remove the default value from the element.
-    $("#current_config option[value='default']").remove();
-    // get a list of the remaining configs.
-    var configs_list = current_config_select.find('option');
-    // sort the list of configs alphabetically.
-    configs_list.sort(function (a, b) { return $(a).text().toUpperCase() > $(b).text().toUpperCase() ? 1 : -1; });
-    // clear the array and append the default value.
-    current_config_select.empty().append('<option value="default">default</option>');
-    // append the sorted configs.
-    current_config_select.append(configs_list);
+    remove_old_config(element_id, "default");
+
+    // sort the configs.
+    sort_configs(element_id);
+
     // select the current config.
     if (use_new_config) {
       // if we should be using the new config, then select that.
-      current_config_select.val(new_config);
+      update_current_config_var(selected_config);
     } else {
       // otherwise, re-select the current config.
-      current_config_select.val(selected_config);
+      update_current_config_var(selected_config);
+    }
+  }
+
+  function append_new_config(element_id, new_config) {
+    if (element_id != "all") {
+      $('#' + element_id).append('<option value="' + new_config + '">' + new_config + '</option>');
+    } else if (element_id == "all") {
+      $('#current_config_settings').append('<option value="' + new_config + '">' + new_config + '</option>');
+      $('#current_config_upload_scripts').append('<option value="' + new_config + '">' + new_config + '</option>');
+      $('#current_config_other_settings').append('<option value="' + new_config + '">' + new_config + '</option>');
+      $('#current_config_danger_zone').append('<option value="' + new_config + '">' + new_config + '</option>');
+      $('#current_config_manage_configs').append('<option value="' + new_config + '">' + new_config + '</option>');
+    }
+  }
+
+  function remove_old_config(element_id, old_config) {
+    if (element_id != "all") {
+      $("#" + element_id + " option[value='" + old_config + "']").remove();
+    } else if (element_id == "all") {
+      $("#current_config_settings option[value='" + old_config + "']").remove();
+      $("#current_config_upload_scripts option[value='" + old_config + "']").remove();
+      $("#current_config_other_settings option[value='" + old_config + "']").remove();
+      $("#current_config_danger_zone option[value='" + old_config + "']").remove();
+      $("#current_config_manage_configs option[value='" + old_config + "']").remove();
+    }
+  }
+
+  function sort_configs(element_id) {
+    if (element_id != "all") {
+      // get the current config element.
+      var current_config_select = $('#' + element_id);
+      // remove the default value from the element.
+      remove_old_config(element_id, "default");
+      // get a list of the remaining configs.
+      var configs_list = current_config_select.find('option');
+      // sort the list of configs alphabetically.
+      configs_list.sort(function (a, b) { return $(a).text().toUpperCase() > $(b).text().toUpperCase() ? 1 : -1; });
+      // clear the array and append the default value.
+      current_config_select.empty().append('<option value="default">default</option>');
+      // append the sorted configs.
+      current_config_select.append(configs_list);
+    } else if (element_id == "all") {
+      sort_configs("current_config_settings");
+      sort_configs("current_config_upload_scripts");
+      sort_configs("current_config_other_settings");
+      sort_configs("current_config_danger_zone");
+      sort_configs("current_config_manage_configs");
     }
   }
 
   /* functions to refresh page elements */
   // refresh current config drop down.
   function refresh_current_config_div() {
-    $("#current_config_div").load(location.href + " #current_config_div");
+    $("#current_config_settings_div").load(location.href + " #current_config_settings_div");
   }
 
   // function to refresh content for settings tab.
-  function refresh_vmbackup_settings(attach_file_tree = true){
+  function refresh_vmbackup_settings(attach_file_tree = true, update_current_config = true){
     $("#vmbackup_settings_div").load(location.href + " #vmbackup_settings_div",
       function () {
-        update_current_config_var();
+        if (update_current_config) {
+          update_current_config_var();
+        }
         configure_set_backup_location(attach_file_tree);
         configure_vms_to_backup();
         configure_vdisks_to_skip();
@@ -596,7 +745,8 @@
   function assign_vmbackup_settings_functions() {
     // monitor form input changes.
     vmbackup_settings_form_input_change();
-    current_config_change();
+    compression_type_change();
+    current_config_settings_change();
     // monitor specific Vmbackup1Settings inputs for changes and click events.
     vdisk_extensions_to_skip_change();
     default_vmbackup_settings_click();
@@ -609,9 +759,53 @@
 
 
 /** start functions for Vmbackup2UploadScripts **/
+
+  // set the change event for current_config.
+  function current_config_upload_scripts_change() {
+    $("#current_config_upload_scripts").on("change", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var config = $("#current_config_upload_scripts").children("option:selected").val();
+      config_changed(config, true);
+    });
+  }
+
+  // set the width of the first grid column based on content.
+  function set_width_vmbackup_upload_scripts(set_config_width = true) {
+    // get an array of all element widths using the supplied selector.
+    var widths = $("#upload_form_div .input_description").map(function () {
+      return $(this).width();
+    }).get();
+
+    // get the largest width from the array.
+    var max_width = Math.max.apply(null, widths);
+
+    // set each element to the max width using the supplied selector.
+    $("#upload_form_div .input_description").css({ "width": max_width });
+
+    // set config dropdown width for consistency.
+    if (set_config_width) {
+      set_width_configs();
+    }
+  }
+
+  // function to hide/show inline help.
+  function toggle_inline_help_vmbackup_upload_scripts() {
+    $('#upload_form_div').off('click', '#current_config_upload_scripts_div .input_description');
+    $('#upload_form_div').on('click', '#current_config_upload_scripts_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+    $('#upload_form_div').off('click', '#scripts_div .input_description');
+    $('#upload_form_div').on('click', '#scripts_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+  }
+
   /* add click events to script buttons*/
-  function submit_pre_script_click() {
-    $("#submit_pre_script").on("click", function (e) {
+  function save_pre_script_click() {
+    $("#save_pre_script").on("click", function (e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
@@ -619,11 +813,11 @@
       var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to Submit the pre-script.
       swal({
-        title: 'Submit pre-script?',
-        text: 'Are you sure you want to submit this pre-script?',
+        title: 'Save pre-script?',
+        text: 'Are you sure you want to save this pre-script?',
         type: "info",
         showCancelButton: true,
-        confirmButtonText: "Yes, submit pre-script",
+        confirmButtonText: "Yes, save pre-script",
         cancelButtonText: "Cancel",
         closeOnConfirm: false,
         closeOnCancel: true,
@@ -675,8 +869,8 @@
         });
     });
   }
-  function submit_post_script_click() {
-    $("#submit_post_script").on("click", function (e) {
+  function save_post_script_click() {
+    $("#save_post_script").on("click", function (e) {
       // prevent normal form submission.
       e.preventDefault();
       e.stopPropagation();
@@ -684,11 +878,11 @@
       var clicked_button = $(this).attr("name") + "=" + $(this).val();
       // ask if user is certain they want to Submit the post-script.
       swal({
-        title: 'Submit post-script?',
-        text: 'Are you sure you want to submit this post-script?',
+        title: 'Save post-script?',
+        text: 'Are you sure you want to save this post-script?',
         type: "info",
         showCancelButton: true,
-        confirmButtonText: "Yes, submit post-script",
+        confirmButtonText: "Yes, save post-script",
         cancelButtonText: "Cancel",
         closeOnConfirm: false,
         closeOnCancel: true,
@@ -742,19 +936,25 @@
   }
 
   // function to refresh content for settings tab.
-  function refresh_vmbackup_upload_scripts() {
+  function refresh_vmbackup_upload_scripts(update_current_config = true) {
     $("#upload_form_div").load(location.href + " #upload_form_div",
       function () {
+        if (update_current_config) {
+          update_current_config_var();
+        }
         assign_vmbackup_upload_scripts_functions();
+        set_width_vmbackup_upload_scripts();
       });
   }
 
   // function assigns actions to forms for changes and add click events.
   function assign_vmbackup_upload_scripts_functions() {
+    // monitor form input changes.
+    current_config_upload_scripts_change();
     // monitor specific Vmbackup2UploadScripts inputs for changes and click events.
-    submit_pre_script_click();
+    save_pre_script_click();
     remove_pre_script_click();
-    submit_post_script_click();
+    save_post_script_click();
     remove_post_script_click();
   }
 /** end functions for Vmbackup2UploadScripts **/
@@ -767,12 +967,18 @@
     $("#vmbackup_other_settings_div :input").off("change");
     // add new change event handlers for inputs.
     $("#vmbackup_other_settings_div :input").on("change", function () {
-      // remove the disabled attribute.
-      $("#apply_vmbackup_other_settings").removeAttr("disabled");
-      // use the property value to set the apply button as not disabled.
-      change_prop("#apply_vmbackup_other_settings", "disabled", false);
-      // change the value of the done button to "Reset".
-      $("#done_vmbackup_other_settings").val("Reset");
+      // check to see if the element is current_config.
+      if ($(this).attr("id") == "current_config_other_settings") {
+        // if so, disable the apply button.
+        change_prop("#apply_vmbackup_other_settings", "disabled", true);
+      } else {
+        // remove the disabled attribute.
+        $("#apply_vmbackup_other_settings").removeAttr("disabled");
+        // use the property value to set the apply button as not disabled.
+        change_prop("#apply_vmbackup_other_settings", "disabled", false);
+        // change the value of the done button to "Reset".
+        $("#done_vmbackup_other_settings").val("Reset");
+      }
 
       // remove any existing click events from the done button.
       $("#done_vmbackup_other_settings").off("click");
@@ -784,7 +990,7 @@
         // check if the button value is Reset.
         if ($("#done_vmbackup_other_settings").val() == "Reset") {
           // if so, refresh the form.
-          refresh_vmbackup_other_settings();
+          refresh_vmbackup_other_settings(true);
         } else {
           // perform normal done action.
           done();
@@ -796,14 +1002,25 @@
   function assign_vmbackup_other_settings_functions() {
     // monitor form input changes.
     vmbackup_other_settings_form_input_change();
+    current_config_other_settings_change();
     // monitor specific VmBackup3OtherSettings inputs for changes and click events.
     default_vmbackup_other_settings_click();
     apply_vmbackup_other_settings_click();
     done_vmbackup_other_settings_click();
   }
 
+  // set the change event for current_config.
+  function current_config_other_settings_change() {
+    $("#current_config_other_settings").on("change", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var config = $("#current_config_other_settings").children("option:selected").val();
+      config_changed(config, true);
+    });
+  }
+
   // set the width of the first grid column based on content.
-  function set_width_vmbackup_other_settings() {
+  function set_width_vmbackup_other_settings(set_config_width = true) {
     // get an array of all element widths using the supplied selector.
     var widths = $("#vmbackup_other_settings_div .input_description").map(function () {
       return $(this).width();
@@ -814,10 +1031,20 @@
 
     // set each element to the max width using the supplied selector.
     $("#vmbackup_other_settings_div .input_description").css({ "width": max_width });
+
+    // set config dropdown width for consistency.
+    if (set_config_width) {
+      set_width_configs();
+    }
   }
 
   // function to hide/show inline help.
   function toggle_inline_help_vmbackup_other_settings() {
+    $('#vmbackup_other_settings_div').off('click', '#current_config_other_settings_div .input_description');
+    $('#vmbackup_other_settings_div').on('click', '#current_config_other_settings_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
     $('#vmbackup_other_settings_div').off('click', '#logging_div .input_description');
     $('#vmbackup_other_settings_div').on('click', '#logging_div .input_description', function (e) {
       e.preventDefault();
@@ -880,7 +1107,7 @@
                 // refresh all tabs.
                 refresh_data_tabs(false);
                 // refresh settings tab a second time to make sure that file tree is updated correctly.
-                refresh_vmbackup_settings(false);
+                refresh_vmbackup_settings(false, false);
                 // switch to the main tab.
                 $("#tab1").trigger("click");
                 swal.close();
@@ -921,7 +1148,7 @@
       e.stopPropagation();
       if ($("#done_vmbackup_other_settings").val() == "Reset") {
         // refresh the form.
-        refresh_vmbackup_other_settings();
+        refresh_vmbackup_other_settings(true);
       } else {
         // perform normal done action.
         done();
@@ -930,10 +1157,14 @@
   }
 
   // function to refresh content for settings tab.
-  function refresh_vmbackup_other_settings() {
+  function refresh_vmbackup_other_settings(update_current_config = true) {
     $("#vmbackup_other_settings_div").load(location.href + " #vmbackup_other_settings_div",
       function () {
+        if (update_current_config) {
+          update_current_config_var();
+        }
         assign_vmbackup_other_settings_functions();
+        set_compression_drop_down_states();
         set_width_vmbackup_other_settings();
       });
     // disable the apply button.
@@ -986,6 +1217,7 @@
   function assign_vmbackup_danger_zone_functions() {
     // monitor form input changes.
     vmbackup_danger_zone_form_input_change();
+    current_config_danger_zone_change();
     // monitor specific Vmbackup4DangerZone inputs for changes and click events.
     snapshot_extension_change();
     disable_restrictive_regex_change();
@@ -996,8 +1228,18 @@
     fix_snapshots_click();
   }
 
+  // set the change event for current_config.
+  function current_config_danger_zone_change() {
+    $("#current_config_danger_zone").on("change", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var config = $("#current_config_danger_zone").children("option:selected").val();
+      config_changed(config, true);
+    });
+  }
+
   // set the width of the first grid column based on content.
-  function set_width_vmbackup_danger_zone() {
+  function set_width_vmbackup_danger_zone(set_config_width = true) {
     // get an array of all element widths using the supplied selector.
     var widths = $("#vmbackup_danger_zone_div .input_description").map(function () {
       return $(this).width();
@@ -1008,10 +1250,20 @@
 
     // set each element to the max width using the supplied selector.
     $("#vmbackup_danger_zone_div .input_description").css({ "width": max_width });
+
+    // set config dropdown width for consistency.
+    if (set_config_width) {
+      set_width_configs();
+    }
   }
 
   // function to hide/show inline help.
   function toggle_inline_help_vmbackup_danger_zone() {
+    $('#vmbackup_danger_zone_div').off('click', '#current_config_danger_zone_div .input_description');
+    $('#vmbackup_danger_zone_div').on('click', '#current_config_danger_zone_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
     $('#vmbackup_danger_zone_div').off('click', '#danger_zone_div .input_description');
     $('#vmbackup_danger_zone_div').on('click', '#danger_zone_div .input_description', function (e) {
       e.preventDefault();
@@ -1079,7 +1331,7 @@
                   // refresh all tabs.
                   refresh_data_tabs(false);
                   // refresh settings tab a second time to make sure that file tree is updated correctly.
-                  refresh_vmbackup_settings(false);
+                  refresh_vmbackup_settings(false, false);
                   // switch to the main tab.
                   $("#tab1").trigger("click");
                   swal.close();
@@ -1126,7 +1378,7 @@
       e.stopPropagation();
       if ($("#done_vmbackup_danger_zone").val() == "Reset") {
         // refresh the form.
-        refresh_vmbackup_danger_zone();
+        refresh_vmbackup_danger_zone(true);
       } else {
         // perform normal done action.
         done();
@@ -1192,12 +1444,18 @@
     $("#vmbackup_danger_zone_form :input").off("change");
     // add new change event handlers for inputs.
     $("#vmbackup_danger_zone_form :input").on("change", function () {
-      // if not, remove the disabled attribute.
-      $("#apply_vmbackup_danger_zone").removeAttr("disabled");
-      // use the property value to set the apply button as not disabled.
-      change_prop("#apply_vmbackup_danger_zone", "disabled", false);
-      // change the value of the done button to "Reset".
-      $("#done_vmbackup_danger_zone").val("Reset");
+      // check to see if the element is current_config.
+      if ($(this).attr("id") == "current_config_danger_zone") {
+        // if so, disable the apply button.
+        change_prop("#apply_vmbackup_danger_zone", "disabled", true);
+      } else {
+        // if not, remove the disabled attribute.
+        $("#apply_vmbackup_danger_zone").removeAttr("disabled");
+        // use the property value to set the apply button as not disabled.
+        change_prop("#apply_vmbackup_danger_zone", "disabled", false);
+        // change the value of the done button to "Reset".
+        $("#done_vmbackup_danger_zone").val("Reset");
+      }
 
       // remove any existing click events from the done button.
       $("#done_vmbackup_danger_zone").off("click");
@@ -1209,7 +1467,7 @@
         // check if the button value is Reset.
         if ($("#done_vmbackup_danger_zone").val() == "Reset") {
           // if so, refresh the form.
-          refresh_vmbackup_danger_zone();
+          refresh_vmbackup_danger_zone(true);
         } else {
           // perform normal done action.
           done();
@@ -1219,10 +1477,14 @@
   }
 
   // function to refresh content for settings tab.
-  function refresh_vmbackup_danger_zone() {
+  function refresh_vmbackup_danger_zone(update_current_config = true) {
     $("#vmbackup_danger_zone_div").load(location.href + " #vmbackup_danger_zone_div",
       function () {
+        if (update_current_config) {
+          update_current_config_var();
+        }
         assign_vmbackup_danger_zone_functions();
+        set_compression_drop_down_states();
         set_width_vmbackup_danger_zone();
       });
     // disable the apply button.
@@ -1297,7 +1559,7 @@
                 });
               });
             // rebuild the dropdown to select a config.
-            rebuild_current_config(add_config_name, "", false);
+            rebuild_current_configs(add_config_name, "", false);
           });
       } else {
         swal({
@@ -1406,16 +1668,14 @@
                     });
                   // if current config was removed, change to default config.
                   if (is_current_config) {
-                    //$("#current_config").children("option:selected").val(new_config_name);
+                    //$("#current_config_settings").children("option:selected").val(new_config_name);
                     // rebuild the dropdown to select a config.
-                    rebuild_current_config(new_config_name, selected_configs_array[0], true);
+                    rebuild_current_configs(new_config_name, selected_configs_array[0], true);
                     // run the config changed function.
-                    config_changed();
+                    config_changed(new_config_name, false);
                   } else {
                     // rebuild the dropdown to select a config.
-                    rebuild_current_config(new_config_name, selected_configs_array[0], false);
-                    // run the config changed function.
-                    config_changed();
+                    rebuild_current_configs(new_config_name, selected_configs_array[0], false);
                   }
                 });
             } else {
@@ -1521,7 +1781,7 @@
                       swal.close();
                     });
                   // rebuild the dropdown to select a config.
-                  rebuild_current_config(copy_config_name, "", false)
+                  rebuild_current_configs(copy_config_name, "", false)
                 });
             } else {
               swal.showInputError("Please type a valid name.");
@@ -1607,20 +1867,21 @@
                   // if current config was removed, change to default config.
                   if (is_current_config) {
                     // set the current config to the default.
-                    $("#current_config").children("option:selected").val("default");
-                    // remove the selected configs form the dropdown.
+                    // $("#current_config_settings").children("option:selected").val("default");
+                    // remove the selected configs from the dropdown.
                     selected_configs_array.forEach(config => {
-                      $("#current_config option[value='" + config + "']").remove();
+                      // rebuild the dropdown to select a config.
+                      rebuild_current_configs("", config, false);
+                      // $("#current_config_settings option[value='" + config + "']").remove();
                     })
-                    // run the config changed function.
-                    config_changed();
+                    // run the config changed function and set the config to default.
+                    config_changed("default", false);
                   } else {
-                    // remove the selected configs form the dropdown.
+                    // remove the selected configs from the dropdown.
                     selected_configs_array.forEach(config => {
-                      $("#current_config option[value='" + config + "']").remove();
+                      // rebuild the dropdown to select a config.
+                      rebuild_current_configs("", config, false);
                     })
-                    // run the config changed function.
-                    config_changed();
                   }
                 });
             }
@@ -1629,18 +1890,72 @@
     });
   }
 
+  // set the change event for current_config.
+  function current_config_manage_configs_change() {
+    $("#current_config_manage_configs").on("change", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var config = $("#current_config_manage_configs").children("option:selected").val();
+      config_changed(config, true);
+    });
+  }
+
   // function to refresh content for settings tab.
-  function refresh_vmbackup_manage_configs(attach_file_tree = true) {
+  function refresh_vmbackup_manage_configs(update_current_config = true) {
     $("#vmbackup_settings_div").load(location.href + " #vmbackup_settings_div",
       function () {
+        if (update_current_config) {
+          update_current_config_var();
+        }
         assign_vmbackup_manage_configs_functions();
+        set_width_vmbackup_manage_configs();
       });
     // set refresh settings to false since it was just performed.
     set_variable_cookie("refresh_settings", false);
   }
 
+  // set the width of the first grid column based on content.
+  function set_width_vmbackup_manage_configs(set_config_width = true) {
+    // get an array of all element widths using the supplied selector.
+    var widths = $("#manage_configs_div .input_description").map(function () {
+      return $(this).width();
+    }).get();
+
+    // get the largest width from the array.
+    var max_width = Math.max.apply(null, widths);
+
+    // set each element to the max width using the supplied selector.
+    $("#manage_configs_div .input_description").css({ "width": max_width });
+
+    // set config dropdown width for consistency.
+    if (set_config_width) {
+      set_width_configs();
+    }
+  }
+
+  // function to hide/show inline help.
+  function toggle_inline_help_vmbackup_manage_configs() {
+    $('#manage_configs_div').off('click', '#current_config_manage_configs_div .input_description');
+    $('#manage_configs_div').on('click', '#current_config_manage_configs_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+    $('#manage_configs_div').off('click', '#add_config_div .input_description');
+    $('#manage_configs_div').on('click', '#add_config_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+    $('#manage_configs_div').off('click', '#rename_delete_configs_div .input_description');
+    $('#manage_configs_div').on('click', '#rename_delete_configs_div .input_description', function (e) {
+      e.preventDefault();
+      $(this).nextAll('.custom_inline_help:first').toggle('slow');
+    });
+  }
+
   // function assigns actions to forms for changes and add click events.
   function assign_vmbackup_manage_configs_functions() {
+    // monitor form input changes.
+    current_config_manage_configs_change();
     // monitor specific Vmbackup5ManageConfigs inputs for changes and click events.
     add_config_button_click();
     rename_config_button_click();

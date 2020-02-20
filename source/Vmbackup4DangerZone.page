@@ -10,15 +10,42 @@ Icon="clone"
 
 ?>
 
-<div class="wrapper_div">
-  <p><u>Warning</u></p>
-	<p>The settings below can be dangerous or have unintended side effects if used improperly.
-  <br>Many of them can result in corrupted backups, or no backups at all.
-  <br>It is recommended not to change these settings.
-  <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
-</div>
-
 <div id="vmbackup_danger_zone_div" class="wrapper_div">
+
+  <!-- current config -->
+  <div class="wrapper_div">
+    <div id="current_config_danger_zone_div" class="grid_container_left pad_config_top">
+      <label name="current_config_danger_zone_label" class="config_label config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config_danger_zone" name="current_config_danger_zone" size="1">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select></div>
+
+      <span name="current_config_danger_zone_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
+    </div>
+  </div>
+
+  <!-- warning -->
+  <div class="wrapper_div">
+    <span class="important_info"><p>Warning</p></span>
+    <p>The settings below can be dangerous or have unintended side effects if used improperly.
+    <br>Many of them can result in corrupted backups, or no backups at all.
+    <br>It is recommended not to change these settings.
+    <br>Be sure to read the help and make certain you fully understand what you are doing before changing any of these settings.</p>
+  </div>
+
   <form id="vmbackup_danger_zone_form" name="vmbackup_danger_zone" autocomplete="off" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" id="vmbackup_danger_zone_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
@@ -28,14 +55,14 @@ Icon="clone"
     <div id="title" class="nocontrol full_width_title">Danger Zone</div>
     <div id="danger_zone_div" class="grid_container_left">
 
-      <label name="threads_label" class="input_description">Number of compression threads:</label>
-      <div class="user_input_div"><select id="threads" name="threads" size="1">
+      <label name="zstd_threads_label" class="input_description">Number of Zstandard compression threads:</label>
+      <div class="user_input_div"><select id="zstd_threads" name="zstd_threads" size="1">
         <option value="0">auto</option>
         <?php
-          $thread_count = cpu_thread_count();
+          $thread_count = cpu_thread_count(false);
           for ($i = 1; $i <= $thread_count; $i++) {
         ?>
-            <?=mk_option($conf_array['threads'], $i, $i);?>
+            <?=mk_option($conf_array['zstd_threads'], $i, $i);?>
           <?php
           }
           ?>
@@ -44,7 +71,30 @@ Icon="clone"
       <span class="custom_inline_help">
         <p>Set to the number of threads you would like to use when compressing backups.</p>
         <ul>
-          <li>Set to '0' to let the compression algorithm automatically choose the number of online processors.</li>
+          <li>Set to 'auto' to let the compression algorithm automatically detect the number of physical CPU cores.</li>
+          <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
+          <li>Default is '2'.</li>
+        </ul>
+      </span>
+
+
+      <label name="pigz_threads_label" class="input_description">Number of legacy compression threads:</label>
+      <div class="user_input_div"><select id="pigz_threads" name="pigz_threads" size="1">
+        <option value="0">auto</option>
+        <?php
+          $thread_count = cpu_thread_count();
+          for ($i = 1; $i <= $thread_count; $i++) {
+        ?>
+            <?=mk_option($conf_array['pigz_threads'], $i, $i);?>
+          <?php
+          }
+          ?>
+      </select></div>
+
+      <span class="custom_inline_help">
+        <p>Set to the number of threads you would like to use when using legacy compression.</p>
+        <ul>
+          <li>Set to 'auto' to let the compression algorithm automatically choose the number of online processors.</li>
           <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
           <li>Default is '2'.</li>
         </ul>

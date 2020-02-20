@@ -10,11 +10,53 @@ Icon="clone"
 
 ?>
 
-
 <div id="manage_configs_div" class="wrapper_div">
+
+  <!-- current config -->
+  <div class="wrapper_div">
+    <div id="current_config_manage_configs_div" class="grid_container_left pad_config_top">
+      <label name="current_config_manage_configs_label" class="config_label config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config_manage_configs" name="current_config_manage_configs" size="1">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select></div>
+
+      <span name="current_config_manage_configs_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
+    </div>
+  </div>
+
+  <!-- instructions -->
+  <div class="wrapper_div">
+    <span class="important_info"><p>Instructions</p></span>
+    <p>This tab is where you manage your configs. The 'default' is the current config when no other configs are available.
+    <br>The default config cannot be renamed, copied, or removed; so it will not show up here.
+    <br>To change the settings for a config, select the config you want to edit from the 'Current Config' drop down box at the top any tab.
+    <br>
+    <ul>
+      <li>Create a config using the textbox in the 'Add Config' section.</li>
+      <li>Rename, copy, or remove the config using the 'Rename/Delete Configs' section.</li>
+      <li>To edit the config, choose it from the 'Current Config' dropdown box at the top of any tab.</li>
+      <li>Make changes to the selected config like normal. Don't forget to apply your changes.</li>
+      <li>Change the drop down box at the top of a tab to select a different config to edit.</li>
+    </ul>
+    </p>
+  </div>
+
   <form id="manage_configs_form" name="manage_configs_form" autocomplete="off" method="POST" action="/plugins/vmbackup/include/configs.php" target="progressFrame">
 
-    <div class="container_left">
+    <div class="container_full">
       <!-- add config -->
       <div id="title" class="nocontrol full_width_title">Add Config</div>
 
@@ -22,15 +64,17 @@ Icon="clone"
         <label>Choose a config name:</label>
         <div class="clear_both"><input type="text" class="narrow" id="add_config" name="add_config" maxlength="100" pattern="^[^\/\. ](([\w.-]+)( [\w.-]+)*)+$"></div>
       </div>
-      <input type="button" id="add_config_button" name="#add_config_button" value="Add Config">
+      <div id="add_config_button_div" name="add_config_button_div" class="clear_both">
+        <input type="button" id="add_config_button" name="#add_config_button" value="Add Config">
+      </div>
 
       <!-- rename/delete configs -->
-      <div id="title" class="nocontrol">Rename/Delete Configs</div>
-      <div id="manage_configs_div" name="manage_configs_div" class="clear_both">
+      <div id="title" class="nocontrol full_width_title">Rename/Delete Configs</div>
+      <div id="rename_delete_configs_div" name="rename_delete_configs_div" class="clear_both">
         <label>Select a config:</label>
         <div id="select_configs_div" name="select_configs_div" class="selection_div clear_both"></div>
       </div>
-      <div id="button_div" name="button_div" class="clear_both">
+      <div id="manage_configs_button_div" name="manage_configs_button_div" class="clear_both">
         <input type="button" id="rename_config_button" name="#rename_config_button" value="Rename Config"><input type="button" id="copy_config_button" name="#copy_config_button" value="Copy Config"><input type="button" id="remove_configs_button" name="#remove_configs_button" value="Remove Configs">
       </div>
     </div>

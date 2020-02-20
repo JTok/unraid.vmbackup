@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.2.0 - 2020/01/21
+v0.2.1 - 2020/02/20
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
@@ -83,11 +83,25 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to compress backups.
 
-  - Do not turn this on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into one tarball.
+  - Option to use Zstandard inline compression.
 
-  - This can add a significant amount of time to the backup.
+    - If turned on and there are already uncompressed or legacy compression backups, you will need to manually remove old versions of those backups until they are gone.
 
-  - Compression uses tar.gz for sparse file compatibility.
+    - This can add to the amount of time the backup process takes depending on your hardware and configuration.
+
+    - Uses Zstandard for multi-threaded compression.
+
+    - Cannot be used with legacy compression.
+
+  - Option to use legacy gzip compression.
+
+    - Do not turn this on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into one tarball.
+
+    - This can add a significant amount of time to the backup.
+
+    - Uses pigz for multi-threaded compression.
+
+    - Cannot be used with Zstandard compression.
 
 - Option to enable reconstruct write (a.k.a. turbo write) during backups.
 
@@ -115,9 +129,11 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Change the number of log files to keep.
 
+- Change the number of error log files to keep.
+
 - Change the log file subfolder, or choose not to use one.
 
-- Change the number of error log files to keep.
+- Option to enable per VM logs.
 
 #### Notifications
 
@@ -133,7 +149,9 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 #### Advanced Features
 
-- Option to choose a compression level.
+- Option to choose a Zstandard compression level.
+
+- Option to choose a legacy compression level.
 
 - Option to timestamp backups.
 
@@ -155,7 +173,9 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 #### Danger Zone
 
-- Option to choose how many threads are used for compression.
+- Option to choose how many threads are used for Zstandard compression.
+
+- Option to choose how many threads are used for legacy compression.
 
 - Option to keep log files from backups with errors.
 

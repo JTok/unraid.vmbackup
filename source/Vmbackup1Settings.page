@@ -166,6 +166,8 @@ Icon="clone"
     backup_frequency();
     // set the label for vms_to_backup based on backup_all_vms.
     set_vms_to_backup_lbl();
+    // set the disabled state for compression drop downs.
+    set_compression_drop_down_states();
     // assign functions to element events.
     assign_functions();
     // set default cookies.
@@ -176,14 +178,40 @@ Icon="clone"
     rebuild_text_files = (get_cookie("rebuild_text_files") === "true");
     refresh_settings = (get_cookie("refresh_settings") === "true");
     current_config = get_cookie("current_config");
-    // set the current config based on the cookie.
-    $("#current_config").val(current_config);
+    // set the current configs based on the cookie.
+    set_current_config_values(current_config);
     // append current config to forms.
     update_form_config(current_config);
   });
 </script>
 
 <div id="vmbackup_settings_div" class="wrapper_div">
+
+  <!-- current config -->
+  <div class="wrapper_div">
+    <div id="current_config_settings_div" class="grid_container_left">
+      <label name="current_config_settings_label" class="config_label config_text">Currently editing config:</label>
+      <div class="user_input_div"><select id="current_config_settings" name="current_config_settings" size="1">
+        <option value="default">default</option>
+        <?php
+          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
+          foreach ($configs as $config_path) {
+            $config = basename($config_path)?>
+            <option value="<?= $config ?>"><?= $config ?></option>
+        <?php
+          } ?>
+      </select></div>
+
+      <span name="current_config_settings_help" class="custom_inline_help">
+        <p>Select a config to edit.</p>
+        <ul>
+          <li>To add a config, go to the Manage Configs tab.</li>
+          <li>Default is 'default'.</li>
+        </ul>
+      </span>
+    </div>
+  </div>
+
   <form id="vmbackup_settings_form" name="vmbackup_settings" autocomplete="off" method="POST" action="/update.php" target="progressFrame" onsubmit="prepare_form(this)">
     <input type="hidden" id="vmbackup_settings_file" name="#file" value="vmbackup/user.cfg">
     <input type="hidden" name="#command" value="/plugins/vmbackup/scripts/commands.sh">
@@ -431,21 +459,44 @@ Icon="clone"
         </ul>
       </span>
 
-      <label name="compress_backups_label" class="input_description">Compress backups?</label>
-      <div class="user_input_div"><select id="compress_backups" name="compress_backups" size="1">
-        <?=mk_option($conf_array['compress_backups'], "0", "No");?>
-        <?=mk_option($conf_array['compress_backups'], "1", "Yes");?>
+
+      <label name="inline_zstd_compress_label" class="input_description">Use Zstandard compression?</label>
+      <div class="user_input_div"><select id="inline_zstd_compress" name="inline_zstd_compress" size="1">
+        <?=mk_option($conf_array['inline_zstd_compress'], "0", "No");?>
+        <?=mk_option($conf_array['inline_zstd_compress'], "1", "Yes");?>
       </select></div>
 
-      <span name="compress_backups_help" class="custom_inline_help">
-        <p>Set to 'Yes' to compress backups.</p>
+      <span name="inline_zstd_compress_help" class="custom_inline_help">
+        <p>Set to 'Yes' to compress backups using inline Zstandard compression.</p>
         <ul>
-          <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
-          <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
-          <li>Compression uses tar.gz for sparse file compatibility.</li>
+          <li>WARNING: If turned on and there are already uncompressed or legacy compression backups, you will need to manually remove old versions of those backups until they are gone.</li>
+          <li>IMPORTANT: This can add to the amount of time the backup process takes depending on your hardware and configuration.</li>
+          <li>Uses Zstandard for multi-threaded compression.</li>
+          <li>Cannot be used with legacy compression.</li>
           <li>Default is 'No'.</li>
         </ul>
       </span>
+
+
+      <label name="pigz_compress_label" class="input_description">Use legacy gzip compression?</label>
+      <div class="user_input_div"><select id="pigz_compress" name="pigz_compress" size="1">
+        <?=mk_option($conf_array['pigz_compress'], "0", "No");?>
+        <?=mk_option($conf_array['pigz_compress'], "1", "Yes");?>
+      </select></div>
+
+      <span name="pigz_compress_help" class="custom_inline_help">
+        <p>Set to 'Yes' to compress backups using legacy gzip compression.
+        <br>It is recommended to use Zstandard compression option instead of this, if possible.</p>
+        <ul>
+          <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
+          <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
+          <li>Uses pigz for multi-threaded compression.</li>
+          <li>Compression uses tar.gz for sparse file compatibility.</li>
+          <li>Cannot be used with Zstandard compression.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </span>
+
 
       <label name="enable_reconstruct_write_label" class="input_description">Enable reconstruct write?</label>
       <div class="user_input_div"><select id="enable_reconstruct_write" name="enable_reconstruct_write" size="1">
@@ -466,29 +517,9 @@ Icon="clone"
     </div>
 
     <div id="advanced_message_div" class="container_left" style="padding-bottom:12px">
+      <span class="important_info"><p>Note</p></span>
       <p>When configuring Advanced Settings, be sure to review the help.
       <br>Several of the options in this section may require additional configuration before they will work correctly.</p>
-    </div>
-    <div id="current_config_div" class="grid_container_left">
-      <label name="current_config_label" class="input_description">Current config:</label>
-      <div class="user_input_div"><select id="current_config" name="current_config" size="1">
-        <option value="default">default</option>
-        <?php
-          $configs = glob("/boot/config/plugins/vmbackup/configs/*", GLOB_ONLYDIR);
-          foreach ($configs as $config_path) {
-            $config = basename($config_path)?>
-            <option value="<?= $config ?>"><?= $config ?></option>
-        <?php
-          } ?>
-      </select></div>
-
-      <span name="current_config_help" class="custom_inline_help">
-        <p>Select a config to edit.</p>
-        <ul>
-          <li>To add a config, go to the Manage Configs tab.</li>
-          <li>Default is 'default'.</li>
-        </ul>
-      </span>
     </div>
 
     <div id="buttons_left_div" class="grid_container_left clear_both">

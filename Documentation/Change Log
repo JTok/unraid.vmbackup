@@ -1,5 +1,15 @@
 ## Change Log ##
 
+# v0.2.1 - 2020/02/20
+# Pika Pika
+#
+# - merged changes from unraid-vmbackup script v1.3.1.
+# - added seconds to logs.
+# - added option to use zstandard compression.
+# - added option to create a vm specific log in each vm's subfolder.
+# - added config drop-down selection to the top of each tab.
+# - updated method used to determine cpu thread count.
+
 # v0.2.0 - 2020/01/21
 # The Resistance
 #
