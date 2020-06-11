@@ -1,5 +1,11 @@
 ## Change Log ##
 
+# v0.2.2 - 2020/06/11
+# Raz of the SAZ
+#
+# - added checks to kill stuck scripts.
+#- updated pigz to pigz-2.3-x86_64-2_slonly.
+
 # v0.2.1 - 2020/02/20
 # Pika Pika
 #
