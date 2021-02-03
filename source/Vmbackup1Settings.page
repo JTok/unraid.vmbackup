@@ -534,11 +534,11 @@ Icon="clone"
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
+    <div style="clear:both; float:right"><p>version: v0.2.2 - 2021.02.02</p></div>
   </div>
 </div>
 
-<div align="center" style="padding-top:50px; width:50%; clear:both">
-  <p>version: v0.2.2 - 2021.02.02</p>
+<div align="left" style="padding-top:0px; width:50%; clear:both">
   <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
     <input type="hidden" name="cmd" value="_s-xclick" />
     <input type="hidden" name="hosted_button_id" value="NG5HGW4Q3CZU4" />
