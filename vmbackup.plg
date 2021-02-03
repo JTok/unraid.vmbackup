@@ -233,7 +233,7 @@
 
     # remove installed packages.
     find "&packages;/" -type f -iname "*.txz" -delete
-    
+
     # remove plugin config folder.
     rm -rf /boot/config/plugins/&name;
 
