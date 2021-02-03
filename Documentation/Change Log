@@ -1,11 +1,17 @@
 ## Change Log ##
 
+# v0.2.3 - 2021/02/04
+# Fettuccine Afraido
+#
+# - 
+
 # v0.2.2 - 2021/02/03
 # Raz of the SAZ
 #
 # - added checks to kill stuck scripts.
 # - updated pigz to pigz-2.3-x86_64-2_slonly.
 # - set max unraid version to 6.8.3 until 6.9 testing is done.
+# - added version number to bottom of Settings tab.
 
 # v0.2.1 - 2020/02/20
 # Pika Pika
