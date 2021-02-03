@@ -33,3 +33,4 @@
 #  - verify at least one box is checked.
 #  - add option to allow any extra files inside a vm path to be backed up.
 #  - move backups to subfolder.
+#  - encryption option?
