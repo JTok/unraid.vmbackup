@@ -1,4 +1,5 @@
 ## To-Do List ##
+#  - remove pigz support. Have warning popup for users with it enabled on settings page.
 #  - option to backup vdisks using full paths. will resolve issues with unique names. use transform to accomplish?
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
@@ -15,6 +16,7 @@
 #  - alert when choosing options that may require additional configuration (like enabling snapshots)?
 #  - test using form attribute with elements to allow placing them outside of forms.
 #  - add autofocus to elements.
+#  - ability to backup passthrough disks.
 #  - show loading content in configs div while refreshing after add/remove/copy?
 #  - show error if form submit fails.
 #  - plugin error log file?

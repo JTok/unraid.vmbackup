@@ -40,12 +40,56 @@
     return (!empty($pid_files));
   }
 
+  // function to kill a running script.
+  function kill_script($pid_file,$log_file,$is_fix_snapshots = false) {
+    if ($is_fix_snapshots == false) {
+      if (is_file($pid_file)) {
+        // get config name for pid file.
+        $config_name = pathinfo($pid_file, PATHINFO_FILENAME);
+        file_put_contents($log_file, date('Y-m-d H:i:s')." Found $pid_file. Attempting to kill process.\n", FILE_APPEND);
+        $script_pid = file_get_contents($pid_file);
+        // try sigterm for orderly shutdown.
+        exec("pkill -SIGTERM -P " . $script_pid);
+        exec("killall -SIGTERM pre-script.sh");
+        exec("killall -SIGTERM user-script.sh");
+        exec("killall -SIGTERM post-script.sh");
+        // try keyboard interrupt.
+        exec("pkill -SIGINT -P " . $script_pid);
+        exec("killall -SIGINT pre-script.sh");
+        exec("killall -SIGINT user-script.sh");
+        exec("killall -SIGINT post-script.sh");
+        // force kill in case those didn't work.
+        exec("pkill -SIGKILL -P " . $script_pid);
+        exec("killall -SIGKILL pre-script.sh");
+        exec("killall -SIGKILL user-script.sh");
+        exec("killall -SIGKILL post-script.sh");
+        file_put_contents($log_file, date('Y-m-d H:i:s')." Killed user script with pid $script_pid for $config_name.\n", FILE_APPEND);
+      }
+    } else {
+      file_put_contents($log_file, date('Y-m-d H:i:s')." Found $pid_file. Attempting to kill process.\n", FILE_APPEND);
+      // attempt to kill fix snapshots script process.
+      $fix_snapshots_pid = file_get_contents("$pid_file");
+      // try sigterm for orderly shutdown.
+      exec("pkill -SIGTERM -P " . $fix_snapshots_pid);
+      exec("killall -SIGTERM user-fix-snapshots.sh");
+      // try keyboard interrupt.
+      exec("pkill -SIGINT -P " . $fix_snapshots_pid);
+      exec("killall -SIGINT user-fix-snapshots.sh");
+      // force kill in case those didn't work.
+      exec("pkill -SIGKILL -P " . $fix_snapshots_pid);
+      exec("killall -SIGKILL user-fix-snapshots.sh");
+      file_put_contents($log_file, date('Y-m-d H:i:s')." Aborted fix snapshots script with pid $fix_snapshots_pid.\n", FILE_APPEND);
+    }
+
+  }
+
+
   if ($arg1 == "run_backup") {
     // if no arguments were passed, set arg2 to default for backwards compatibility.
     if (empty($arg2)) {
       $arg2 = "default";
     } 
-    
+
     // get variables from arguments.
     $config_name = $arg2;
 
@@ -142,8 +186,8 @@
 
     // remove any old logs from the tmp path.
     $old_logs = glob($tmp_plugin_path_config . "/*_user-script.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
+    foreach ($old_logs as $old_log) {
+      unlink($old_log);
     }
 
     // start logging to tmp log file.
@@ -245,6 +289,9 @@
       }
     }
 
+    // kill the script if it is still running.
+    kill_script($tmp_user_script_pid,$tmp_log_file,false);
+
     // remove tmp pre script file.
     if (is_file($tmp_pre_script_file)) {
       unlink($tmp_pre_script_file);
@@ -298,8 +345,8 @@
 
     // remove any old logs from the tmp path.
     $old_logs = glob($tmp_plugin_path . "/*_fix-snapshots.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
+    foreach ($old_logs as $old_log) {
+      unlink($old_log);
     }
 
     // start logging to tmp log file.
@@ -356,6 +403,9 @@
       exec($run_cmd);
     }
 
+    // kill the script if it is still running.
+    kill_script($tmp_fix_snapshots_pid,$tmp_fix_snapshots_log_file,true);
+
     // remove tmp fix snapshots script file.
     unlink($tmp_fix_snapshots_file);
     file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Removed: ".$tmp_fix_snapshots_file."\n", FILE_APPEND);
@@ -375,8 +425,8 @@
 
     // remove any old logs from the tmp path.
     $old_logs = glob($tmp_plugin_path . "/*_abort-script.log");
-    foreach ($old_logs as $log_file) {
-      unlink($log_file);
+    foreach ($old_logs as $old_log) {
+      unlink($old_log);
     }
 
     // notify the user that an abort has been started.
@@ -401,28 +451,12 @@
     // go through each pid file and get the config name then try to kill that pid.
     foreach ($pid_files as $pid_file) {
       if (is_file($pid_file)) {
-        // get config name for pid file.
-        $config_name = pathinfo($pid_file, PATHINFO_FILENAME);
-        file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Found $pid_file. Attempting to kill process.\n", FILE_APPEND);
-        $script_pid = file_get_contents($pid_file);
-        // try sigterm for orderly shutdown.
-        exec("pkill -SIGTERM -P " . $script_pid);
-        exec("killall -SIGTERM pre-script.sh");
-        exec("killall -SIGTERM user-script.sh");
-        exec("killall -SIGTERM post-script.sh");
-        // try keyboard interrupt.
-        exec("pkill -SIGINT -P " . $script_pid);
-        exec("killall -SIGINT pre-script.sh");
-        exec("killall -SIGINT user-script.sh");
-        exec("killall -SIGINT post-script.sh");
-        // force kill in case those didn't work.
-        exec("pkill -SIGKILL -P " . $script_pid);
-        exec("killall -SIGKILL pre-script.sh");
-        exec("killall -SIGKILL user-script.sh");
-        exec("killall -SIGKILL post-script.sh");
-        file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted user script with pid $script_pid for $config_name.\n", FILE_APPEND);
+        // call function to kill script.
+        kill_script($pid_file,$tmp_abort_script_log_file,false);
 
         // set variables for other files based on config name.
+        // get config name for pid file.
+        $config_name = pathinfo($pid_file, PATHINFO_FILENAME);
         $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
         $tmp_pre_script_file = $tmp_plugin_path_config . '/pre-script.sh';
         $tmp_user_script_file = $tmp_plugin_path_config . '/user-script.sh';
@@ -456,19 +490,7 @@
 
     // check for fix snapshots script pid.
     if (is_file($tmp_fix_snapshots_pid)) {
-      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Found $tmp_fix_snapshots_pid. Attempting to kill process.\n", FILE_APPEND);
-      // attempt to kill fix snapshots script process.
-      $fix_snapshots_pid = file_get_contents("$tmp_fix_snapshots_pid");
-      // try sigterm for orderly shutdown.
-      exec("pkill -SIGTERM -P " . $fix_snapshots_pid);
-      exec("killall -SIGTERM user-fix-snapshots.sh");
-      // try keyboard interrupt.
-      exec("pkill -SIGINT -P " . $fix_snapshots_pid);
-      exec("killall -SIGINT user-fix-snapshots.sh");
-      // force kill in case those didn't work.
-      exec("pkill -SIGKILL -P " . $fix_snapshots_pid);
-      exec("killall -SIGKILL user-fix-snapshots.sh");
-      file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Aborted fix snapshots script with pid $fix_snapshots_pid.\n", FILE_APPEND);
+      kill_script($tmp_fix_snapshots_pid,$tmp_abort_script_log_file,true);
 
       // remove tmp user script file.
       if (is_file($tmp_fix_snapshots_file)) {
@@ -494,6 +516,7 @@
     // notify the user that an abort has been finished.
     exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "abort finished" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Finished attempt to abort scripts."');
   }
+
 
   if ($arg1 == "show_log") {
     // if no arguments were passed, set arg2 to default for backwards compatibility.

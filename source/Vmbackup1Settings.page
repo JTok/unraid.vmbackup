@@ -124,7 +124,7 @@ Icon="clone"
       item.value = vdisks_to_skip;
       item.selected = true;
     }
-    
+
     // make vms to backup a comma separated list for user config.
     if (typeof form.vms_to_backup !== 'undefined') {
       var vms_to_backup = '';
@@ -297,7 +297,7 @@ Icon="clone"
 
       <label name="number_of_backups_to_keep_label" class="input_description">Number of backups to keep:</label>
       <div class="user_input_div"><input type="text" id="number_of_backups_to_keep" name="number_of_backups_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_backups_to_keep'];?>" pattern="^(0|([2-9]|[1-3][0-9]|40))$"></div>
-      
+
       <span id="number_of_backups_to_keep_help" name="number_of_backups_to_keep_help" class="custom_inline_help">
         <p>Set this to the number of backups that should be kept.
         <br>'0' means indefinitely.</p>
@@ -534,10 +534,11 @@ Icon="clone"
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
+    <div style="clear:both; float:right"><p>version: v0.2.2 - 2021.02.03</p></div>
   </div>
 </div>
 
-<div align="center" style="padding-top:50px; width:50%; clear:both">
+<div align="left" style="padding-top:0px; width:50%; clear:both">
   <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
     <input type="hidden" name="cmd" value="_s-xclick" />
     <input type="hidden" name="hosted_button_id" value="NG5HGW4Q3CZU4" />
