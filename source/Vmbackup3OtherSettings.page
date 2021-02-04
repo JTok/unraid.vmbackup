@@ -201,13 +201,13 @@ Icon="clone"
       </span>
 
 
-      <label name="pigz_level_label" class="input_description">Legacy compression level:</label>
-      <div class="user_input_div"><select id="pigz_level" name="pigz_level" size="1">
+      <label name="gzip_level_label" class="input_description">Legacy compression level:</label>
+      <div class="user_input_div"><select id="gzip_level" name="gzip_level" size="1">
         <?php
-          $pigz_level = create_number_array(1,9);
-          foreach($pigz_level as $key => $value) {
+          $gzip_level = create_number_array(1,9);
+          foreach($gzip_level as $key => $value) {
         ?>
-            <?=mk_option($conf_array['pigz_level'], $value, $key);?>
+            <?=mk_option($conf_array['gzip_level'], $value, $key);?>
           <?php
           }
           ?>

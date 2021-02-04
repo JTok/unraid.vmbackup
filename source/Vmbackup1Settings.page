@@ -478,19 +478,18 @@ Icon="clone"
       </span>
 
 
-      <label name="pigz_compress_label" class="input_description">Use legacy gzip compression?</label>
-      <div class="user_input_div"><select id="pigz_compress" name="pigz_compress" size="1">
-        <?=mk_option($conf_array['pigz_compress'], "0", "No");?>
-        <?=mk_option($conf_array['pigz_compress'], "1", "Yes");?>
+      <label name="gzip_compress_label" class="input_description">Use legacy gzip compression?</label>
+      <div class="user_input_div"><select id="gzip_compress" name="gzip_compress" size="1">
+        <?=mk_option($conf_array['gzip_compress'], "0", "No");?>
+        <?=mk_option($conf_array['gzip_compress'], "1", "Yes");?>
       </select></div>
 
-      <span name="pigz_compress_help" class="custom_inline_help">
+      <span name="gzip_compress_help" class="custom_inline_help">
         <p>Set to 'Yes' to compress backups using legacy gzip compression.
         <br>It is recommended to use Zstandard compression option instead of this, if possible.</p>
         <ul>
           <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
           <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
-          <li>Uses pigz for multi-threaded compression.</li>
           <li>Compression uses tar.gz for sparse file compatibility.</li>
           <li>Cannot be used with Zstandard compression.</li>
           <li>Default is 'No'.</li>

@@ -78,29 +78,6 @@ Icon="clone"
       </span>
 
 
-      <label name="pigz_threads_label" class="input_description">Number of legacy compression threads:</label>
-      <div class="user_input_div"><select id="pigz_threads" name="pigz_threads" size="1">
-        <option value="0">auto</option>
-        <?php
-          $thread_count = cpu_thread_count();
-          for ($i = 1; $i <= $thread_count; $i++) {
-        ?>
-            <?=mk_option($conf_array['pigz_threads'], $i, $i);?>
-          <?php
-          }
-          ?>
-      </select></div>
-
-      <span class="custom_inline_help">
-        <p>Set to the number of threads you would like to use when using legacy compression.</p>
-        <ul>
-          <li>Set to 'auto' to let the compression algorithm automatically choose the number of online processors.</li>
-          <li>Be careful choosing the number of threads as this setting could affect other services running on unRAID.</li>
-          <li>Default is '2'.</li>
-        </ul>
-      </span>
-
-
       <label name="keep_error_log_file_label" class="input_description">Keep error log file?</label>
       <div class="user_input_div"><select id="keep_error_log_file" name="keep_error_log_file" size="1">
         <?=mk_option($conf_array['keep_error_log_file'], "0", "No");?>
