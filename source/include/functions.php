@@ -81,6 +81,7 @@
   // function to replace legacy variables from past versions of the plugin.
   function replace_legacy_variables($conf_array) {
     // update new variables with values from legacy variables before removal.
+    // v0.2.0 variables which added pigz for gzip compression.
     if (strcasecmp($conf_array["pigz_compress"], $conf_array["compress_backups"])) {
       $conf_array["pigz_compress"] = $conf_array["compress_backups"];
     }
@@ -90,10 +91,22 @@
     if (strcasecmp($conf_array["pigz_threads"], $conf_array["threads"])) {
       $conf_array["pigz_threads"] = $conf_array["threads"];
     }
+    // v0.2.3 variables which removed pigz and reverted back to gzip.
+    if (strcasecmp($conf_array["gzip_compress"], $conf_array["pigz_compress"])) {
+      $conf_array["gzip_compress"] = $conf_array["pigz_compress"];
+    }
+    if (strcasecmp($conf_array["gzip_level"], $conf_array["pigz_level"])) {
+      $conf_array["gzip_level"] = $conf_array["pigz_level"];
+    }
     // remove legacy variables.
+    // v0.2.0 variables replaced, which added pigz for gzip compression.
     unset($conf_array["compress_backups"]);
     unset($conf_array["compression_level"]);
     unset($conf_array["threads"]);
+    // v0.2.3 variables replaced, which removing pigz and reverted back to gzip.
+    unset($conf_array["pigz_compress"]);
+    unset($conf_array["pigz_level"]);
+    unset($conf_array["pigz_threads"]);
 
     // return updated config array.
     return $conf_array;
