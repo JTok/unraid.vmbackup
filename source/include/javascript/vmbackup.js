@@ -22,12 +22,10 @@
 
   // set the disabled state for compression drop downs.
   function set_compression_drop_down_states() {
-    if ($("#pigz_compress").val() == "0") {
-      change_prop("#pigz_level", "disabled", true);
-      change_prop("#pigz_threads", "disabled", true);
+    if ($("#gzip_compress").val() == "0") {
+      change_prop("#gzip_level", "disabled", true);
     } else {
-      change_prop("#pigz_level", "disabled", false);
-      change_prop("#pigz_threads", "disabled", false);
+      change_prop("#gzip_level", "disabled", false);
     }
     if ($("#inline_zstd_compress").val() == "0") {
       change_prop("#zstd_level", "disabled", true);
@@ -298,12 +296,12 @@
   function compression_type_change() {
     $("#inline_zstd_compress").on("change", function () {
       if ($("#inline_zstd_compress").val() == "1") {
-        $("#pigz_compress").val("0");
+        $("#gzip_compress").val("0");
       }
       set_compression_drop_down_states();
     });
-    $("#pigz_compress").on("change", function () {
-      if ($("#pigz_compress").val() == "1") {
+    $("#gzip_compress").on("change", function () {
+      if ($("#gzip_compress").val() == "1") {
         $("#inline_zstd_compress").val("0");
       }
       set_compression_drop_down_states();
