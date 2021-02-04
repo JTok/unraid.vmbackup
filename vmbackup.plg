@@ -14,7 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "aac7bb57c635cebce73f506bef1fc59b">
+<!ENTITY MD5        "d3ddb855face49a152ca1026e9a9ddc7">
 ]>
 
 <PLUGIN name="&name;"
