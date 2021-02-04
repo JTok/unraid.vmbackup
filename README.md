@@ -4,11 +4,10 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.2.2 - 2021/02/03
+v0.2.3 - 2021/02/04
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
-This plugin installs [pigz](https://zlib.net/pigz/) to allow for multi-threaded gzip compression.
 
 Currently the plugin is in beta. I have tested them as well as I can, but I cannot guarantee they will work correctly for everyone, so be sure to test thoroughly on your system before depending on this plugin for backups. Please review the Change Log and To-Do List if you would like to know more.
 
@@ -98,8 +97,6 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
     - Do not turn this on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into one tarball.
 
     - This can add a significant amount of time to the backup.
-
-    - Uses pigz for multi-threaded compression.
 
     - Cannot be used with Zstandard compression.
 
