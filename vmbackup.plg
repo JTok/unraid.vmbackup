@@ -247,7 +247,7 @@
     removepkg &xmlstarlet;
 
     # remove plugin.
-    removepkg &name;-&tag;
+    removepkg &name;-&tag;-&version;
 
     echo ""
     echo "-----------------------------------------------------------"
