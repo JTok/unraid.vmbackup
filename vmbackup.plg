@@ -14,8 +14,6 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY pigz       "pigz-2.3-x86_64-2_slonly">
-<!ENTITY PIGZMD5    "85d228eade416eaa341180db3559dba0">
 <!ENTITY MD5        "aac7bb57c635cebce73f506bef1fc59b">
 ]>
 
@@ -35,7 +33,7 @@
 ### v0.2.3 - 2021/02/04
 **Fettuccine Afraido**
 
-- 
+- removed pigz and reverted back to standard gzip to reduce complexity.
 
 ### v0.2.2 - 2021/02/03
 **Raz of the SAZ**
@@ -159,13 +157,6 @@
   <MD5>&XMLMD5;</MD5>
 </FILE>
 
-<!--
-  pigz package file.
--->
-<FILE Name="&packages;/&pigz;.txz" Run="upgradepkg --install-new">
-  <URL>"&gitURL;/packages/&pigz;.txz"</URL>
-  <MD5>&PIGZMD5;</MD5>
-</FILE>
 
 <!--
   plugin package file.
@@ -208,7 +199,6 @@
   <INLINE>
     find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
     find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
-    find &packages;/ -type f -iname "pigz*.txz" ! -iname "&pigz;.txz" -delete
   </INLINE>
 </FILE>
 
@@ -255,9 +245,6 @@
 
     # remove xmlstarlet.
     removepkg &xmlstarlet;
-
-    # remove pigz.
-    removepkg &pigz;
 
     # remove plugin.
     removepkg &name;-&tag;
