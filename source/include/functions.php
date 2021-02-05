@@ -81,29 +81,29 @@
   // function to replace legacy variables from past versions of the plugin.
   function replace_legacy_variables($conf_array) {
     // update new variables with values from legacy variables before removal.
-    // v0.2.0 variables which added pigz for gzip compression.
-    if (!strcasecmp($conf_array["pigz_compress"], $conf_array["compress_backups"])) {
+    // v0.2.1 variables which added zstandard compression to the existing pigz compression.
+    if (array_key_exists("pigz_compress", $conf_array) && array_key_exists("compress_backups", $conf_array)) {
       $conf_array["pigz_compress"] = $conf_array["compress_backups"];
     }
-    if (!strcasecmp($conf_array["pigz_level"], $conf_array["compression_level"])) {
+    if (array_key_exists("pigz_level", $conf_array) && array_key_exists("compression_level", $conf_array)) {
       $conf_array["pigz_level"] = $conf_array["compression_level"];
     }
-    if (!strcasecmp($conf_array["pigz_threads"], $conf_array["threads"])) {
+    if (array_key_exists("pigz_threads", $conf_array) && array_key_exists("threads", $conf_array)) {
       $conf_array["pigz_threads"] = $conf_array["threads"];
     }
     // v0.2.3 variables which removed pigz and reverted back to gzip.
-    if (!strcasecmp($conf_array["gzip_compress"], $conf_array["pigz_compress"])) {
+    if (array_key_exists("gzip_compress", $conf_array) && array_key_exists("pigz_compress", $conf_array)) {
       $conf_array["gzip_compress"] = $conf_array["pigz_compress"];
     }
-    if (!strcasecmp($conf_array["gzip_level"], $conf_array["pigz_level"])) {
+    if (array_key_exists("gzip_level", $conf_array) && array_key_exists("pigz_level", $conf_array)) {
       $conf_array["gzip_level"] = $conf_array["pigz_level"];
     }
     // remove legacy variables.
-    // v0.2.0 variables replaced, which added pigz for gzip compression.
+    // v0.2.0 variables replaced, which added zstandard compression to the existing pigz compression.
     unset($conf_array["compress_backups"]);
     unset($conf_array["compression_level"]);
     unset($conf_array["threads"]);
-    // v0.2.3 variables replaced, which removing pigz and reverted back to gzip.
+    // v0.2.3 variables replaced, which removed pigz and reverted back to gzip.
     unset($conf_array["pigz_compress"]);
     unset($conf_array["pigz_level"]);
     unset($conf_array["pigz_threads"]);
