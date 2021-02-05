@@ -1,5 +1,5 @@
 ## To-Do List ##
-#  - remove pigz support. Have warning popup for users with it enabled on settings page.
+#  - update help to make it clearer how danger zone can be used.
 #  - option to backup vdisks using full paths. will resolve issues with unique names. use transform to accomplish?
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
