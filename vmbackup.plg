@@ -140,6 +140,10 @@
     rm -rf /boot/config/plugins/&name;/*.txt 2>/dev/null
     rm -rf /boot/config/plugins/&name;/*.json 2>/dev/null
 
+    # remove old package files.
+    rm -rf /boot/config/plugins/&name;/*.txz 2>/dev/null
+    rm -rf /boot/config/plugins/&name;/packages/*.txz 2>/dev/null
+
     # remove xmlstarlet.
     removepkg xmlstarlet* 2>/dev/null
 
