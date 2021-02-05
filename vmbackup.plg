@@ -30,10 +30,13 @@
 <CHANGES>
 ##&name;
 
-### v0.2.3 - 2021/02/04
+### v0.2.3 - 2021/02/05
 **Fettuccine Afraido**
 
 - removed pigz and reverted back to standard gzip to reduce complexity.
+- fixed issue with legacy options not being updated correctly.
+- fixed issue with old package files not being removed.
+- fixed plugin package removal.
 
 ### v0.2.2 - 2021/02/03
 **Raz of the SAZ**
