@@ -1,6 +1,11 @@
 ## To-Do List ##
-#  - update help to make it clearer how danger zone can be used.
+#  - move txt files from usb drive to /tmp.
+#  - backup configs? will require validation system.
+#  - add option to allow any extra files inside a vm path to be backed up.
+#  - move backups to subfolder.
+#  - encryption option?
 #  - option to backup vdisks using full paths. will resolve issues with unique names. use transform to accomplish?
+#  - update help to make it clearer how danger zone can be used.
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings.
@@ -20,17 +25,12 @@
 #  - show loading content in configs div while refreshing after add/remove/copy?
 #  - show error if form submit fails.
 #  - plugin error log file?
-#  - backup configs? will require validation system.
 #  - toggle help based on master toggle.
 #  - ability to perform different backup schemes, such as incremental.
 #  - ability to have a detailed summary emailed.
 #  - check into rsync process not ending.
 #  - check into high IOWAIT while running backup.
 #  - add help to upload scripts and manage configs.
-#  - move txt files from usb drive to /tmp.
 #  - fix config drop-down help.
 #  - add restore functionality.
 #  - verify at least one box is checked.
-#  - add option to allow any extra files inside a vm path to be backed up.
-#  - move backups to subfolder.
-#  - encryption option?
