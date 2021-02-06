@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2021.02.05">
+<!ENTITY version    "2021.02.06">
 <!ENTITY tag        "v0.2.3">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
@@ -30,7 +30,7 @@
 <CHANGES>
 ##&name;
 
-### v0.2.3 - 2021/02/05
+### v0.2.3 - 2021/02/06
 **Fettuccine Afraido**
 
 - removed pigz and reverted back to standard gzip to reduce complexity.
