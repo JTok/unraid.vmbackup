@@ -314,9 +314,9 @@
   # function to create text file lists of vms and their vdisks.
   create_vm_lists() {
     # create local variables.
-    local vm_list_file="/boot/config/plugins/vmbackup/vm-list.txt"
-    local vdisk_list_file="/boot/config/plugins/vmbackup/vdisk-list.json"
-    local vdisk_path_list_file="/boot/config/plugins/vmbackup/vdisk-path-list.txt"
+    local vm_list_file="/tmp/vmbackup/vm-list.txt"
+    local vdisk_list_file="/tmp/vmbackup/vdisk-list.json"
+    local vdisk_path_list_file="/tmp/vmbackup/vdisk-path-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local user_prefix="/mnt/user/domains/"
     local cache_prefix="/mnt/cache/domains/"
