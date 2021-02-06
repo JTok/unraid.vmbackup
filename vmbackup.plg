@@ -143,6 +143,8 @@
     # remove old txt and json files.
     rm -f /boot/config/plugins/&name;/*.txt 2>/dev/null
     rm -f /boot/config/plugins/&name;/*.json 2>/dev/null
+    rm -f /tmp/&name;/*.txt 2>/dev/null
+    rm -f /tmp/&name;/*.json 2>/dev/null
 
     # remove old package files.
     rm -f /boot/config/plugins/&name;/*.txz 2>/dev/null
@@ -245,11 +247,8 @@
     # remove plugin folder.
     rm -rf /usr/local/emhttp/plugins/&name;
 
-    # remove plugin packages folder.
-    rm -rf &packages;/
-
-    # remove plugin files from emhttp.
-    rm -rf /usr/local/emhttp/plugins/&name;
+    # remove plugin files from tmp.
+    rm -rf /tmp/&name;
 
     # remove xmlstarlet.
     removepkg &xmlstarlet;
