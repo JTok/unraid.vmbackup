@@ -37,6 +37,7 @@
 - fixed issue with legacy options not being updated correctly.
 - fixed issue with old package files not being removed.
 - fixed plugin package removal.
+- moved txt and json files from usb to /tmp.
 
 ### v0.2.2 - 2021/02/03
 **Raz of the SAZ**

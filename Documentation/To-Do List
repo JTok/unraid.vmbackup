@@ -1,5 +1,4 @@
 ## To-Do List ##
-#  - move txt files from usb drive to /tmp.
 #  - backup configs? will require validation system.
 #  - add option to allow any extra files inside a vm path to be backed up.
 #  - move backups to subfolder.
