@@ -15,15 +15,14 @@
   $user_fix_snapshots_file = $plugin_path . '/user-fix-snapshots.sh';
   // tmp files.
   $current_datetime = date('Ymd_His');
-  $tmp_plugin_path = '/tmp/vmbackup';
-  $tmp_plugin_path_scripts = $tmp_plugin_path . '/scripts';
+  $tmp_plugin_path = '/tmp/vmbackup/scripts';
   // fix snapshots tmp files.
-  $tmp_fix_snapshots_file = $tmp_plugin_path_scripts . '/user-fix-snapshots.sh';
-  $tmp_fix_snapshots_log_file = $tmp_plugin_path_scripts . '/'. $current_datetime .'_fix-snapshots.log';
-  $tmp_fix_snapshots_pid = $tmp_plugin_path_scripts . '/user-fix-snapshots.pid';
+  $tmp_fix_snapshots_file = $tmp_plugin_path . '/user-fix-snapshots.sh';
+  $tmp_fix_snapshots_log_file = $tmp_plugin_path . '/'. $current_datetime .'_fix-snapshots.log';
+  $tmp_fix_snapshots_pid = $tmp_plugin_path . '/user-fix-snapshots.pid';
   // abort script tmp files.
-  $tmp_abort_script_log_file = $tmp_plugin_path_scripts . '/'. $current_datetime .'_abort-script.log';
-  $tmp_abort_now_file = $tmp_plugin_path_scripts . '/'. 'abort-now.txt';
+  $tmp_abort_script_log_file = $tmp_plugin_path . '/'. $current_datetime .'_abort-script.log';
+  $tmp_abort_now_file = $tmp_plugin_path . '/'. 'abort-now.txt';
   // get arguments.
   $arg1 = $argv[1];
   $arg2 = $argv[2];
@@ -110,7 +109,7 @@
       $post_script_file = $plugin_path . '/post-script.sh';
     }
     // tmp files.
-    $tmp_plugin_path_config = $tmp_plugin_path_scripts . '/' . $config_name;
+    $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
     // user script tmp files.
     $tmp_user_script_file = $tmp_plugin_path_config . '/user-script.sh';
     $tmp_log_file = $tmp_plugin_path_config . '/'. $current_datetime .'_user-script.log';
@@ -140,7 +139,7 @@
       }
       // check to see if the other running scripts allow simultaneous execution.
       // get array of pid files from the path.
-      $pid_files = glob($tmp_plugin_path_scripts . "/*.pid");
+      $pid_files = glob($tmp_plugin_path . "/*.pid");
       // check to see if simultaneous scripts are allowed for each running config.
       foreach ($pid_files as $pid_file) {
         // get the config name from the pid file and set the path to the config file.
@@ -162,7 +161,7 @@
       }
     } else {
       // check to see if a backup is already running.
-      if (script_running($tmp_plugin_path_scripts)) {
+      if (script_running($tmp_plugin_path)) {
         file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Simultaneous execution is disabled, and a script is already running. Exiting.\n", FILE_APPEND);
         exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run '.$config_name.'" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') Simultaneous execution is disabled, and a script is already running. Exiting."');
         exit();
@@ -320,10 +319,10 @@
 
   if ($arg1 == "fix_snapshots") {
     // make directory in tmp to run script from.
-    exec("mkdir -p ".escapeshellarg($tmp_plugin_path_scripts));
+    exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
     // check to see if a backup is already running.
-    if (script_running($tmp_plugin_path_scripts)) {
+    if (script_running($tmp_plugin_path)) {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." A script is already running. Exiting.\n", FILE_APPEND);
       exec('/usr/local/emhttp/plugins/dynamix/scripts/notify -s "VM Backup plugin" -d "cannot run fix snapshots" -i "warning" -m "$(date \'+%Y-%m-%d %H:%M\') A script is already running. Exiting."');
       exit();
@@ -345,7 +344,7 @@
     }
 
     // remove any old logs from the tmp path.
-    $old_logs = glob($tmp_plugin_path_scripts . "/*_fix-snapshots.log");
+    $old_logs = glob($tmp_plugin_path . "/*_fix-snapshots.log");
     foreach ($old_logs as $old_log) {
       unlink($old_log);
     }
@@ -422,10 +421,10 @@
 
   if ($arg1 == "abort_script") {
     // make directory in tmp to run script from.
-    exec("mkdir -p ".escapeshellarg($tmp_plugin_path_scripts));
+    exec("mkdir -p ".escapeshellarg($tmp_plugin_path));
 
     // remove any old logs from the tmp path.
-    $old_logs = glob($tmp_plugin_path_scripts . "/*_abort-script.log");
+    $old_logs = glob($tmp_plugin_path . "/*_abort-script.log");
     foreach ($old_logs as $old_log) {
       unlink($old_log);
     }
@@ -443,12 +442,12 @@
     file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." Created ".$tmp_abort_now_file.".\n", FILE_APPEND);
 
     // check to see if a script is actually running.
-    if (!script_running($tmp_plugin_path_scripts)) {
+    if (!script_running($tmp_plugin_path)) {
       file_put_contents($tmp_abort_script_log_file, date('Y-m-d H:i:s')." No PID files found. Nothing to abort.", FILE_APPEND);
     }
 
     // get array of pid files from the tmp plugin path.
-    $pid_files = glob($tmp_plugin_path_scripts . "/*.pid");
+    $pid_files = glob($tmp_plugin_path . "/*.pid");
     // go through each pid file and get the config name then try to kill that pid.
     foreach ($pid_files as $pid_file) {
       if (is_file($pid_file)) {
@@ -458,7 +457,7 @@
         // set variables for other files based on config name.
         // get config name for pid file.
         $config_name = pathinfo($pid_file, PATHINFO_FILENAME);
-        $tmp_plugin_path_config = $tmp_plugin_path_scripts . '/' . $config_name;
+        $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
         $tmp_pre_script_file = $tmp_plugin_path_config . '/pre-script.sh';
         $tmp_user_script_file = $tmp_plugin_path_config . '/user-script.sh';
         $tmp_post_script_file = $tmp_plugin_path_config . '/post-script.sh';
@@ -530,7 +529,7 @@
 
     // create variables.
     // user files.
-    $tmp_plugin_path_config = $tmp_plugin_path_scripts . '/' . $config_name;
+    $tmp_plugin_path_config = $tmp_plugin_path . '/' . $config_name;
 
     if (file_exists($tmp_plugin_path_config)) {
       $files = scandir($tmp_plugin_path_config, SCANDIR_SORT_DESCENDING);

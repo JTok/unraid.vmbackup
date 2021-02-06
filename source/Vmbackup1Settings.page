@@ -26,9 +26,8 @@ Icon="clone"
   $plugin_path = '/boot/config/plugins/' . $plugin;
   $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
   // generated files.
-  $tmp_plugin_path = '/tmp/vmbackup';
-  $vm_list = $tmp_plugin_path . '/vm-list.txt';
-  $vdisk_list = $tmp_plugin_path . '/vdisk-list.json';
+  $vm_list = $plugin_path . '/vm-list.txt';
+  $vdisk_list = $plugin_path . '/vdisk-list.json';
 
   // get current config from cookie.
   if (!isset($_COOKIE["current_config"])) {
@@ -534,7 +533,7 @@ Icon="clone"
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
-    <div style="clear:both; float:right"><p>version: v0.2.3 - 2021.02.06</p></div>
+    <div style="clear:both; float:right"><p>version: v0.2.3 - 2021.02.04</p></div>
   </div>
 </div>
 
