@@ -26,8 +26,9 @@ Icon="clone"
   $plugin_path = '/boot/config/plugins/' . $plugin;
   $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
   // generated files.
-  $vm_list = $plugin_path . '/vm-list.txt';
-  $vdisk_list = $plugin_path . '/vdisk-list.json';
+  $tmp_plugin_path = '/tmp/vmbackup';
+  $vm_list = $tmp_plugin_path . '/vm-list.txt';
+  $vdisk_list = $tmp_plugin_path . '/vdisk-list.json';
 
   // get current config from cookie.
   if (!isset($_COOKIE["current_config"])) {
