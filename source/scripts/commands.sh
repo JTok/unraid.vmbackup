@@ -314,7 +314,7 @@
   # function to create text file lists of vms and their vdisks.
   create_vm_lists() {
     # create local variables.
-    local tmp_plugin_folder "/tmp/vmbackup"
+    local tmp_plugin_folder="/tmp/vmbackup"
     local vm_list_file="$tmp_plugin_folder/vm-list.txt"
     local vdisk_list_file="$tmp_plugin_folder/vdisk-list.json"
     local vdisk_path_list_file="$tmp_plugin_folder/vdisk-path-list.txt"
