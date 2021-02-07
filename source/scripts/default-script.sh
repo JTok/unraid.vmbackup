@@ -966,7 +966,7 @@ only_send_error_notifications="no_config"
           log_message "information: $vm is $vm_state. vm desired state is $vm_desired_state."
 
           # if we have already exhausted our wait time set by the script variables then its time to do something else.
-          if [ $i = "$clean_shutdown_checks" ] ; then
+          if [ "$i" = "$clean_shutdown_checks" ] ; then
 
             # check if the user wants to kill the vm on failure of unclean shutdown.
             if [ "$kill_vm_if_cant_shutdown" -eq 1 ]; then
