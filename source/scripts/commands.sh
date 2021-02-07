@@ -314,9 +314,10 @@
   # function to create text file lists of vms and their vdisks.
   create_vm_lists() {
     # create local variables.
-    local vm_list_file="/tmp/vmbackup/vm-list.txt"
-    local vdisk_list_file="/tmp/vmbackup/vdisk-list.json"
-    local vdisk_path_list_file="/tmp/vmbackup/vdisk-path-list.txt"
+    local tmp_plugin_folder "/tmp/vmbackup"
+    local vm_list_file="$tmp_plugin_folder/vm-list.txt"
+    local vdisk_list_file="$tmp_plugin_folder/vdisk-list.json"
+    local vdisk_path_list_file="$tmp_plugin_folder/vdisk-path-list.txt"
     local user_config="/boot/config/plugins/vmbackup/user.cfg"
     local user_prefix="/mnt/user/domains/"
     local cache_prefix="/mnt/cache/domains/"
@@ -333,11 +334,17 @@
     # sort vm_list alphabetically.
     vm_list=$(echo "$vm_list" | sort -f)
 
+    # check to see if plugin tmp folder exits, if not create it and set permissions.
+    if [[ ! -d "$tmp_plugin_folder" ]]; then
+      mkdir -p "$tmp_plugin_folder"
+      chmod -R 777 "$tmp_plugin_folder"
+    fi
+
     # check to see if the list text files exist and rebuild_text_files is false.
     if [[ -f "$vm_list_file" ]] && [[ -f "$vdisk_list_file" ]] && [[ -f "$vdisk_path_list_file" ]] && [ "$rebuild_text_files" = false ]; then
 
       # read vm_list_file into a variable for comparing it to the vms on the system.
-      vm_list_var="$(<$vm_list_file)"
+      vm_list_var="$(<"$vm_list_file")"
 
       # read vdisk_path_list_file into a variable for comparing it to the vms on the system.
       readarray -t vdisk_path_list_array < "$vdisk_path_list_file"
