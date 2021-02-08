@@ -89,7 +89,7 @@
     // if no arguments were passed, set arg2 to default for backwards compatibility.
     if (empty($arg2)) {
       $arg2 = "default";
-    } 
+    }
 
     // get variables from arguments.
     $config_name = $arg2;
@@ -202,7 +202,7 @@
     $conf_array = get_special_variables($user_script_file);
     // get unraid config variables.
     $unraid_conf = parse_ini_file("/var/local/emhttp/var.ini");
-    
+
     // verify that the array is started before trying to run the script. if not, exit.
     if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
       file_put_contents($tmp_log_file, date('Y-m-d H:i:s')." Array is not started. Cannot run $user_script_file. Exiting.\n", FILE_APPEND);
@@ -361,7 +361,7 @@
     $conf_array = get_special_variables($user_fix_snapshots_file);
     // get unraid config variables.
     $unraid_conf = parse_ini_file("/var/local/emhttp/var.ini");
-    
+
     // verify that the array is started before trying to run the script. if not, exit.
     if ($conf_array['arrayStarted'] == "true" && $unraid_conf['mdState'] != "STARTED") {
       file_put_contents($tmp_fix_snapshots_log_file, date('Y-m-d H:i:s')." Array is not started. Cannot run $user_fix_snapshots_file. Exiting.\n", FILE_APPEND);
@@ -523,8 +523,8 @@
     // if no arguments were passed, set arg2 to default for backwards compatibility.
     if (empty($arg2)) {
       $arg2 = "default";
-    } 
-    
+    }
+
     // get variables from arguments.
     $config_name = $arg2;
 
