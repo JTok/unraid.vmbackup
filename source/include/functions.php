@@ -468,8 +468,10 @@
       $conf_name = 'default';
     } else {
       // the file is in a folder, so it must not be the default config.
+      // strip the configs folder from the file path.
+      $file_folder = str_replace('configs/', '', $file_path);
       // get the name of the folder the file is in and set that as the config name.
-      $conf_name = str_replace('/', '', dirname($conf_file_folder));
+      $conf_name = str_replace('/', '', dirname($file_folder));
     }
     // read contents into array.
     $contents_array = parse_ini_string($contents);
