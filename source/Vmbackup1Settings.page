@@ -415,6 +415,36 @@ Icon="clone"
     <!-- advanced settings -->
     <div id="advanced_settings" class="grid_container_left">
 
+      <label name="backup_config_label" class="input_description">Keep pre/post config backed up?</label>
+      <div class="user_input_div"><select id="backup_config" name="backup_config" size="1">
+        <?=mk_option($conf_array['backup_config'], "0", "No");?>
+        <?=mk_option($conf_array['backup_config'], "1", "Yes");?>
+      </select></div>
+
+      <span name="backup_config_help" class="custom_inline_help">
+        <p>A copy of the config will be backed up to the backup folder with each applied change.</p>
+        <ul>
+          <li>The backup file name will start with the config name.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </span>
+
+
+      <label name="backup_user_scripts_label" class="input_description">Keep pre/post scripts backed up?</label>
+      <div class="user_input_div"><select id="backup_user_scripts" name="backup_user_scripts" size="1">
+        <?=mk_option($conf_array['backup_user_scripts'], "0", "No");?>
+        <?=mk_option($conf_array['backup_user_scripts'], "1", "Yes");?>
+      </select></div>
+
+      <span name="backup_user_scripts_help" class="custom_inline_help">
+        <p>A copy of the pre and post scripts will be backed up to the backup folder with each applied change.</p>
+        <ul>
+          <li>The backup file name will start with the config name.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </span>
+
+
       <label name="vdisks_to_skip_label" class="input_description">List vdisks to skip:</label>
       <div class="user_input_div"><select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
         <? $vdisk_list_json_contents = file_get_contents($vdisk_list);

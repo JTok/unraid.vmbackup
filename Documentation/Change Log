@@ -7,7 +7,9 @@
 # - fixed issue with legacy options not being updated correctly.
 # - fixed issue with old package files not being removed.
 # - fixed plugin package removal.
-# - moved txt and json files from usb to /tmp.
+# - moved txt and json files from usb to /tmp to reduce writes to usb.
+# - added option to backup configs.
+# - added option to backup pre and post scripts.
 
 # v0.2.2 - 2021/02/03
 # Raz of the SAZ

@@ -409,7 +409,7 @@
     );
     $context  = stream_context_create($options);
     $result = file_get_contents($url, false, $context);
-    if ($result === FALSE) { 
+    if ($result === FALSE) {
       echo "POST to $url failed.\n";
     }
 
@@ -456,6 +456,23 @@
 
     // remove the cron job.
     exec("$commands_script_file remove_cron_job ".escapeshellarg($current_config));
+  }
+
+  function backup_user_files($file_path, $contents) {
+    // strip the plugin path from the file path.
+    $file_folder = str_replace('/boot/config/plugins/vmbackup/', '', $file_path);
+    // check to see if the file is in a folder or not.
+    if ($file_folder === basename($file_path)) {
+      // the file is not in a folder, so it must be the default config.
+      // set the config name to default.
+      $conf_name = 'default';
+    } else {
+      // the file is in a folder, so it must not be the default config.
+      // get the name of the folder the file is in and set that as the config name.
+      $conf_name = str_replace('/', '', dirname($conf_file_folder));
+    }
+    // write file to backup location.
+    file_put_contents($conf_contents["backup_location"] . '/' . $conf_name . '_' . basename($file_path), $contents);
   }
 
 
@@ -509,6 +526,11 @@
     // write sanitized config contents variable to the user config file.
     file_put_contents($conf_file, $conf_contents);
 
+    // see if user config should be backed up.
+    if ($conf_contents["backup_config"] === "1") {
+      backup_user_files($conf_file, $conf_contents);
+    }
+
     // create a variable with the default script contents and user config file merged.
     $script_contents = update_script_contents($default_script_file, $conf_file);
 
@@ -535,5 +557,10 @@
 
     // write user script contents variable as the user script file.
     file_put_contents($script_file, $script_contents);
+
+    // see if user scripts should be backed up.
+    if ($conf_contents["backup_user_scripts"] === "1") {
+      backup_user_files($script_file, $script_contents);
+    }
   }
 ?>
