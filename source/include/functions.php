@@ -527,7 +527,9 @@
     file_put_contents($conf_file, $conf_contents);
 
     // see if user config should be backed up.
-    if ($conf_contents["backup_config"] === "1") {
+    // convert conf_contents string to associative array
+    $conf_contents_array = parse_ini_file($conf_contents);
+    if ($conf_contents_array["backup_config"] == "1") {
       backup_user_files($conf_file, $conf_contents);
     }
 
@@ -559,7 +561,9 @@
     file_put_contents($script_file, $script_contents);
 
     // see if user scripts should be backed up.
-    if ($conf_contents["backup_user_scripts"] === "1") {
+    // convert conf_contents string to associative array
+    $conf_contents_array = parse_ini_file($conf_contents);
+    if ($conf_contents_array["backup_user_scripts"] == "1") {
       backup_user_files($script_file, $script_contents);
     }
   }
