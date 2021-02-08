@@ -15,7 +15,7 @@
 
     // loop through each key pair in the config file
     foreach ($conf as $key => $value) {
-      
+
       // remove whitespace from between comma separated values for user variable.
       $new_value = remove_list_whitespace($value);
 
@@ -52,10 +52,10 @@
 
   // function to take comma separated list and turn it into an array.
   function make_comma_array($string) {
-    
+
     // remove whitespace from between comma separated values in string.
     $string = remove_list_whitespace($string);
-    
+
     // split string into array using commas.
     $array = preg_split("/,/", $string);
 
