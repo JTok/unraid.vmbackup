@@ -415,7 +415,7 @@ Icon="clone"
     <!-- advanced settings -->
     <div id="advanced_settings" class="grid_container_left">
 
-      <label name="backup_config_label" class="input_description">Keep pre/post config backed up?</label>
+      <label name="backup_config_label" class="input_description">Keep config backed up?</label>
       <div class="user_input_div"><select id="backup_config" name="backup_config" size="1">
         <?=mk_option($conf_array['backup_config'], "0", "No");?>
         <?=mk_option($conf_array['backup_config'], "1", "Yes");?>
