@@ -52,6 +52,13 @@
     } else {
       $pre_script_contents = validate_script($pre_script_contents, $user_conf_file);
       file_put_contents($pre_script_file, $pre_script_contents);
+
+      // see if user scripts should be backed up.
+      // convert conf_file to associative array.
+      $conf_file_array = parse_ini_file($user_conf_file);
+      if ($conf_file_array["backup_user_scripts"] === "1") {
+        backup_user_files($pre_script_file, $pre_script_contents, $conf_file_array);
+      }
     }
   }
   // if remove pre-script, then remove pre-script.
@@ -75,6 +82,13 @@
     } else {
       $post_script_contents = validate_script($post_script_contents, $user_conf_file);
       file_put_contents($post_script_file, $post_script_contents);
+
+      // see if user scripts should be backed up.
+      // convert conf_file to associative array.
+      $conf_file_array = parse_ini_file($user_conf_file);
+      if ($conf_file_array["backup_user_scripts"] === "1") {
+        backup_user_files($post_script_file, $post_script_contents, $conf_file_array);
+      }
     }
   }
   // if remove post-script, then remove post-script.

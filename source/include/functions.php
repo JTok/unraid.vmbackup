@@ -561,12 +561,5 @@
 
     // write user script contents variable as the user script file.
     file_put_contents($script_file, $script_contents);
-
-    // see if user scripts should be backed up.
-    // convert conf_file to associative array.
-    $conf_file_array = parse_ini_file($conf_file);
-    if ($conf_file_array["backup_user_scripts"] === "1") {
-      backup_user_files($script_file, $script_contents, $conf_file_array);
-    }
   }
 ?>
