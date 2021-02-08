@@ -458,7 +458,7 @@
     exec("$commands_script_file remove_cron_job ".escapeshellarg($current_config));
   }
 
-  function backup_user_files($file_path, $contents) {
+  function backup_user_files($file_path, $file_contents, $conf_array) {
     // strip the plugin path from the file path.
     $file_folder = str_replace('/boot/config/plugins/vmbackup/', '', $file_path);
     // check to see if the file is in a folder or not.
@@ -473,10 +473,8 @@
       // get the name of the folder the file is in and set that as the config name.
       $conf_name = str_replace('/', '', dirname($file_folder));
     }
-    // read contents into array.
-    $contents_array = parse_ini_string($contents);
     // write file to backup location.
-    file_put_contents($contents_array["backup_location"] . $conf_name . '_' . basename($file_path), $contents);
+    file_put_contents($conf_array["backup_location"] . $conf_name . '_' . basename($file_path), $file_contents);
   }
 
 
@@ -534,7 +532,7 @@
     // convert conf_contents string to associative array.
     $conf_contents_array = parse_ini_string($conf_contents);
     if ($conf_contents_array["backup_config"] === "1") {
-      backup_user_files($conf_file, $conf_contents);
+      backup_user_files($conf_file, $conf_contents, $conf_contents_array);
     }
 
     // create a variable with the default script contents and user config file merged.
@@ -568,7 +566,7 @@
     // convert conf_file to associative array.
     $conf_file_array = parse_ini_file($conf_file);
     if ($conf_file_array["backup_user_scripts"] === "1") {
-      backup_user_files($script_file, $script_contents);
+      backup_user_files($script_file, $script_contents, $conf_file_array);
     }
   }
 ?>
