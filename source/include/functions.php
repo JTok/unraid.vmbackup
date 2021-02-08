@@ -471,8 +471,10 @@
       // get the name of the folder the file is in and set that as the config name.
       $conf_name = str_replace('/', '', dirname($conf_file_folder));
     }
+    // read contents into array.
+    $contents_array = parse_ini_string($contents);
     // write file to backup location.
-    file_put_contents($conf_contents["backup_location"] . '/' . $conf_name . '_' . basename($file_path), $contents);
+    file_put_contents($contents_array["backup_location"] . $conf_name . '_' . basename($file_path), $contents);
   }
 
 
