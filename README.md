@@ -74,6 +74,10 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 
 - Option to backup pre and post scripts to backup location.
 
+- Option to backup any additional files and folders in the directory of each vdisk.
+
+  - This is recommended when backing up Macinabox VMs.
+
 - List specific vdisks to skip, if any.
 
 - List specific vdisk extensions to skip, if any (iso listed by default).
