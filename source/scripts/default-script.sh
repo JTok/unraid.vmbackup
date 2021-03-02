@@ -76,6 +76,11 @@ gzip_compress="no_config"
 # default is 1. set this to 0 if you would like to have backups without a timestamp. Timestamps are dropped only when number_of_backups_to_keep is equal to 1.
 timestamp_files="no_config"
 
+# default is 0. set this to 1 if you want to backup any extra files and folders that are in the directory of each backed up vdisk.
+# this still honors vdisk_extensions_to_skip setting. this setting will be ignored if backup_vdisks is set to 0.
+# NOTE: This is not compatible with gzip compression. enabling this will disable gzip compression.
+include_extra_files="no_config"
+
 
 #### logging and notifications ####
 
@@ -141,7 +146,7 @@ backup_xml="no_config"
 # default is 1. set to 0 if you would like to skip backing up nvram files.
 backup_nvram="no_config"
 
-# default is 1. set to 0 if you would like to skip backing up vdisks. setting this to 0 will automatically disable compression.
+# default is 1. set to 0 if you would like to skip backing up vdisks. setting this to 0 will automatically disable compression and include_extra_files.
 backup_vdisks="no_config"
 
 # default is 0. set this to 1 if you would like to start a vm after it has successfully been backed up. will override set_vm_to_original_state when set to 1.
