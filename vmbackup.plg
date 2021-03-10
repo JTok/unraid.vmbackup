@@ -26,8 +26,7 @@
   support="&supportURL;"
   launch="&launch;"
   icon="&icon;"
-  min="6.7.0"
-  max="6.8.3">
+  min="6.7.0">
 
 <CHANGES>
 ##&name;
