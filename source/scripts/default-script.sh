@@ -933,7 +933,7 @@ only_send_error_notifications="no_config"
 
     # if the vm is running, try to get it to the desired state.
     elif [ "$vm_state" == "running" ] || { [ "$vm_state" == "paused" ] && [ ! "$vm_desired_state" == "paused" ]; }; then
-      log_message "infomration: $vm is $vm_state. vm desired state is $vm_desired_state."
+      log_message "information: $vm is $vm_state. vm desired state is $vm_desired_state."
 
       if [ "$vm_desired_state" == "paused" ]; then
         # attempt to pause the vm.
