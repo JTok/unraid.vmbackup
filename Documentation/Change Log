@@ -1,5 +1,9 @@
 ## Change Log ##
 
+# v0.2.5 - 2022/12/19
+# The Last Dance
+# - fixed typo in import for jquery filetree
+
 # v0.2.4 - 2021/03/12
 # Fettuccine Afraido
 #
@@ -11,11 +15,11 @@
 # - added option to backup configs.
 # - added option to backup pre and post scripts.
 
-### v0.2.3 - 2021/03/11
-**Firetown**
+# v0.2.3 - 2021/03/11
+# Firetown
 
-- removed max unraid version.
-- hotfix for graphic issues related to broken EOL characters.
+# - removed max unraid version.
+# - hotfix for graphic issues related to broken EOL characters.
 
 # v0.2.2 - 2021/02/03
 # Raz of the SAZ
