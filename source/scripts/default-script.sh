@@ -69,7 +69,7 @@ number_of_backups_to_keep="no_config"
 inline_zstd_compress="no_config"
 
 # default is 0. set this to 1 if you would like to compress backups. This can add a significant amount of time to the backup process. uses tar.gz for sparse file compatibility.
-# this is the legacy setting for compression.
+# this is the legacy setting for compression. if include_extra_files is set to 1, this setting will be disabled.
 # WARNING: do not turn on if you already have uncompressed backups. You will need to move or delete uncompressed backups before using. this will compress all config, nvram, and vdisk images in the backup directory into ONE tarball.
 gzip_compress="no_config"
 
@@ -78,7 +78,7 @@ timestamp_files="no_config"
 
 # default is 0. set this to 1 if you want to backup any extra files and folders that are in the directory of each backed up vdisk.
 # this still honors vdisk_extensions_to_skip setting. this setting will be ignored if backup_vdisks is set to 0.
-# NOTE: This is not compatible with gzip compression. enabling this will disable gzip compression.
+# NOTE: This is not compatible with gzip_compress. enabling this will disable gzip compression.
 include_extra_files="no_config"
 
 
@@ -288,8 +288,8 @@ only_send_error_notifications="no_config"
         local is_error="1"
         ;;
       *)
-	      local is_error="0"
-    		;;
+        local is_error="0"
+        ;;
       esac
 
     if [ "$description" ] && [ "$importance" ]; then
@@ -1468,12 +1468,19 @@ only_send_error_notifications="no_config"
 
   # check to see if vdisks should be inline compressed.
   if [[ ! "$inline_zstd_compress" =~ ^(0|1)$ ]]; then
+
     log_message "failure: inline_zstd_compress is $inline_zstd_compress. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+
     exit 1
+
   elif [ "$inline_zstd_compress" -eq 0 ]; then
+
     log_message "information: inline_zstd_compress is $inline_zstd_compress. vdisk images will not be inline compressed."
+
   elif [ "$inline_zstd_compress" -eq 1 ]; then
+
     log_message "information: inline_zstd_compress is $inline_zstd_compress. vdisk images will be inline compressed but will not be compared afterwards or post compressed."
+
   fi
 
   # if inline_zstd_compress is enabled, check to see if zstd_level and zstd_threads are valid and in range.
@@ -1481,45 +1488,78 @@ only_send_error_notifications="no_config"
 
     # check to see if zstd_level is valid and in range.
     if [[ ! "$zstd_level" =~ ^[0-9]+$ ]]; then
+
       log_message "failure: zstd_level is $zstd_level. this is not a valid format. expecting a number between [1 - 19]. exiting." "script failed" "alert"
+
       exit 1
+
     elif [ "$zstd_level" -lt 1 ] || [ "$zstd_level" -gt 19 ] ; then
+
       log_message "failure: zstd_level is $zstd_level. expecting a number between [1 - 19]. exiting." "script failed" "alert"
+
       exit 1
+
     elif [ "$zstd_level" -gt 8 ] ; then
+
       log_message "warning: zstd_level is $zstd_level. this will be slower and may not produce meaningfully smaller backup images."
+
     else
+
       log_message "information: zstd_level is $zstd_level."
+
     fi
 
     # check to see if zstd_threads is valid and in range.
     if [[ ! "$zstd_threads" =~ ^[0-9]+$ ]]; then
+
       log_message "failure: zstd_threads is $zstd_threads. this is not a valid format. expecting a number between [0 - 200]. exiting." "script failed" "alert"
+
       exit 1
+
     elif [ "$zstd_threads" -lt 0 ] || [ "$zstd_threads" -gt 200 ] ; then
+
       log_message "failure: zstd_threads is $zstd_threads. expecting a number between [0 - 200]. exiting." "script failed" "alert"
+
       exit 1
+
     elif [ "$zstd_threads" -gt 4 ] ; then
+
       log_message "warning: zstd_threads is $zstd_threads. this is a lot of threads to use for compression."
+
     elif [ "$zstd_threads" -eq 0 ] ; then
+
       log_message "information: zstd_threads is $zstd_threads. the actual number of threads will be auto determined."
+
     else
+
       log_message "information: zstd_threads is $zstd_threads."
+
     fi
 
   fi
 
   # if inline_zstd_compress is disabled, check to see if backups should be post compressed.
   if [ "$inline_zstd_compress" -ne 1 ]; then
+
     if [[ ! "$gzip_compress" =~ ^(0|1)$ ]]; then
+
       log_message "failure: gzip_compress is $gzip_compress. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+
       exit 1
+
     elif [ "$gzip_compress" -eq 0 ]; then
+
       log_message "information: gzip_compress is $gzip_compress. backups will not be post compressed."
+
     elif [ "$gzip_compress" -eq 1 ]; then
+
       log_message "information: gzip_compress is $gzip_compress. backups will be post compressed."
+
     fi
+
   fi
+
+
 
   #### advanced variables ####
 
@@ -1555,6 +1595,7 @@ only_send_error_notifications="no_config"
       if [ "$extension" == "$snapshot_extension" ]; then
 
         snap_exists=true
+
         break
 
       fi
@@ -1645,14 +1686,23 @@ only_send_error_notifications="no_config"
 
   # if inline_zstd_compress is disabled, check to see if files should be compared after backup.
   if [ "$inline_zstd_compress" -ne 1 ]; then
+
     if [[ ! "$compare_files" =~ ^(0|1)$ ]]; then
+
       log_message "failure: compare_files is $compare_files. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+
       exit 1
+
     elif [ "$compare_files" -eq 0 ]; then
+
       log_message "information: compare_files is $compare_files. files will not be compared after backups."
+
     elif [ "$compare_files" -eq 1 ]; then
+
       log_message "information: compare_files is $compare_files. files will be compared after backups."
+
     fi
+
   fi
 
   # check to see if config should be backed up. if yes, continue. if no, continue. if input invalid, exit.
@@ -1822,7 +1872,7 @@ only_send_error_notifications="no_config"
       rsync_dry_run_option="n"
 
       # set rsync_only variable to 1 so that dry run will work.
-	    rsync_only="1"
+      rsync_only="1"
 
     elif [ "$actually_copy_files" -eq 1 ]; then
 
