@@ -1495,6 +1495,7 @@
   // build config selection.
   function build_configs_file_tree() {
     $("#select_configs_div").fileTree({
+      top: "/boot/config/plugins/vmbackup/configs/",
       root: "/boot/config/plugins/vmbackup/configs/",
       multiSelect: true,
       filter: "HIDE_FILES_FILTER",
@@ -1550,6 +1551,7 @@
               function () {
                 // re-build config selection after refresh.
                 $("#select_configs_div").fileTree({
+                  top: "/boot/config/plugins/vmbackup/configs/",
                   root: "/boot/config/plugins/vmbackup/configs/",
                   multiSelect: true,
                   filter: "HIDE_FILES_FILTER",
@@ -1657,6 +1659,7 @@
                     function () {
                       // re-build config selection after refresh.
                       $("#select_configs_div").fileTree({
+                        top: "/boot/config/plugins/vmbackup/configs/",
                         root: "/boot/config/plugins/vmbackup/configs/",
                         multiSelect: true,
                         filter: "HIDE_FILES_FILTER",
@@ -1771,6 +1774,7 @@
                     function () {
                       // re-build config selection after refresh.
                       $("#select_configs_div").fileTree({
+                        top: "/boot/config/plugins/vmbackup/configs/",
                         root: "/boot/config/plugins/vmbackup/configs/",
                         multiSelect: true,
                         filter: "HIDE_FILES_FILTER",
@@ -1856,6 +1860,7 @@
                     function () {
                       // re-build config selection after refresh.
                       $("#select_configs_div").fileTree({
+                        top: "/boot/config/plugins/vmbackup/configs/",
                         root: "/boot/config/plugins/vmbackup/configs/",
                         multiSelect: true,
                         filter: "HIDE_FILES_FILTER",
