@@ -1550,13 +1550,7 @@
             $("#select_configs_div").load(location.href + " #select_configs_div",
               function () {
                 // re-build config selection after refresh.
-                $("#select_configs_div").fileTree({
-                  top: "/boot/config/plugins/vmbackup/configs/",
-                  root: "/boot/config/plugins/vmbackup/configs/",
-                  multiSelect: true,
-                  filter: "HIDE_FILES_FILTER",
-                  folderEvent: "nothing"
-                });
+                build_configs_file_tree();
               });
             // rebuild the dropdown to select a config.
             rebuild_current_configs(add_config_name, "", false);
@@ -1658,13 +1652,7 @@
                   $("#select_configs_div").load(location.href + " #select_configs_div",
                     function () {
                       // re-build config selection after refresh.
-                      $("#select_configs_div").fileTree({
-                        top: "/boot/config/plugins/vmbackup/configs/",
-                        root: "/boot/config/plugins/vmbackup/configs/",
-                        multiSelect: true,
-                        filter: "HIDE_FILES_FILTER",
-                        folderEvent: "nothing"
-                      });
+                      build_configs_file_tree();
                       swal.close();
                     });
                   // if current config was removed, change to default config.
@@ -1773,13 +1761,7 @@
                   $("#select_configs_div").load(location.href + " #select_configs_div",
                     function () {
                       // re-build config selection after refresh.
-                      $("#select_configs_div").fileTree({
-                        top: "/boot/config/plugins/vmbackup/configs/",
-                        root: "/boot/config/plugins/vmbackup/configs/",
-                        multiSelect: true,
-                        filter: "HIDE_FILES_FILTER",
-                        folderEvent: "nothing"
-                      });
+                      build_configs_file_tree();
                       swal.close();
                     });
                   // rebuild the dropdown to select a config.
@@ -1859,13 +1841,7 @@
                   $("#select_configs_div").load(location.href + " #select_configs_div",
                     function () {
                       // re-build config selection after refresh.
-                      $("#select_configs_div").fileTree({
-                        top: "/boot/config/plugins/vmbackup/configs/",
-                        root: "/boot/config/plugins/vmbackup/configs/",
-                        multiSelect: true,
-                        filter: "HIDE_FILES_FILTER",
-                        folderEvent: "nothing"
-                      });
+                      build_configs_file_tree();
                     });
                   // if current config was removed, change to default config.
                   if (is_current_config) {
