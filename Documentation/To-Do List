@@ -32,3 +32,5 @@
 #  - fix config drop-down help.
 #  - add restore functionality.
 #  - verify at least one box is checked.
+#  - automatically disable copied configs and warn user that was done.
+#  - allow vmbackup configs to be backed up to a specific folder instead of to the same folder as the VMs.
