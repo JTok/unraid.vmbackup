@@ -1560,6 +1560,30 @@ only_send_error_notifications="no_config"
   fi
 
 
+    # check to see if extra files and folders should be included in the backup. if yes, continue. if no, continue. if input invalid, exit.
+  if [[ "$include_extra_files" =~ ^(0|1)$ ]]; then
+
+    if [ "$include_extra_files" -eq 0 ]; then
+
+      log_message "information: include_extra_files is $include_extra_files. extra files and folders will not be included in the backup."
+
+    elif [ "$include_extra_files" -eq 1 ]; then
+
+      log_message "information: include_extra_files is $include_extra_files. extra files and folders will be included in the backup. gzip legacy compression will be disabled."
+
+      gzip_compress="0"
+
+    fi
+
+  else
+
+    log_message "failure: include_extra_files is $include_extra_files. this is not a valid format. expecting [0 = no] or [1 = yes]. exiting." "script failed" "alert"
+
+    exit 1
+
+  fi
+
+
 
   #### advanced variables ####
 
