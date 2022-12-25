@@ -233,6 +233,11 @@ only_send_error_notifications="no_config"
         rsync -av"$rsync_dry_run_option" --inplace --no-whole-file "$source" "$destination"
         ;;
 
+      "mkpath")
+        # perform inplace copy (i.e. delta sync).
+        rsync -av"$rsync_dry_run_option" --mkpath "$source" "$destination"
+        ;;
+
       *)
         # no valid copy choice was able to be ran.
         log_message "failure: no valid copy choice was able to run for copy of $source to $destination failed." "copy failed" "alert"
@@ -533,7 +538,7 @@ only_send_error_notifications="no_config"
               disk_path=$(dirname "$disk")
 
               # call function copy_extra_files to copy any files and folders that are in the disk path.
-              copy_extra_files "$disk_path" "$vm" "${vdisks[@]}"
+              copy_extra_files "$disk_path" "$vm" vdisks
             fi
 
           fi
@@ -783,7 +788,7 @@ only_send_error_notifications="no_config"
               disk_path=$(dirname "$disk")
 
               # call function copy_extra_files to copy any files and folders that are in the disk path.
-              copy_extra_files "$disk_path" "$vm" "${vdisks[@]}"
+              copy_extra_files "$disk_path" "$vm" vdisks
             fi
           fi
         fi
@@ -797,12 +802,9 @@ only_send_error_notifications="no_config"
     # assign arguments to local variables for readability.
     local _copy_path="$1"
     local _vm="$2"
-    local _vdisks="$3"
+    local -n _vdisks="$3"
 
     log_message "information: beginning copy of extra files in path: $_copy_path for VM $_vm." "script starting copy of extra files for $_vm" "normal"
-
-    # assume file will not be skipped.
-    skip_file="0"
 
     # get a list of files in the directory of the disk.
     extra_files=$(find "$_copy_path" -type f)
@@ -810,6 +812,9 @@ only_send_error_notifications="no_config"
     # loop through the list of files and copy them to the backup location.
     for extra_file in $extra_files
     do
+
+      # assume file will not be skipped.
+      skip_file="0"
 
       # get the extension of the file.
       file_extension="${extra_file##*.}"
@@ -851,12 +856,14 @@ only_send_error_notifications="no_config"
         extra_file_name=$(basename "$extra_file")
 
         # get the relative path of the file to be copied without the basename.
-        extra_file_relative_path=$(realpath --relative-to "$_copy_path/" "$extra_file")
+        extra_file_relative_path=$(realpath --relative-base "$_copy_path" "$extra_file")
         extra_file_relative_path=$(dirname "$extra_file_relative_path")
+        # remove all periods from the relative path.
+        extra_file_relative_path=${extra_file_relative_path//./}
 
         # copy the file to the backup location.
         log_message "information: copy of backup of $_copy_path/$extra_file_relative_path/$extra_file_name file to $backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name starting." "script starting copy $_vm file $extra_file" "normal"
-        copy_file "$_copy_path/$extra_file_relative_path/$extra_file_name" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name" "$rsync_dry_run_option" "standard"
+        copy_file "$_copy_path/$extra_file_relative_path/$extra_file_name" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name" "$rsync_dry_run_option" "mkpath"
 
         # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
         touch -d "now" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name"
