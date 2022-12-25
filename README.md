@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=NG5HGW4Q3CZU4&source=url "Donations are appreciated")
 
-v0.2.4 - 2021/03/12
+v0.2.5 - 2022/12/25
 
 Plugin for backing up VMs in unRAID including vdisks, configuration files, and nvram.
 This plugin installs [xmlstarlet](http://xmlstar.sourceforge.net/) to work with VM XML config files.
@@ -73,6 +73,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
 - Option to backup config to backup location.
 
 - Option to backup pre and post scripts to backup location.
+
+- BETA: Option to backup extra files in the same path as a VM's disks.
 
 - Option to backup any additional files and folders in the directory of each vdisk.
 
@@ -197,6 +199,8 @@ i.e. VM1 cannot have /mnt/diskX/vdisk1.img and /mnt/users/domains/VM1/vdisk1.img
   - If a snapshot fails and this is enabled, VMs will be shutdown or paused based on standard backup settings.
 
 - Option to pause VMs instead of shutting them down during standard backups. Could result in unusable backups.
+
+- Option to backup specific VMs while they are running instead of shutting them down during standard backups. Could result in unusable backups.
 
 - Option to skip backing up xml configuration.
 
