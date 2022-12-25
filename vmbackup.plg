@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2022.12.24">
+<!ENTITY version    "2022.12.24a">
 <!ENTITY tag        "v0.2.5">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
@@ -14,7 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "f1f32ed614b27c11be4a39a1100f3a78">
+<!ENTITY MD5        "8f26640cc14d19c8716e390c7174527b">
 ]>
 
 <PLUGIN name="&name;"
