@@ -454,7 +454,8 @@ Icon="clone"
       <span name="include_extra_files_help" class="custom_inline_help">
         <p>This will back up any extra files and folders in the directory of each vdisk.</p>
         <ul>
-          <li>This is recommended for backing up Macinabox VMs.</li>
+          <li>WARNING: This is still in beta and may not work as expected yet.</li>
+          <li>This is recommended for backing up non-standard VMs.</li>
           <li>This will still honor the vdisk extensions to skip setting.</li>
           <li>Any vdisk that is skipped will have its directory ignored unless a different vdisk in that directory is backed up.</li>
           <li>This is not compatible with gzip compression. enabling this will disable gzip compression.</li>
