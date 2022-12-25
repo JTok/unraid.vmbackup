@@ -5,7 +5,7 @@
 <!ENTITY author     "jtok">
 <!ENTITY version    "2022.12.25">
 <!ENTITY tag        "v0.2.5">
-<!ENTITY branch     "development">
+<!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
 <!ENTITY gitURL     "https://raw.githubusercontent.com/&author;/unraid.&name;/&branch;">
@@ -14,7 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "fbc960b5d6417556cd35ac0a88b3a700">
+<!ENTITY MD5        "62e708fcad3ba7ff854fe3f0f63eca60">
 ]>
 
 <PLUGIN name="&name;"
