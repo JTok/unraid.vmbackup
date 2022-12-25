@@ -141,6 +141,21 @@ Icon="clone"
       item.selected = true;
     }
 
+    // make vms to backup while running a comma separated list for user config.
+    if (typeof form.vms_to_backup_running !== 'undefined') {
+      var vms_to_backup_running = '';
+      for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
+        if (item.selected) {
+          if (vms_to_backup_running.length) vms_to_backup_running += ',';
+          vms_to_backup_running += item.value;
+          item.selected = false;
+        }
+      }
+      item = form.vms_to_backup_running.options[0];
+      item.value = vms_to_backup_running;
+      item.selected = true;
+    }
+
     // remove whitespace and prepare comma separated lists.
     var vdisk_extensions_to_skip = document.getElementById("vdisk_extensions_to_skip");
     vdisk_extensions_to_skip.value = remove_list_whitespace(vdisk_extensions_to_skip.value);
@@ -156,6 +171,7 @@ Icon="clone"
     //configure dropdown checklists.
     configure_vdisks_to_skip();
     configure_vms_to_backup();
+    configure_vms_to_backup_running();
     // set the regex pattern each element should use.
     toggle_cron_regex();
     toggle_restrictive_regex();

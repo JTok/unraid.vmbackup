@@ -623,6 +623,10 @@
     $("#vms_to_backup").dropdownchecklist({ emptyText: 'None', width: 166, explicitClose: '...close' });
   }
 
+  function configure_vms_to_backup_running() {
+    $("#vms_to_backup_running").dropdownchecklist({ emptyText: 'None', width: 166, explicitClose: '...close' });
+  }
+
   function configure_vdisks_to_skip() {
     $("#vdisks_to_skip").dropdownchecklist({ emptyText: 'None', width: 166, explicitClose: '...close' });
   }
@@ -724,6 +728,7 @@
         }
         configure_set_backup_location(attach_file_tree);
         configure_vms_to_backup();
+        configure_vms_to_backup_running();
         configure_vdisks_to_skip();
         toggle_cron_regex();
         toggle_restrictive_regex();
