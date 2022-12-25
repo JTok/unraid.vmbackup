@@ -77,7 +77,7 @@ gzip_compress="no_config"
 timestamp_files="no_config"
 
 # default is 0. set this to 1 if you want to backup any extra files and folders that are in the directory of each backed up vdisk.
-# this still honors vdisk_extensions_to_skip setting. this setting will be ignored if backup_vdisks is set to 0.
+# this still honors vdisk_extensions_to_skip setting and vdisks_to_skip. this setting will be ignored if backup_vdisks is set to 0.
 # NOTE: This is not compatible with gzip_compress. enabling this will disable gzip compression.
 include_extra_files="no_config"
 
@@ -526,6 +526,16 @@ only_send_error_notifications="no_config"
               # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
               touch -d "now" "$backup_location/$vm/$timestamp$new_disk"
             fi
+
+            # check to see if extra files should be backed up.
+            if [ "$include_extra_files" -eq 1 ]; then
+              # get the path of the disk without the filename.
+              disk_path=$(dirname "$disk")
+
+              # call function copy_extra_files to copy any files and folders that are in the disk path.
+              copy_extra_files "$disk_path" "$vm" "${vdisks[@]}"
+            fi
+
           fi
 
         elif [ "$mode" == "source_image" ]; then
@@ -766,8 +776,90 @@ only_send_error_notifications="no_config"
                 log_message "warning: snapshot performed for $vm, but vm state is $vm_state. cannot commit changes from snapshot." "script skipping $vm" "warning"
               fi
             fi
+
+            # check to see if extra files should be backed up.
+            if [ "$include_extra_files" -eq 1 ]; then
+              # get the path of the disk without the filename.
+              disk_path=$(dirname "$disk")
+
+              # call function copy_extra_files to copy any files and folders that are in the disk path.
+              copy_extra_files "$disk_path" "$vm" "${vdisks[@]}"
+            fi
           fi
         fi
+      fi
+    done
+  }
+
+  # copy extra files.
+  copy_extra_files () {
+
+    # assign arguments to local variables for readability.
+    local _copy_path="$1"
+    local _vm="$2"
+    local _vdisks="$3"
+
+    log_message "information: beginning copy of extra files in path: $_copy_path for VM $_vm." "script starting copy of extra files for $_vm" "normal"
+
+    # assume file will not be skipped.
+    skip_file="0"
+
+    # get a list of files in the directory of the disk.
+    extra_files=$(find "$_copy_path" -type f)
+
+    # loop through the list of files and copy them to the backup location.
+    for extra_file in $extra_files
+    do
+
+      # get the extension of the file.
+      file_extension="${extra_file##*.}"
+
+      # disable case matching.
+      shopt -s nocasematch
+
+      # check to see if extra file is an existing vdisk
+      for disk in "${_vdisks[@]}"
+      do
+        # check to see if extra file is a vdisk.
+        if [[ "$extra_file" == "$disk" ]]; then
+          skip_file="1"
+          log_message "information: $extra_file on $_vm is a vdisk. skipping file."
+        fi
+      done
+
+      # check to see if extra file extension is the same as the snapshot extension. if it is, skip the file.
+      if [[ "$file_extension" == "$snapshot_extension" ]]; then
+        skip_file="1"
+        log_message "information: extension for $extra_file on $_vm is the same as the snapshot extension $snapshot_extension. This means this is probably the snapshot file and this message can be ignored." "cannot backup extra file on $_vm" "normal"
+      fi
+
+      # check to see if extra file should be skipped by extension.
+      for skipvdisk_extension in $vdisk_extensions_to_skip
+      do
+        if [[ "$file_extension" == "$skipvdisk_extension" ]]; then
+          skip_file="1"
+          log_message "information: extension for $extra_file on $_vm was found in vdisks_extensions_to_skip. skipping file."
+        fi
+      done
+
+      # re-enable case matching.
+      shopt -u nocasematch
+
+      # skip the extra file if skip_file is set to 1
+      if [ "$skip_file" -ne 1 ]; then
+        # get the basename of the file to be copied.
+        extra_file_name=$(basename "$extra_file")
+
+        # get the relative path of the file to be copied without the basename.
+        extra_file_relative_path=$(realpath --relative-to "$_copy_path/" "$extra_file")
+        extra_file_relative_path=$(dirname "$extra_file_relative_path")
+
+        # copy the file to the backup location.
+        log_message "information: copy of backup of $_copy_path/$extra_file_relative_path/$extra_file_name file to $backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name starting." "script starting copy $_vm file $extra_file" "normal"
+        copy_file "$_copy_path/./$extra_file_relative_path/$extra_file_name" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name" "$rsync_dry_run_option" "relative"
+
+        # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
+        touch -d "now" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name"
       fi
     done
   }
