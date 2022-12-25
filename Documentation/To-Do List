@@ -36,3 +36,5 @@
 #  - allow vmbackup configs to be backed up to a specific folder instead of to the same folder as the VMs.
 #  - run check to see if /mnt/user is being used when running snapshot backups and give option to fallback to non-snapshot backups.
 #  - update local variable names
+#  - fix vdisk backups to work with non-standardized names
+#  - fix removing old backups to work with non-standard names and paths (especially when using extra files backup)
