@@ -6,7 +6,6 @@
 # - fixed issue with renaming and deleting configs not showing configurations
 # - cleaned up code
 # - enabled beta for backup extra files
-# - added ability to backup VMs while they are running
 # - re-added option to backup vms while they are running
 
 # v0.2.4 - 2021/03/12
