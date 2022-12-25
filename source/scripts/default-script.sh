@@ -856,7 +856,7 @@ only_send_error_notifications="no_config"
 
         # copy the file to the backup location.
         log_message "information: copy of backup of $_copy_path/$extra_file_relative_path/$extra_file_name file to $backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name starting." "script starting copy $_vm file $extra_file" "normal"
-        copy_file "$_copy_path/./$extra_file_relative_path/$extra_file_name" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name" "$rsync_dry_run_option" "relative"
+        copy_file "$_copy_path/$extra_file_relative_path/$extra_file_name" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name" "$rsync_dry_run_option" "standard"
 
         # make sure copy has current date/time for modified attribute so that removing old backups by date will work.
         touch -d "now" "$backup_location/$_vm/$extra_file_relative_path/$timestamp$extra_file_name"
