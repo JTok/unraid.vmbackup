@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2022.12.24a">
+<!ENTITY version    "2022.12.24b">
 <!ENTITY tag        "v0.2.5">
 <!ENTITY branch     "development">
 <!ENTITY launch     "Settings/Vmbackup">
@@ -14,7 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "8f26640cc14d19c8716e390c7174527b">
+<!ENTITY MD5        "e3b6bd14814747330f640566d88c98d3">
 ]>
 
 <PLUGIN name="&name;"
@@ -29,7 +29,7 @@
 <CHANGES>
 ##&name;
 
-### v0.2.5 - 2022/12/19
+### v0.2.5 - 2022/12/24b
 **The Last Dance**
 
 - fixed typo in import for jquery filetree
