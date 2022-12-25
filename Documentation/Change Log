@@ -5,6 +5,7 @@
 # - fixed typo in import for jquery filetree
 # - fixed issue with renaming and deleting configs not showing configurations
 # - cleaned up code
+# - enabled beta for backup extra files
 
 # v0.2.4 - 2021/03/12
 # Fettuccine Afraido
