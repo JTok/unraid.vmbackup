@@ -69,7 +69,7 @@ Icon="clone"
         </ul>
       </span>
 
-      
+
       <label name="number_of_log_files_to_keep_label" class="input_description">Number of log files to keep:</label>
       <div class="user_input_div"><input type="text" id="number_of_log_files_to_keep" name="number_of_log_files_to_keep" class="narrow" maxlength="5" value="<?=$conf_array['number_of_log_files_to_keep'];?>" pattern="^(0|([1-9]|[1-3][0-9]|40))$" required></div>
 
@@ -201,13 +201,13 @@ Icon="clone"
       </span>
 
 
-      <label name="pigz_level_label" class="input_description">Legacy compression level:</label>
-      <div class="user_input_div"><select id="pigz_level" name="pigz_level" size="1">
+      <label name="gzip_level_label" class="input_description">Legacy compression level:</label>
+      <div class="user_input_div"><select id="gzip_level" name="gzip_level" size="1">
         <?php
-          $pigz_level = create_number_array(1,9);
-          foreach($pigz_level as $key => $value) {
+          $gzip_level = create_number_array(1,9);
+          foreach($gzip_level as $key => $value) {
         ?>
-            <?=mk_option($conf_array['pigz_level'], $value, $key);?>
+            <?=mk_option($conf_array['gzip_level'], $value, $key);?>
           <?php
           }
           ?>

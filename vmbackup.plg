@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2021.03.11">
-<!ENTITY tag        "v0.2.3">
+<!ENTITY version    "2022.12.25">
+<!ENTITY tag        "v0.2.5">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -14,9 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY pigz       "pigz-2.3-x86_64-2_slonly">
-<!ENTITY PIGZMD5    "85d228eade416eaa341180db3559dba0">
-<!ENTITY MD5        "03085cb0aff969f93dc82b0d8f9adc6d">
+<!ENTITY MD5        "62e708fcad3ba7ff854fe3f0f63eca60">
 ]>
 
 <PLUGIN name="&name;"
@@ -30,6 +28,26 @@
 
 <CHANGES>
 ##&name;
+
+### v0.2.5 - 2022/12/25
+**The Last Dancer**
+
+- fixed typo in import for jquery filetree
+- fixed issue with renaming and deleting configs not showing configurations
+- cleaned up code
+- enabled beta for backup extra files
+- re-added option to backup vms while they are running
+
+### v0.2.4 - 2021/03/12
+**Fettuccine Afraido**
+
+- removed pigz and reverted back to standard gzip to reduce complexity.
+- fixed issue with legacy options not being updated correctly.
+- fixed issue with old package files not being removed.
+- fixed plugin package removal.
+- moved txt and json files from usb to /tmp to reduce writes to usb.
+- added option to backup configs.
+- added option to backup pre and post scripts.
 
 ### v0.2.3 - 2021/03/11
 **Firetown**
@@ -139,14 +157,23 @@
     rm -rf /usr/local/emhttp/plugins/&name; 2>/dev/null
 
     # remove old txt and json files.
-    rm -rf /boot/config/plugins/&name;/*.txt 2>/dev/null
-    rm -rf /boot/config/plugins/&name;/*.json 2>/dev/null
+    rm -f /boot/config/plugins/&name;/*.txt 2>/dev/null
+    rm -f /boot/config/plugins/&name;/*.json 2>/dev/null
+    rm -f /tmp/&name;/*.txt 2>/dev/null
+    rm -f /tmp/&name;/*.json 2>/dev/null
+
+    # remove old package files.
+    rm -f /boot/config/plugins/&name;/*.txz 2>/dev/null
+    rm -f /boot/config/plugins/&name;/packages/*.txz 2>/dev/null
 
     # remove xmlstarlet.
     removepkg xmlstarlet* 2>/dev/null
 
     # remove pigz.
     removepkg pigz* 2>/dev/null
+
+    # create plugin tmp folder.
+    mkdir -p /tmp/&name;
   </INLINE>
 </FILE>
 
@@ -159,13 +186,6 @@
   <MD5>&XMLMD5;</MD5>
 </FILE>
 
-<!--
-  pigz package file.
--->
-<FILE Name="&packages;/&pigz;.txz" Run="upgradepkg --install-new">
-  <URL>"&gitURL;/packages/&pigz;.txz"</URL>
-  <MD5>&PIGZMD5;</MD5>
-</FILE>
 
 <!--
   plugin package file.
@@ -182,6 +202,7 @@
 <FILE Run="/bin/bash">
   <INLINE>
     chmod -R 755 /usr/local/emhttp/plugins/&name;
+    chmod -R 777 /tmp/&name;
   </INLINE>
 </FILE>
 
@@ -208,7 +229,6 @@
   <INLINE>
     find /boot/config/plugins/&name;/ -type f -iname "&name;*.txz" ! -iname "*&tag;*" -delete
     find &packages;/ -type f -iname "xmlstarlet*.txz" ! -iname "&xmlstarlet;.txz" -delete
-    find &packages;/ -type f -iname "pigz*.txz" ! -iname "&pigz;.txz" -delete
   </INLINE>
 </FILE>
 
@@ -247,20 +267,14 @@
     # remove plugin folder.
     rm -rf /usr/local/emhttp/plugins/&name;
 
-    # remove plugin packages folder.
-    rm -rf &packages;/
-
-    # remove plugin files from emhttp.
-    rm -rf /usr/local/emhttp/plugins/&name;
+    # remove plugin files from tmp.
+    rm -rf /tmp/&name;
 
     # remove xmlstarlet.
     removepkg &xmlstarlet;
 
-    # remove pigz.
-    removepkg &pigz;
-
     # remove plugin.
-    removepkg &name;-&tag;
+    removepkg &name;-&tag;-&version;
 
     echo ""
     echo "-----------------------------------------------------------"

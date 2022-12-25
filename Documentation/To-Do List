@@ -1,13 +1,15 @@
 ## To-Do List ##
-#  - remove pigz support. Have warning popup for users with it enabled on settings page.
+#  - add option to allow any extra files inside a vm path to be backed up.
+#  - move backups to subfolder.
+#  - encryption option?
 #  - option to backup vdisks using full paths. will resolve issues with unique names. use transform to accomplish?
+#  - update help to make it clearer how danger zone can be used.
 #  - test case where vdisk1 does not exist.
 #  - plugin/script for enabling and disabling snapshots on specific vm for testing?
 #  - ignore/change number of backups to keep and number of days to keep backups warnings.
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
 #  - move some of the settings alerts to html form validation instead.
 #  - update script to use xmlstarlet.
-#  - re-add vms_to_backup_running to danger zone.
 #  - create more advanced regex for custom cron.
 #  - option to skip running vms.
 #  - disable backup now and fix snapshots buttons while their scripts are running?
@@ -20,16 +22,19 @@
 #  - show loading content in configs div while refreshing after add/remove/copy?
 #  - show error if form submit fails.
 #  - plugin error log file?
-#  - backup configs? will require validation system.
 #  - toggle help based on master toggle.
 #  - ability to perform different backup schemes, such as incremental.
 #  - ability to have a detailed summary emailed.
 #  - check into rsync process not ending.
 #  - check into high IOWAIT while running backup.
 #  - add help to upload scripts and manage configs.
-#  - move txt files from usb drive to /tmp.
 #  - fix config drop-down help.
 #  - add restore functionality.
 #  - verify at least one box is checked.
-#  - add option to allow any extra files inside a vm path to be backed up.
-#  - move backups to subfolder.
+#  - automatically disable copied configs and warn user that was done.
+#  - allow vmbackup configs to be backed up to a specific folder instead of to the same folder as the VMs.
+#  - run check to see if /mnt/user is being used when running snapshot backups and give option to fallback to non-snapshot backups.
+#  - update local variable names
+#  - fix vdisk backups to work with non-standardized names
+#  - fix removing old backups to work with non-standard names and paths (especially when using extra files backup)
+#  - add validation for vms_to_backup_running that verifies that only vms that are selected for backup have been chosen.

@@ -26,8 +26,9 @@ Icon="clone"
   $plugin_path = '/boot/config/plugins/' . $plugin;
   $user_fix_snapshots_file = $plugin_path. '/user-fix-snapshots.sh';
   // generated files.
-  $vm_list = $plugin_path . '/vm-list.txt';
-  $vdisk_list = $plugin_path . '/vdisk-list.json';
+  $tmp_plugin_path = '/tmp/vmbackup';
+  $vm_list = $tmp_plugin_path . '/vm-list.txt';
+  $vdisk_list = $tmp_plugin_path . '/vdisk-list.json';
 
   // get current config from cookie.
   if (!isset($_COOKIE["current_config"])) {
@@ -96,7 +97,7 @@ Icon="clone"
 <link type="text/css" rel="stylesheet" href="<?autov('/plugins/vmbackup/include/vmbackup.css')?>">
 
 <!-- import javascript sources -->
-<script type="text/javascript" src="<?=autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
 <script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
 <script type="text/javascript" src="<?autov('/plugins/vmbackup/include/javascript/functions.js')?>"></script>
 <script type="text/javascript" src="<?autov('/plugins/vmbackup/include/javascript/vmbackup.js')?>"></script>
@@ -140,6 +141,21 @@ Icon="clone"
       item.selected = true;
     }
 
+    // make vms to backup while running a comma separated list for user config.
+    if (typeof form.vms_to_backup_running !== 'undefined') {
+      var vms_to_backup_running = '';
+      for (var i=0,item; item=form.vms_to_backup_running.options[i]; i++) {
+        if (item.selected) {
+          if (vms_to_backup_running.length) vms_to_backup_running += ',';
+          vms_to_backup_running += item.value;
+          item.selected = false;
+        }
+      }
+      item = form.vms_to_backup_running.options[0];
+      item.value = vms_to_backup_running;
+      item.selected = true;
+    }
+
     // remove whitespace and prepare comma separated lists.
     var vdisk_extensions_to_skip = document.getElementById("vdisk_extensions_to_skip");
     vdisk_extensions_to_skip.value = remove_list_whitespace(vdisk_extensions_to_skip.value);
@@ -155,6 +171,7 @@ Icon="clone"
     //configure dropdown checklists.
     configure_vdisks_to_skip();
     configure_vms_to_backup();
+    configure_vms_to_backup_running();
     // set the regex pattern each element should use.
     toggle_cron_regex();
     toggle_restrictive_regex();
@@ -182,6 +199,8 @@ Icon="clone"
     set_current_config_values(current_config);
     // append current config to forms.
     update_form_config(current_config);
+    // fix the dimensions of the vms_to_backup_running dropdown box so that it will actually display
+    fix_css_vms_to_backup_running();
   });
 </script>
 
@@ -242,10 +261,10 @@ Icon="clone"
       <span id="backup_location_help" name="backup_location_help" class="custom_inline_help">
         <p>Folder location to save backups. Must be full path.</p>
         <ul>
-          <li>This should be an unassigned device, or a share you have already created.</li>
+          <li>This can be a device/share mapped through unassigned devices, or an Unraid share you have already created.</li>
           <li>Each VM will have a subfolder made for it in this location.</li>
           <li>To change the dropdown menu from /mnt/users/ to /mnt/, disable restrictive validation.</li>
-          <li>Any typed path in /mnt/ will validate. If a different path is needed, disable restrictive validation.</li>
+          <li>Any typed path in /mnt/ will validate. If a different path is needed, disable restrictive validation on the Danger Zone tab.</li>
         </ul>
       </span>
 
@@ -414,6 +433,55 @@ Icon="clone"
     <!-- advanced settings -->
     <div id="advanced_settings" class="grid_container_left">
 
+      <label name="backup_config_label" class="input_description">Keep config backed up?</label>
+      <div class="user_input_div"><select id="backup_config" name="backup_config" size="1">
+        <?=mk_option($conf_array['backup_config'], "0", "No");?>
+        <?=mk_option($conf_array['backup_config'], "1", "Yes");?>
+      </select></div>
+
+      <span name="backup_config_help" class="custom_inline_help">
+        <p>A copy of the config will be backed up to the backup folder with each applied change.</p>
+        <ul>
+          <li>The backup file name will start with the config name.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </span>
+
+
+      <label name="backup_user_scripts_label" class="input_description">Keep pre/post scripts backed up?</label>
+      <div class="user_input_div"><select id="backup_user_scripts" name="backup_user_scripts" size="1">
+        <?=mk_option($conf_array['backup_user_scripts'], "0", "No");?>
+        <?=mk_option($conf_array['backup_user_scripts'], "1", "Yes");?>
+      </select></div>
+
+      <span name="backup_user_scripts_help" class="custom_inline_help">
+        <p>A copy of the pre and post scripts will be backed up to the backup folder with each applied change.</p>
+        <ul>
+          <li>The backup file name will start with the config name.</li>
+          <li>Default is 'Yes'.</li>
+        </ul>
+      </span>
+
+
+      <label name="include_extra_files_label" class="input_description">Include extra files in VM folder?</label>
+      <div class="user_input_div"><select id="include_extra_files" name="include_extra_files" size="1">
+        <?=mk_option($conf_array['include_extra_files'], "0", "No");?>
+        <?=mk_option($conf_array['include_extra_files'], "1", "Yes");?>
+      </select></div>
+
+      <span name="include_extra_files_help" class="custom_inline_help">
+        <p>This will back up any extra files and folders in the directory of each vdisk.</p>
+        <ul>
+          <li>WARNING: This is still in beta and may not work as expected yet.</li>
+          <li>This is recommended for backing up non-standard VMs.</li>
+          <li>This will still honor the vdisk extensions to skip setting.</li>
+          <li>Any vdisk that is skipped will have its directory ignored unless a different vdisk in that directory is backed up.</li>
+          <li>This is not compatible with gzip compression. enabling this will disable gzip compression.</li>
+          <li>Default is 'No'.</li>
+        </ul>
+      </span>
+
+
       <label name="vdisks_to_skip_label" class="input_description">List vdisks to skip:</label>
       <div class="user_input_div"><select id="vdisks_to_skip" name="vdisks_to_skip" size="1" multiple="multiple" style="display:none">
         <? $vdisk_list_json_contents = file_get_contents($vdisk_list);
@@ -478,19 +546,18 @@ Icon="clone"
       </span>
 
 
-      <label name="pigz_compress_label" class="input_description">Use legacy gzip compression?</label>
-      <div class="user_input_div"><select id="pigz_compress" name="pigz_compress" size="1">
-        <?=mk_option($conf_array['pigz_compress'], "0", "No");?>
-        <?=mk_option($conf_array['pigz_compress'], "1", "Yes");?>
+      <label name="gzip_compress_label" class="input_description">Use legacy gzip compression?</label>
+      <div class="user_input_div"><select id="gzip_compress" name="gzip_compress" size="1">
+        <?=mk_option($conf_array['gzip_compress'], "0", "No");?>
+        <?=mk_option($conf_array['gzip_compress'], "1", "Yes");?>
       </select></div>
 
-      <span name="pigz_compress_help" class="custom_inline_help">
+      <span name="gzip_compress_help" class="custom_inline_help">
         <p>Set to 'Yes' to compress backups using legacy gzip compression.
         <br>It is recommended to use Zstandard compression option instead of this, if possible.</p>
         <ul>
           <li>WARNING: Do not turn on if you already have uncompressed backups. Move or delete existing uncompressed backups before enabling, because this will compress all files in the backup directory into ONE tarball.</li>
           <li>IMPORTANT: This can add a significant amount of time to the backup process.</li>
-          <li>Uses pigz for multi-threaded compression.</li>
           <li>Compression uses tar.gz for sparse file compatibility.</li>
           <li>Cannot be used with Zstandard compression.</li>
           <li>Default is 'No'.</li>
@@ -534,7 +601,7 @@ Icon="clone"
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
-    <div style="clear:both; float:right"><p>version: v0.2.3 - 2021.03.11</p></div>
+    <div style="clear:both; float:right"><p>version: v0.2.5 - 2022.12.25</p></div>
   </div>
 </div>
 

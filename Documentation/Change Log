@@ -1,10 +1,29 @@
 ## Change Log ##
 
-### v0.2.3 - 2021/03/11
-**Firetown**
+# v0.2.5 - 2022/12/25
+# The Last Dancer
+# - fixed typo in import for jquery filetree
+# - fixed issue with renaming and deleting configs not showing configurations
+# - cleaned up code
+# - enabled beta for backup extra files
+# - re-added option to backup vms while they are running
 
-- removed max unraid version.
-- hotfix for graphic issues related to broken EOL characters.
+# v0.2.4 - 2021/03/12
+# Fettuccine Afraido
+#
+# - removed pigz and reverted back to standard gzip to reduce complexity.
+# - fixed issue with legacy options not being updated correctly.
+# - fixed issue with old package files not being removed.
+# - fixed plugin package removal.
+# - moved txt and json files from usb to /tmp to reduce writes to usb.
+# - added option to backup configs.
+# - added option to backup pre and post scripts.
+
+# v0.2.3 - 2021/03/11
+# Firetown
+
+# - removed max unraid version.
+# - hotfix for graphic issues related to broken EOL characters.
 
 # v0.2.2 - 2021/02/03
 # Raz of the SAZ
