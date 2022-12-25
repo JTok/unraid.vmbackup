@@ -10,7 +10,6 @@
 #  - check to see if VM is running off existing snapshot file and handle it (possibly by using backingStore in config).
 #  - move some of the settings alerts to html form validation instead.
 #  - update script to use xmlstarlet.
-#  - re-add vms_to_backup_running to danger zone.
 #  - create more advanced regex for custom cron.
 #  - option to skip running vms.
 #  - disable backup now and fix snapshots buttons while their scripts are running?
@@ -38,3 +37,4 @@
 #  - update local variable names
 #  - fix vdisk backups to work with non-standardized names
 #  - fix removing old backups to work with non-standard names and paths (especially when using extra files backup)
+#  - add validation for vms_to_backup_running that verifies that only vms that are selected for backup have been chosen.
