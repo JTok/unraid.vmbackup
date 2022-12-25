@@ -199,6 +199,8 @@ Icon="clone"
     set_current_config_values(current_config);
     // append current config to forms.
     update_form_config(current_config);
+    // fix the dimensions of the vms_to_backup_running dropdown box so that it will actually display
+    fix_css_vms_to_backup_running();
   });
 </script>
 
