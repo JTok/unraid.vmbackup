@@ -163,14 +163,15 @@
     rm -f /tmp/&name;/*.json 2>/dev/null
 
     # remove old package files.
-    rm -f /boot/config/plugins/&name;/*.txz 2>/dev/null
-    rm -f /boot/config/plugins/&name;/packages/*.txz 2>/dev/null
-
-    # remove xmlstarlet.
-    removepkg xmlstarlet* 2>/dev/null
-
-    # remove pigz.
-    removepkg pigz* 2>/dev/null
+    find /boot/config/plugins/&name; -type f \
+      -maxdepth 2 -iname "*.txz" \
+      ! -iname "&xmlstarlet;.txz" \
+      ! -iname "&name;-&tag;-&version;.txz" \
+      -delete 2>/dev/null
+    
+    # remove legacy default cronjob.
+    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
+    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
 
     # create plugin tmp folder.
     mkdir -p /tmp/&name;
@@ -212,9 +213,6 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-    # remove legacy default cronjob.
-    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
-    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
     # update files and re-add missing cronjobs.
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file all
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script all
