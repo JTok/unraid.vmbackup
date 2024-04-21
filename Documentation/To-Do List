@@ -38,3 +38,15 @@
 #  - fix vdisk backups to work with non-standardized names
 #  - fix removing old backups to work with non-standard names and paths (especially when using extra files backup)
 #  - add validation for vms_to_backup_running that verifies that only vms that are selected for backup have been chosen.
+#  - move shared bash functions to separate script
+#  - give option to perform a backup before restoring
+#  - add support for hibernate/supend
+#  - allow a vm to be restored to a different name
+#  - fix comment for rsync mkpath option
+#  - allow for manual restores without an xml config file
+#  - allow the plugin to load without internet by leaving installation packages for the current version untouched (PR#36 realizelol)
+#  - move cron-job deletion to pre-install to cleanup processes (PR#36 realizelol)
+#  - respect installed packages (like pigz and xmlstarlet) that might be in use by other plugins (PR#36 realizelol)
+#  - fix cronjob removal in plg script by removing colon from cronjob cleanup line
+#  - fix popup when changing configs so that it lasts until the change is complete
+#  - fix removal of xmlstarlet during uninstall
