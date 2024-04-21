@@ -1,5 +1,10 @@
 ## Change Log ##
 
+# v0.2.7 - 2024/04/21a
+# Loud Sounds in the Night
+# - fix v0.2.6 update notes
+# - fix config directory not being created automatically
+
 # v0.2.6 - 2024/04/21
 # Booger Nights
 # - workaround for issue with empty path with unassigned devices (thanks to @juugis)
