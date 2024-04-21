@@ -1,9 +1,16 @@
 ## Change Log ##
 
+# v0.2.7 - 2024/04/21a
+# Loud Sounds in the Night
+# - fix v0.2.6 update notes
+# - fix config directory not being created automatically
+
 # v0.2.6 - 2024/04/21
 # Booger Nights
-# - workaround for issue with empty path with unnassigned device (thanks to @juugis)
+# - workaround for issue with empty path with unassigned devices (thanks to @juugis)
 # - fix issue with plugin requiring internet at server boot (thanks to @realizelol)
+# - respect existing installed packages that might be used by other plugins (thanks to @realizelol)
+# - moved old cronjob removal to pre-install step (thanks to @realizelol)
 
 # v0.2.5 - 2022/12/25
 # The Last Dancer

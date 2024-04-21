@@ -62,6 +62,10 @@ Icon="clone"
     $post_script_file = $plugin_path . '/post-script.sh';
   }
 
+  // verify the config directory exists, and create it if it does not.
+  if (!is_dir($plugin_path . '/configs')) {
+    mkdir($plugin_path . '/configs', 0700);
+  }
 
   // create or update the user config file as necessary and return the results as a config array.
   $conf_array = update_user_conf_file($default_conf_file, $user_conf_file);
@@ -601,7 +605,7 @@ Icon="clone"
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
-    <div style="clear:both; float:right"><p>version: v0.2.6 - 2024.04.21</p></div>
+    <div style="clear:both; float:right"><p>version: v0.2.7 - 2024.04.21a</p></div>
   </div>
 </div>
 
