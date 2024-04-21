@@ -198,7 +198,7 @@
   plugin package file.
 -->
 <FILE Name="&packages;/&name;-&tag;-&version;.txz" Run="upgradepkg --install-new">
-  <URL>&gitURL;/&name;-&tag;-&version;.txz</URL>
+  <URL>&gitURL;/packages/&name;-&tag;-&version;.txz</URL>
   <MD5>&MD5;</MD5>
 </FILE>
 
