@@ -29,6 +29,12 @@
 <CHANGES>
 ##&name;
 
+### v0.2.6 - 2024/04/21
+**Booger Nights**
+- workaround for issue with empty path with unnassigned device (thanks to @juugis)
+- fix issue with plugin requiring internet at server boot (thanks to @realizelol)
+
+
 ### v0.2.5 - 2022/12/25
 **The Last Dancer**
 
@@ -168,7 +174,7 @@
       ! -iname "&xmlstarlet;.txz" \
       ! -iname "&name;-&tag;-&version;.txz" \
       -delete 2>/dev/null
-    
+
     # remove legacy default cronjob.
     ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
     ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
