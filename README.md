@@ -1,6 +1,6 @@
 # unraid.vmbackup plugin
 
-## NOTICE: I currently do not have the time to do more than maintain this project for myself at the moment. I will eventually do more work on it as my life permits, but for now development will be sporatic at best. I am more happy to add someone else to the project to maintain it, or even accept some PRs as that is much easier for me to find time for.
+## NOTICE: I currently do not have the time to do more than maintain this project for myself at the moment. I will eventually do more work on it as my life permits, but for now development will be sporadic at best. I am more happy to add someone else to the project to maintain it, or even accept some PRs as that is much easier for me to find time for
 
 ## currently in beta
 
