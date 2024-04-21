@@ -62,6 +62,10 @@ Icon="clone"
     $post_script_file = $plugin_path . '/post-script.sh';
   }
 
+  // verify the config directory exists, and create it if it does not.
+  if (!is_dir($plugin_path . '/configs')) {
+    mkdir($plugin_path . '/configs', 0700);
+  }
 
   // create or update the user config file as necessary and return the results as a config array.
   $conf_array = update_user_conf_file($default_conf_file, $user_conf_file);
