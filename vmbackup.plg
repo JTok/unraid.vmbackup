@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2022.12.25">
-<!ENTITY tag        "v0.2.5">
+<!ENTITY version    "2024.04.21">
+<!ENTITY tag        "v0.2.6">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -14,7 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "62e708fcad3ba7ff854fe3f0f63eca60">
+<!ENTITY MD5        "e9bf389106bb54b08bcb9a48c95ed7df">
 ]>
 
 <PLUGIN name="&name;"
@@ -28,6 +28,12 @@
 
 <CHANGES>
 ##&name;
+
+### v0.2.6 - 2024/04/21
+**Booger Nights**
+- workaround for issue with empty path with unnassigned device (thanks to @juugis)
+- fix issue with plugin requiring internet at server boot (thanks to @realizelol)
+
 
 ### v0.2.5 - 2022/12/25
 **The Last Dancer**
@@ -163,14 +169,15 @@
     rm -f /tmp/&name;/*.json 2>/dev/null
 
     # remove old package files.
-    rm -f /boot/config/plugins/&name;/*.txz 2>/dev/null
-    rm -f /boot/config/plugins/&name;/packages/*.txz 2>/dev/null
+    find /boot/config/plugins/&name; -type f \
+      -maxdepth 2 -iname "*.txz" \
+      ! -iname "&xmlstarlet;.txz" \
+      ! -iname "&name;-&tag;-&version;.txz" \
+      -delete 2>/dev/null
 
-    # remove xmlstarlet.
-    removepkg xmlstarlet* 2>/dev/null
-
-    # remove pigz.
-    removepkg pigz* 2>/dev/null
+    # remove legacy default cronjob.
+    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
+    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
 
     # create plugin tmp folder.
     mkdir -p /tmp/&name;
@@ -190,8 +197,8 @@
 <!--
   plugin package file.
 -->
-<FILE Name="/boot/config/plugins/&name;/&name;-&tag;-&version;.txz" Run="upgradepkg --install-new">
-  <URL>&gitURL;/&name;-&tag;-&version;.txz</URL>
+<FILE Name="&packages;/&name;-&tag;-&version;.txz" Run="upgradepkg --install-new">
+  <URL>&gitURL;/packages/&name;-&tag;-&version;.txz</URL>
   <MD5>&MD5;</MD5>
 </FILE>
 
@@ -212,9 +219,6 @@
 -->
 <FILE Run="/bin/bash">
   <INLINE>
-    # remove legacy default cronjob.
-    ( crontab -l | grep -v -F "# Job for VM Backup plugin:" ) | crontab -
-    ( crontab -l | grep -v -F "/usr/local/emhttp/plugins/vmbackup/runscript.php run_backup > /dev/null" ) | crontab -
     # update files and re-add missing cronjobs.
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_conf_file all
     /usr/local/emhttp/plugins/vmbackup/scripts/commands.sh update_user_script all

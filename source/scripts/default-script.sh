@@ -426,6 +426,12 @@ only_send_error_notifications="no_config"
       vdisk_type="$(xmllint --xpath "string(/domain/devices/disk[$i]/driver/@type)" "$vm.xml")"
       vdisk_spec="$(xmllint --xpath "string(/domain/devices/disk[$i]/target/@dev)" "$vm.xml")"
 
+      # skip if vdisk_path is empty.
+      if [[ -z "$vdisk_path" ]]; then
+        log_message "warning: vdisk_path is empty. skipping vdisk." "empty vdisk_path" "warning"
+        continue
+      fi
+
       vdisks+=("$vdisk_path")
       vdisk_types["$vdisk_path"]="$vdisk_type"
       vdisk_specs["$vdisk_path"]="$vdisk_spec"

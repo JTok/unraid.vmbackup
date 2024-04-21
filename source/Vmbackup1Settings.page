@@ -601,7 +601,7 @@ Icon="clone"
       <input type="button" id="show_log" name="#show_log" value="Show Log" title="Show latest log.">
       <input type="button" id="backup" name="#backup" value="Backup Now">
     </form>
-    <div style="clear:both; float:right"><p>version: v0.2.5 - 2022.12.25</p></div>
+    <div style="clear:both; float:right"><p>version: v0.2.6 - 2024.04.21</p></div>
   </div>
 </div>
 
