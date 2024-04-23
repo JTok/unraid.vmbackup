@@ -1023,7 +1023,9 @@ only_send_error_notifications="no_config"
       log_message "information: ${vm} is ${vm_state}. vm desired state is ${vm_desired_state}. can_backup_vm set to ${can_backup_vm}."
 
     # if the vm is running, try to get it to the desired state.
-    elif [ "${vm_state}" == "running" ] || { [ "${vm_state}" == "paused" ] && [ ! "${vm_desired_state}" == "paused" ]; }; then
+    elif [ "${vm_state}" == "running" ] || [ "${vm_state}" == "pmsuspended" ] || \
+      { [ "${vm_state}" == "paused" ] && [ ! "${vm_desired_state}" == "paused" ]; }; then
+
       log_message "information: ${vm} is ${vm_state}. vm desired state is ${vm_desired_state}."
 
       if [ "${vm_desired_state}" == "paused" ]; then
@@ -1033,6 +1035,14 @@ only_send_error_notifications="no_config"
 
       elif [ "${vm_desired_state}" == "shut off" ]; then
 
+        # resume the vm if it is pmsuspended, based on testing this should be instant but will trap later if it has not resumed.
+        if [ "${vm_state}" == "pmsuspended" ]; then
+          log_message "action: ${vm} is ${vm_state}. vm desired state is ${vm_desired_state}. waking up."
+
+          # dompmwakeup the vm.
+          virsh dompmwakeup "${vm}"
+        fi
+
         # resume the vm if it is suspended, based on testing this should be instant but will trap later if it has not resumed.
         if [ "${vm_state}" == "paused" ]; then
           log_message "action: ${vm} is ${vm_state}. vm desired state is ${vm_desired_state}. resuming."
@@ -1040,6 +1050,10 @@ only_send_error_notifications="no_config"
           # resume the vm.
           virsh resume "${vm}"
         fi
+
+        # sleep 5 seconds before shutdown to handle a more clean ACPI shutdown
+        #  [ delay must be less than the next sleep interval ]
+        sleep 5 # TODO: Using ${seconds_to_wait}(default: 30seconds) to be more flexible here?
 
         # attempt to cleanly shutdown the vm.
         virsh shutdown "${vm}"
@@ -1091,9 +1105,28 @@ only_send_error_notifications="no_config"
             # if the user doesn't want to force a shutdown then there is nothing more to do so i cannot backup the vm.
             else
 
-              # set a flag to check later to indicate whether to backup this vm or not.
-              can_backup_vm="n"
-              log_message "failure: ${vm} is ${vm_state}. vm desired state is ${vm_desired_state}. can_backup_vm set to ${can_backup_vm}." "${vm} backup failed" "alert"
+              # if the vm is running but the guesttools aren't responding -> destory vm
+              if ! virsh guestinfo "${vm}" &>/dev/null && [ "${vm_state}" == "running" ]; then
+                virsh destroy "${vm}"
+                sleep 1
+              fi
+
+              # recheck the state of the vm.
+              vm_state=$(virsh domstate "${vm}")
+
+              if [ "${vm_state}" == "${vm_desired_state}" ]; then
+
+                # set a flag to check later to indicate whether to backup this vm or not.
+                can_backup_vm="y"
+                log_message "information: ${vm} is ${vm_state}. vm desired state after --destory-- is ${vm_desired_state}. can_backup_vm set to ${can_backup_vm}."
+
+              else
+
+                # set a flag to check later to indicate whether to backup this vm or not.
+                can_backup_vm="n"
+                log_message "failure: ${vm} is ${vm_state}. vm desired state is ${vm_desired_state}. can_backup_vm set to ${can_backup_vm}." "${vm} backup failed" "alert"
+
+              fi
             fi
           fi
 
@@ -2424,7 +2457,7 @@ only_send_error_notifications="no_config"
         vm_state=$(virsh domstate "${vm}")
 
         # start the vm after backup based on previous state.
-        if [ ! "${vm_state}" == "${vm_original_state}" ] && [ "${vm_original_state}" == "running" ]; then
+        if [ ! "${vm_state}" == "${vm_original_state}" ] && { [ "${vm_original_state}" == "running" ] || [ "${vm_original_state}" == "pmsuspended" ]; }; then
 
           log_message "information: vm_state is ${vm_state}. vm_original_state is ${vm_original_state}. starting ${vm}." "script starting ${vm}" "normal"
 
@@ -2703,7 +2736,7 @@ only_send_error_notifications="no_config"
     else
 
       # start the vm based on previous state.
-      if [ "${vm_original_state}" == "running" ]; then
+      if [ "${vm_original_state}" == "running" ] || [ "${vm_original_state}" == "pmsuspended" ]; then
 
         log_message "information: vm_state is ${vm_state}. vm_original_state is ${vm_original_state}. starting ${vm}." "script starting ${vm}" "normal"
 
