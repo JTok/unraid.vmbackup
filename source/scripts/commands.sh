@@ -483,13 +483,13 @@
             # remove common prefixes and add to the vdisk list array.
             case "${vdisk_path}" in
               ${user_prefix}*)
-                vdisk_list+=(["${vdisk_path}"]="${vdisk_path##${user_prefix}}")
+                vdisk_list+=(["${vdisk_path}"]="${vdisk_path##"${user_prefix}"}")
                 ;;
               ${cache_prefix}*)
-                vdisk_list+=(["${vdisk_path}"]="${vdisk_path##${cache_prefix}}")
+                vdisk_list+=(["${vdisk_path}"]="${vdisk_path##"${cache_prefix}"}")
                 ;;
               ${disk_prefix}*)
-                vdisk_list+=(["${vdisk_path}"]="${vdisk_path##${disk_prefix}}")
+                vdisk_list+=(["${vdisk_path}"]="${vdisk_path##"${disk_prefix}"}")
                 ;;
               *)
                 vdisk_list+=(["${vdisk_path}"]="${vdisk_path}")
