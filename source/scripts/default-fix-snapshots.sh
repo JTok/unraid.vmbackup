@@ -1,7 +1,8 @@
 #!/bin/bash
+# shellcheck enable=require-variable-braces
 #arrayStarted=no_config
 #noParity=no_config
-#version=v1.1.0 - 2020/01/03
+#version=v0.2.8 - 2024/04/23
 
 snapshot_extension="no_config"
 
@@ -12,9 +13,7 @@ IFS=$'\n'
 vms=$(virsh list --all --name)
 
 # loop through the vms in the list and try and back up their associated configs and vdisk(s).
-for vm in ${vms}
-
-do
+for vm in ${vms}; do
 
   # see if a config file exists for the vm already and remove it.
   if [ -f "${vm}.xml" ]; then
@@ -50,8 +49,7 @@ do
     declare -A vdisk_specs
 
     # get vdisk paths from config file.
-    for (( i=1; i<=vdisk_count; i++ ))
-    do
+    for (( i=1; i<=vdisk_count; i++ )); do
       vdisk_path="$(xmllint --xpath "string(/domain/devices/disk[${i}]/source/@file)" "${vm}.xml")"
       vdisk_spec="$(xmllint --xpath "string(/domain/devices/disk[${i}]/target/@dev)" "${vm}.xml")"
 
@@ -65,8 +63,7 @@ do
     fi
 
     # get vdisk names to check on current backups
-    for disk in "${vdisks[@]}"
-    do
+    for disk in "${vdisks[@]}"; do
       if [[ -n "${disk}" ]]; then
 
         # assume disk will be skipped.

@@ -421,8 +421,7 @@ only_send_error_notifications="no_config"
     declare -A vdisk_specs
 
     # get vdisk paths from config file.
-    for (( i=1; i<=vdisk_count; i++ ))
-    do
+    for (( i=1; i<=vdisk_count; i++ )); do
       vdisk_path="$(xmllint --xpath "string(/domain/devices/disk[${i}]/source/@file)" "${vm}.xml")"
       vdisk_type="$(xmllint --xpath "string(/domain/devices/disk[${i}]/driver/@type)" "${vm}.xml")"
       vdisk_spec="$(xmllint --xpath "string(/domain/devices/disk[${i}]/target/@dev)" "${vm}.xml")"
@@ -449,8 +448,7 @@ only_send_error_notifications="no_config"
     vdisk_extensions=()
 
     # get vdisk names to check on current backups
-    for disk in "${vdisks[@]}"
-    do
+    for disk in "${vdisks[@]}"; do
 
       if [[ -n "${disk}" ]]; then
 
@@ -458,8 +456,7 @@ only_send_error_notifications="no_config"
         skip_disk="0"
 
         # check to see if vdisk should be explicitly skipped.
-        for skipvdisk_name in ${vdisks_to_skip}
-        do
+        for skipvdisk_name in ${vdisks_to_skip}; do
 
           if [ "${skipvdisk_name}" == "${disk}" ]; then
             skip_disk="1"
@@ -479,8 +476,7 @@ only_send_error_notifications="no_config"
         fi
 
         # check to see if vdisk should be skipped by extension.
-        for skipvdisk_extension in ${vdisk_extensions_to_skip}
-        do
+        for skipvdisk_extension in ${vdisk_extensions_to_skip}; do
 
           if [[ "${skipvdisk_extension}" == "${disk_extension}" ]]; then
             skip_disk="1"
@@ -520,8 +516,7 @@ only_send_error_notifications="no_config"
             shopt -s extglob
 
             # get the most recent vdisk file.
-            for diskimage in "${backup_location}/${vm}/"*"${disk_number}"
-            do
+            for diskimage in "${backup_location}/${vm}/"*"${disk_number}"; do
               [[ ${diskimage} -nt ${newest_vdisk_file} ]] && newest_vdisk_file=${diskimage}
             done
 
@@ -560,8 +555,7 @@ only_send_error_notifications="no_config"
             extension_exists=false
 
             # for each extension check to see if it is already in the array.
-            for extension in "${vdisk_extensions[@]}"
-            do
+            for extension in "${vdisk_extensions[@]}"; do
 
               # if the extension already exists in the array set extension_exists to true and break out of the current loop.
               if [ "${extension}" == "${disk_extension}" ]; then
@@ -613,8 +607,7 @@ only_send_error_notifications="no_config"
               snapshot_cmd=()
 
               # find each vdisk_spec and use it to build a snapshot command.
-              for vdisk_spec in "${vdisk_specs[@]}"
-              do
+              for vdisk_spec in "${vdisk_specs[@]}"; do
 
                 # check to see if snapshot command is empty.
                 if [ ${#snapshot_cmd[@]} -eq 0 ]; then
@@ -684,8 +677,7 @@ only_send_error_notifications="no_config"
 
                   # determine if vm should be kept running.
                   # first check to see if vm exists in vms_to_backup_running variable.
-                  for vm_to_keep_running in ${vms_to_backup_running}
-                  do
+                  for vm_to_keep_running in ${vms_to_backup_running}; do
 
                     if [[ "${vm_to_keep_running}" == "${vm}" ]]; then
                       skip_vm_shutdown=true
@@ -817,8 +809,7 @@ only_send_error_notifications="no_config"
     extra_files=$(find "${_copy_path}" -type f)
 
     # loop through the list of files and copy them to the backup location.
-    for extra_file in ${extra_files}
-    do
+    for extra_file in ${extra_files}; do
 
       # assume file will not be skipped.
       skip_file="0"
@@ -830,8 +821,7 @@ only_send_error_notifications="no_config"
       shopt -s nocasematch
 
       # check to see if extra file is an existing vdisk
-      for disk in "${_vdisks[@]}"
-      do
+      for disk in "${_vdisks[@]}"; do
         # check to see if extra file is a vdisk.
         if [[ "${extra_file}" == "${disk}" ]]; then
           skip_file="1"
@@ -846,8 +836,7 @@ only_send_error_notifications="no_config"
       fi
 
       # check to see if extra file should be skipped by extension.
-      for skipvdisk_extension in ${vdisk_extensions_to_skip}
-      do
+      for skipvdisk_extension in ${vdisk_extensions_to_skip}; do
         if [[ "${file_extension}" == "${skipvdisk_extension}" ]]; then
           skip_file="1"
           log_message "information: extension for ${extra_file} on ${_vm} was found in vdisks_extensions_to_skip. skipping file."
@@ -890,8 +879,7 @@ only_send_error_notifications="no_config"
     vdisk_extensions_find_cmd=()
 
     # find each vdisk extension and use it to build a find command.
-    for extension in "${vdisk_extensions[@]}"
-    do
+    for extension in "${vdisk_extensions[@]}"; do
 
       local _ext="${extension}"
       if [ "${inline_zstd_compress}" -eq 1 ]; then
@@ -932,8 +920,7 @@ only_send_error_notifications="no_config"
     remove_old_files_cmd=()
 
     # find each vdisk extension and use it to build a remove command.
-    for extension in "${vdisk_extensions[@]}"
-    do
+    for extension in "${vdisk_extensions[@]}"; do
 
       # check to see if remove command is empty.
       if [ ${#remove_old_files_cmd[@]} -eq 0 ]; then
@@ -981,8 +968,7 @@ only_send_error_notifications="no_config"
       _deleted_files=$("${_find_cmd[@]}" -mmin +$((number_of_days_to_keep_backups*_days_to_mins)) -delete -print)
     fi
     if [[ -n "${_deleted_files}" ]]; then
-      for _deleted_file in ${_deleted_files}
-      do
+      for _deleted_file in ${_deleted_files}; do
         log_message "information: ${_deleted_file} ${_type} file." "script removing ${_type} file" "normal"
       done
     else
@@ -1001,8 +987,7 @@ only_send_error_notifications="no_config"
     local _deleted_files
     _deleted_files=$("${_find_cmd[@]}" -printf '%T@\t%p\n' | sort -t $'\t' -gr | tail -n +$((_number_of_files_to_keep + 1)) | cut -d $'\t' -f 2- | xargs -d '\n' -r rm -fv --)
     if [[ -n "${_deleted_files}" ]]; then
-      for _deleted_file in ${_deleted_files}
-      do
+      for _deleted_file in ${_deleted_files}; do
         log_message "information: ${_deleted_file} ${_type} file." "script removing ${_type} file" "normal"
       done
     else
@@ -1062,8 +1047,7 @@ only_send_error_notifications="no_config"
       fi
 
       # the shutdown of the vm may last a while so we are going to check periodically based on global input variables.
-      for (( i=1; i<=clean_shutdown_checks; i++ ))
-      do
+      for (( i=1; i<=clean_shutdown_checks; i++ )); do
         log_message "information: cycle ${i} of ${clean_shutdown_checks}: waiting ${seconds_to_wait} seconds before checking if the vm has entered the desired state."
 
         # wait x seconds based on how many seconds the user wants to wait between checks for a clean shutdown.
@@ -1717,9 +1701,7 @@ only_send_error_notifications="no_config"
     snap_exists=false
 
     # for each extension check to see if it is already in the array.
-    for extension in ${vdisk_extensions_to_skip}
-
-    do
+    for extension in ${vdisk_extensions_to_skip}; do
 
       # if the extension already exists in the array set snap_exists to true and break out of the current loop.
       if [ "${extension}" == "${snapshot_extension}" ]; then
@@ -2146,16 +2128,12 @@ only_send_error_notifications="no_config"
     vm_exists=$(virsh list --all --name)
 
     # check each vm on the system against the list of vms to ignore.
-    for vmname in ${vm_exists}
-
-    do
+    for vmname in ${vm_exists}; do
 
       # assume the vm will not be ignored until it is found in the list of vms to ignore.
       ignore_vm=false
 
-      for vm in ${vms_to_ignore}
-
-      do
+      for vm in ${vms_to_ignore}; do
 
         if [ "${vmname}" == "${vm}" ]; then
 
@@ -2189,9 +2167,7 @@ only_send_error_notifications="no_config"
   fi
 
   # create comma separated list of vms to backup for log file.
-  for vm_to_backup in ${vms_to_backup}
-
-  do
+  for vm_to_backup in ${vms_to_backup}; do
 
     if [[ -z "${vms_to_backup_list}" ]]; then
 
@@ -2216,9 +2192,7 @@ only_send_error_notifications="no_config"
   fi
 
   # loop through the vms in the list and try and back up their associated configs and vdisk(s).
-  for vm in ${vms_to_backup}
-
-  do
+  for vm in ${vms_to_backup}; do
 
     # get a list of the vm names installed on the system.
     vm_exists=$(virsh list --all --name)
@@ -2227,9 +2201,7 @@ only_send_error_notifications="no_config"
     skip_vm="y"
 
     # check to see if the vm exists on the system to backup.
-    for vmname in ${vm_exists}
-
-    do
+    for vmname in ${vm_exists}; do
 
       # if the vm doesn't match then set the skip flag to y.
       if [ "${vm}" == "${vmname}" ] ; then
@@ -2314,8 +2286,7 @@ only_send_error_notifications="no_config"
 
     # determine if vm should be kept running.
     # first check to see if vm exists in vms_to_backup_running variable.
-    for vm_to_keep_running in ${vms_to_backup_running}
-    do
+    for vm_to_keep_running in ${vms_to_backup_running}; do
 
       if [[ "${vm_to_keep_running}" == "${vm}" ]]; then
         skip_vm_shutdown=true
@@ -2595,9 +2566,7 @@ only_send_error_notifications="no_config"
             touch "${backup_file_list}"
 
             # for each extension, add it to the list of files to be backed up.
-            for extension in "${vdisk_extensions[@]}"
-
-            do
+            for extension in "${vdisk_extensions[@]}"; do
 
               find "${backup_location}/${vm}" -type f -name '*.'"${extension}" -printf "%f\n" >> "${backup_file_list}"
 
@@ -2674,9 +2643,7 @@ only_send_error_notifications="no_config"
           touch "${backup_file_list}"
 
           # for each extension, add it to the list of files to be backed up.
-          for extension in "${vdisk_extensions[@]}"
-
-          do
+          for extension in "${vdisk_extensions[@]}"; do
 
             find "${backup_location}/${vm}" -type f -name '*.'"${extension}" -printf "%f\n" >> "${backup_file_list}"
 
@@ -2863,8 +2830,7 @@ only_send_error_notifications="no_config"
         numberofvdisks="1"
 
         # find each vdisk extension and use it to build a regular expression to get a vdisk's trailing number.
-        for extension in "${vdisk_extensions[@]}"
-        do
+        for extension in "${vdisk_extensions[@]}"; do
 
           # if empty, build initial regular expression, otherwise append to it
           if [[ -z "${vdisknumberextregex}" ]]; then
@@ -2884,8 +2850,7 @@ only_send_error_notifications="no_config"
 
         # get number of vdisks
         vdisknumberonlyregex="[0-9]+"
-        for imagefilename in "${backup_location}/${vm}/"*
-        do
+        for imagefilename in "${backup_location}/${vm}/"*; do
           # get highest number from vdisk count
           if [[ ${imagefilename} =~ ${vdisknumberextregex} ]]; then
             imagefilenamenumberext=${BASH_REMATCH[0]}
@@ -2961,9 +2926,7 @@ only_send_error_notifications="no_config"
 
         if [[ -n "${deleted_files}" ]]; then
 
-          for deleted_file in ${deleted_files}
-
-          do
+          for deleted_file in ${deleted_files}; do
 
             log_message "information: ${deleted_file}." "script removing logs" "normal"
 
@@ -2981,9 +2944,7 @@ only_send_error_notifications="no_config"
 
         if [[ -n "${deleted_files}" ]]; then
 
-          for deleted_file in ${deleted_files}
-
-          do
+          for deleted_file in ${deleted_files}; do
 
             log_message "information: ${deleted_file}."
 
@@ -3022,9 +2983,7 @@ only_send_error_notifications="no_config"
 
         if [[ -n "${deleted_files}" ]]; then
 
-          for deleted_file in ${deleted_files}
-
-          do
+          for deleted_file in ${deleted_files}; do
 
               log_message "information: ${deleted_file}." "script removing error logs" "normal"
 
@@ -3042,9 +3001,7 @@ only_send_error_notifications="no_config"
 
         if [[ -n "${deleted_files}" ]]; then
 
-          for deleted_file in ${deleted_files}
-
-          do
+          for deleted_file in ${deleted_files}; do
 
             log_message "information: ${deleted_file}."
 

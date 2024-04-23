@@ -1,4 +1,6 @@
 #!/bin/bash
+# shellcheck enable=require-variable-braces
+#version=v0.2.8 - 2024/04/23
 
 # usage: update_user_script, update_user_conf_file, create_vm_lists true/false, backup_now, fix_snapshots, abort_script
 
@@ -36,8 +38,7 @@
 
     if [[ "${config_name}" == "all" ]]; then
       # loop through each config (directory) in the configs folder.
-      for config in "${configs_path}"/*/
-      do
+      for config in "${configs_path}"/*/; do
         # verify that we are working with a directory.
         if [[ -d "${config}" ]]; then
           pre_script="${config}/pre-script.sh"
@@ -126,8 +127,7 @@
 
     if [[ "${config_name}" == "all" ]]; then
       # loop through each config (directory) in the configs folder.
-      for config in "${configs_path}"/*/
-      do
+      for config in "${configs_path}"/*/; do
         # verify that we are working with a directory.
         if [[ -d "${config}" ]]; then
           user_config="${config}/user.cfg"
@@ -159,8 +159,7 @@
 
     if [[ "${config_name}" == "all" ]]; then
       # loop through each config (directory) in the configs folder.
-      for config in "${configs_path}"/*/
-      do
+      for config in "${configs_path}"/*/; do
         # verify that we are working with a directory.
         if [[ -d "${config}" ]]; then
           user_config="${config}/user.cfg"
@@ -190,8 +189,7 @@
 
     if [[ "${config_name}" == "all" ]]; then
       # loop through each config (directory) in the configs folder.
-      for config in "${configs_path}"/*/
-      do
+      for config in "${configs_path}"/*/; do
         # verify that we are working with a directory.
         if [[ -d "${config}" ]]; then
           cronjob_comment="# Job for VM Backup plugin ${config}:"
@@ -230,8 +228,7 @@
       # read cron settings from user config file.
       # parse user config to get cron variables and remove any double quotes.
       readarray -t user_config_array < "${user_config}"
-      for option in "${user_config_array[@]}"
-      do
+      for option in "${user_config_array[@]}"; do
         key=${option%%=*}
         case "${key}" in
           "frequency")
@@ -352,8 +349,7 @@
       # create an empty array for sorting the vdisk list array.
       tmp_vdisk_list=()
 
-      for vmname in ${vm_list}
-      do
+      for vmname in ${vm_list}; do
         # create working xml file.
         tmp_xml=$(virsh dumpxml "${vmname}")
 
@@ -361,12 +357,10 @@
         tmp_xml=${tmp_xml/"vmtemplate xmlns=\"unraid\""/"vmtemplate xmlns=\"http://unraid.net/xmlns\""}
 
         # get the vdisk path from the xml file.
-        for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n <(echo "${tmp_xml}"))
-        do
+        for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n <(echo "${tmp_xml}")); do
           # verify it is not already in the vdisk list.
           vdisk_exists=false
-          for vdisk in "${tmp_vdisk_list[@]}"
-          do
+          for vdisk in "${tmp_vdisk_list[@]}"; do
             if [[ "${vdisk}" == "${vdisk_path}" ]]; then
               vdisk_exists=true
             fi
@@ -412,8 +406,7 @@
     else
       # parse user config to get extensions to skip, including snapshot extension.
       readarray -t user_config_array < "${user_config}"
-      for line in "${user_config_array[@]}"
-      do
+      for line in "${user_config_array[@]}"; do
         key=${line%%=*}
         case "${key}" in
           "vdisk_extensions_to_skip")
@@ -429,8 +422,7 @@
 
             # verify extension is not already in the extensions to skip array.
             extension_exists=false
-            for extension in "${vdisk_extensions_to_skip[@]}"
-            do
+            for extension in "${vdisk_extensions_to_skip[@]}"; do
               if [[ "${extension}" == "${value}" ]]; then
                 extension_exists=true
               fi
@@ -453,8 +445,7 @@
     # create an empty array for sorting the vdisk list array.
     vdisk_list_sort=()
 
-    for vmname in ${vm_list}
-    do
+    for vmname in ${vm_list}; do
       # create working xml file.
       tmp_xml=$(virsh dumpxml "${vmname}")
 
@@ -462,8 +453,7 @@
       tmp_xml=${tmp_xml/"vmtemplate xmlns=\"unraid\""/"vmtemplate xmlns=\"http://unraid.net/xmlns\""}
 
       # get the vdisk path from the xml file.
-      for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n <(echo "${tmp_xml}"))
-      do
+      for vdisk_path in $(xmlstarlet sel -t -m "/domain/devices/disk/source/@file" -v . -n <(echo "${tmp_xml}")); do
         # get the extension of the disk.
         disk_extension="${vdisk_path##*.}"
 
@@ -471,8 +461,7 @@
         skip_disk=false
 
         # make sure the vdisk extension should not be skipped and added it to the list array.
-        for extension in "${extensions_to_skip[@]}"
-        do
+        for extension in "${extensions_to_skip[@]}"; do
           if [[ "${extension}" == "${disk_extension}" ]]; then
             skip_disk=true
           fi
@@ -481,8 +470,7 @@
         # if the disk should not be skipped, verify it is not already in the vdisk list.
         if [ "${skip_disk}" = false ]; then
           vdisk_exists=false
-          for vdisk in "${vdisk_list[@]}"
-          do
+          for vdisk in "${vdisk_list[@]}"; do
             if [[ "${vdisk}" == "${vdisk_path}" ]]; then
               vdisk_exists=true
             fi
@@ -512,8 +500,7 @@
 
         # verify path is not already in the tmp vdisk list.
         tmp_vdisk_exists=false
-        for vdisk in "${tmp_vdisk_list[@]}"
-        do
+        for vdisk in "${tmp_vdisk_list[@]}"; do
           if [[ "${vdisk}" == "${vdisk_path}" ]]; then
             tmp_vdisk_exists=true
           fi
@@ -540,8 +527,7 @@
 
     json_string="{ "
     # create vm vdisk list text file.
-    for key in "${vdisk_list_sort[@]}"
-    do
+    for key in "${vdisk_list_sort[@]}"; do
       json_string+="\"${key}\": \"${vdisk_list[${key}]}\","
       #printf "%s\n" "${key}=\"${vdisk_list[${key}]}\"" >> "${vdisk_list_file}"
     done
@@ -597,8 +583,7 @@
     unset tmp_assoc_array
     declare -A tmp_assoc_array
     # get the values of each array and place them into a different array as a key.
-    for value in "${array_one[@]}" "${array_two[@]}"
-    do
+    for value in "${array_one[@]}" "${array_two[@]}"; do
       # placing array values into another array as the key will deduplicate them since keys must be unique.
       tmp_assoc_array["${value}"]=1;
     done
