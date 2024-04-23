@@ -403,7 +403,7 @@ only_send_error_notifications="no_config"
     local mode="${1}"
 
     # get number of vdisks assoicated with the vm.
-    vdisk_count=$(xmllint --xpath "count(/domain/devices/disk/source/@file)" "${vm}.xml")
+    vdisk_count=$(xmllint --xpath "count(/domain/devices/disk/@device)" "${vm}.xml" 2>/dev/null)
 
     # unset array for vdisks.
     unset vdisks
@@ -422,9 +422,9 @@ only_send_error_notifications="no_config"
 
     # get vdisk paths from config file.
     for (( i=1; i<=vdisk_count; i++ )); do
-      vdisk_path="$(xmllint --xpath "string(/domain/devices/disk[${i}]/source/@file)" "${vm}.xml")"
-      vdisk_type="$(xmllint --xpath "string(/domain/devices/disk[${i}]/driver/@type)" "${vm}.xml")"
-      vdisk_spec="$(xmllint --xpath "string(/domain/devices/disk[${i}]/target/@dev)" "${vm}.xml")"
+      vdisk_path="$(xmllint --xpath "string(/domain/devices/disk[${i}]/source/@file)" "${vm}.xml" 2>/dev/null)"
+      vdisk_type="$(xmllint --xpath "string(/domain/devices/disk[${i}]/driver/@type)" "${vm}.xml" 2>/dev/null)"
+      vdisk_spec="$(xmllint --xpath "string(/domain/devices/disk[${i}]/target/@dev)" "${vm}.xml" 2>/dev/null)"
 
       # skip if vdisk_path is empty.
       if [[ -z "${vdisk_path}" ]]; then
