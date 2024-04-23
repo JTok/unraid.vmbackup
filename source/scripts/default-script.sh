@@ -2490,20 +2490,20 @@ only_send_error_notifications="no_config"
 
         if [ "${vm_state}" == "paused" ]; then
 
-            # resume vm
-            virsh resume "${vm}"
+          # resume vm
+          virsh resume "${vm}"
 
-          elif [ "${vm_state}" == "shut off" ]; then
+        elif [ "${vm_state}" == "shut off" ]; then
 
-            # start vm
-            virsh start "${vm}"
+          # start vm
+          virsh start "${vm}"
 
-          else
+        else
 
-            # there was an error
-            log_message "warning: vm_state is ${vm_state}. vm_original_state is ${vm_original_state}. unable to start ${vm}." "script cannot start ${vm}" "warning"
+          # there was an error
+          log_message "warning: vm_state is ${vm_state}. vm_original_state is ${vm_original_state}. unable to start ${vm}." "script cannot start ${vm}" "warning"
 
-          fi
+        fi
 
       fi
 
@@ -2742,20 +2742,20 @@ only_send_error_notifications="no_config"
 
         if [ "${vm_state}" == "paused" ]; then
 
-            # resume vm
-            virsh resume "${vm}"
+          # resume vm
+          virsh resume "${vm}"
 
-          elif [ "${vm_state}" == "shut off" ]; then
+        elif [ "${vm_state}" == "shut off" ]; then
 
-            # start vm
-            virsh start "${vm}"
+          # start vm
+          virsh start "${vm}"
 
-          else
+        else
 
-            # there was an error
-            log_message "warning: vm_state is ${vm_state}. vm_original_state is ${vm_original_state}. unable to start ${vm}." "script cannot start ${vm}" "warning"
+          # there was an error
+          log_message "warning: vm_state is ${vm_state}. vm_original_state is ${vm_original_state}. unable to start ${vm}." "script cannot start ${vm}" "warning"
 
-          fi
+        fi
 
       else
 
