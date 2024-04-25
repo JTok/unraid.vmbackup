@@ -29,6 +29,16 @@
 <CHANGES>
 ##&name;
 
+### v0.2.8 - 2024/04/23
+**Forks and Spoons Only**
+
+- fix backup of VM names containing spaces (@realizelol)
+- indentation fixes (@realizelol)
+- update loops to break the row via semicolon (@realizelol)
+- fix disk_prefix in $vdisk_path variable (@realizelol)
+- fix counting vDisks by using Disks instead of "file sources" + Silence: STDERR output to /dev/null (@realizelol)
+- add ability for the script to handle OS suspended VMs (@realizelol)
+
 ### v0.2.7 - 2024/04/21a
 **Loud Sounds in the Night**
 
@@ -148,16 +158,16 @@
 - fixed spacing in tmp log file.
 - fixed issue with xml plugin url.
 
-###v0.1.5 - 2019/12/18a
+### v0.1.5 - 2019/12/18a
 **This Beer is Tasty**
 
 - fixed issue with runscript.php not being included in plugin package.
 - changed how logging is handled when running the script.
 
-###v0.1.4 - 2019/12/18
+### v0.1.4 - 2019/12/18
 **Aging Gracelessly**
 
-- intial beta release
+- initial beta release
 - based on unraid-vmbackup script v1.2.2 at https://github.com/JTok/unraid-vmbackup.
 </CHANGES>
 
