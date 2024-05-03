@@ -428,7 +428,7 @@ only_send_error_notifications="no_config"
 
       # skip if vdisk_path is empty.
       if [[ -z "${vdisk_path}" ]]; then
-        log_message "warning: vdisk_path is empty. skipping vdisk." "empty vdisk_path" "warning"
+        log_message "warning: There's an empty vdisk_path on ${vm}. This is mainly caused by an empty cdrom file path. skipping vdisk." "empty vdisk_path on ${vm}" "warning"
         continue
       fi
 
