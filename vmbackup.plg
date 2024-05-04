@@ -3,8 +3,8 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name       "vmbackup">
 <!ENTITY author     "jtok">
-<!ENTITY version    "2024.04.23">
-<!ENTITY tag        "v0.2.8">
+<!ENTITY version    "2024.05.02">
+<!ENTITY tag        "v.0.2.9">
 <!ENTITY branch     "master">
 <!ENTITY launch     "Settings/Vmbackup">
 <!ENTITY icon       "clone">
@@ -14,7 +14,7 @@
 <!ENTITY packages   "/boot/config/plugins/&name;/packages">
 <!ENTITY xmlstarlet "xmlstarlet-1.6.1-x86_64-1_slonly">
 <!ENTITY XMLMD5     "1539a7b5c9ea9c45fb0ec95418dfadb6">
-<!ENTITY MD5        "1138c1d5b52066673a32a57652990fd9">
+<!ENTITY MD5        "846a643afe08462da10516690f5d724b">
 ]>
 
 <PLUGIN name="&name;"
@@ -28,6 +28,12 @@
 
 <CHANGES>
 ##&name;
+
+### v0.2.9 - 2024/05/02
+**Widdershins**
+
+- add a more detailed VM description to the empty vdisk_path notification (@realizelol)
+- add a flexible variable to the sleep-timer before ACPI VM shutdown so VM can recognize the "power-button-shutdown" (@realizelol)
 
 ### v0.2.8 - 2024/04/23
 **Forks and Spoons Only**

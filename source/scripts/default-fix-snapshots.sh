@@ -2,7 +2,7 @@
 # shellcheck enable=require-variable-braces
 #arrayStarted=no_config
 #noParity=no_config
-#version=v0.2.8 - 2024/04/23
+#version=v0.2.9 - 2024/05/02
 
 snapshot_extension="no_config"
 

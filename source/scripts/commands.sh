@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck enable=require-variable-braces
-#version=v0.2.8 - 2024/04/23
+#version=v0.2.9 - 2024/05/02
 
 # usage: update_user_script, update_user_conf_file, create_vm_lists true/false, backup_now, fix_snapshots, abort_script
 

@@ -1,5 +1,11 @@
 ## Change Log
 
+### v0.2.9 - 2024/05/02
+**Widdershins**
+
+- add a more detailed VM description to the empty vdisk_path notification (@realizelol)
+- add a flexible variable to the sleep-timer before ACPI VM shutdown so VM can recognize the "power-button-shutdown" (@realizelol)
+
 ### v0.2.8 - 2024/04/23
 **Forks and Spoons Only**
 
