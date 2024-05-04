@@ -3,7 +3,7 @@
 #backgroundOnly=true
 #arrayStarted=no_config
 #noParity=no_config
-#version=v0.2.8 - 2024/04/23
+#version=v0.2.9 - 2024/05/02
 
 # based on unraid-vmbackup script version:
 # v1.3.1 - 2020/01/21
@@ -428,7 +428,7 @@ only_send_error_notifications="no_config"
 
       # skip if vdisk_path is empty.
       if [[ -z "${vdisk_path}" ]]; then
-        log_message "warning: vdisk_path is empty. skipping vdisk." "empty vdisk_path" "warning"
+        log_message "warning: There's an empty vdisk_path on ${vm}. This is mainly caused by an empty cdrom file path. skipping vdisk." "empty vdisk_path on ${vm}" "warning"
         continue
       fi
 
@@ -1051,9 +1051,10 @@ only_send_error_notifications="no_config"
           virsh resume "${vm}"
         fi
 
-        # sleep 5 seconds before shutdown to handle a more clean ACPI shutdown
-        #  [ delay must be less than the next sleep interval ]
-        sleep 5 # TODO: Using ${seconds_to_wait}(default: 30seconds) to be more flexible here?
+        # sleep X/2 (default: 30) seconds before shutdown to handle a more clean ACPI shutdown.
+        # SR-IOV/GVT-X/VFIO/passthrough vms need more time to wakeup than a "normal" vm so use variable 'seconds_to_wait' here.
+        # NOTE: delay must be less than the next sleep interval of the operating system.
+        sleep $(( seconds_to_wait / 2 )) # default: 30 seconds / 2 = 15 seconds
 
         # attempt to cleanly shutdown the vm.
         virsh shutdown "${vm}"
